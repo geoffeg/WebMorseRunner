@@ -458,7 +458,7 @@ const morse_map = {
     '.-.-.-': '.',
     '-...-': '=',
     '-..-.': '/',
-    '-.-.--': '!',    
+    '-.-.--': '!',
     // Deutsche Umlaute
     '.--.-': 'ä',
     '---.': 'ö',
@@ -507,7 +507,7 @@ class MorseKeyer {
     }
 
     _DEBUG(msg) {
-      //  console.log(Math.round(performance.now()) + " : " + msg)
+        //  console.log(Math.round(performance.now()) + " : " + msg)
     }
 
 
@@ -561,10 +561,12 @@ class MorseKeyer {
         if (this._started === false) {
             this._started = true
 
-//            this._ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 }) // web audio context 
             //            this._ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 }) // web audio context 
-            this._ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 ,
-                sampleRate: 96000}) // web audio context 
+            //            this._ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 }) // web audio context 
+            this._ctx = new (window.AudioContext || window.webkitAudioContext)({
+                latencyHint: 0,
+                sampleRate: 96000
+            }) // web audio context 
 
             console.log(this._ctx.sampleRate)
             console.log(this._ctx.baseLatency)
@@ -572,10 +574,10 @@ class MorseKeyer {
             this._gain = this._ctx.createGain()
             this._gain.connect(this._ctx.destination)
 
-            this._gain.gain.value = 1 
+            this._gain.gain.value = 1
 
             this._lpf = this._ctx.createBiquadFilter()
-            this._lpf.type = 'lowpass' 
+            this._lpf.type = 'lowpass'
 
             this._lpf.frequency.setValueAtTime(this._freq, this._ctx.currentTime)
             this._lpf.Q.setValueAtTime(15, this._ctx.currentTime)
@@ -585,21 +587,21 @@ class MorseKeyer {
             await this._ctx.audioWorklet.addModule("morse-processor.js")
 
             // temp. implementation of a shared memory buffer  
-//            const gSAB = new SharedArrayBuffer(1024);
-//            myWorker.postMessage(buffer);
+            //            const gSAB = new SharedArrayBuffer(1024);
+            //            myWorker.postMessage(buffer);
 
             this._cwGain = new AudioWorkletNode(
                 this._ctx,
                 "morse-processor",
-              );           
-              this._cwGain.connect(this._lpf)
+            );
+            this._cwGain.connect(this._lpf)
 
-//*********** */
-const sharedArray  = new SharedArrayBuffer(4 * Int32Array.BYTES_PER_ELEMENT)
-this._cwGain.port.postMessage(sharedArray)
-this._sharedArray  = new Int32Array(sharedArray);
-console.log("send array")
-//************ */
+            //*********** */
+            const sharedArray = new SharedArrayBuffer(4 * Int32Array.BYTES_PER_ELEMENT)
+            this._cwGain.port.postMessage(sharedArray)
+            this._sharedArray = new Int32Array(sharedArray);
+            console.log("send array")
+            //************ */
             this._totalGain = this._ctx.createGain()
             this.volume = this._volume
             this._totalGain.connect(this._cwGain)
@@ -658,18 +660,18 @@ console.log("send array")
                 if (this._dahMemory || this._dahKey === DOWN) this.startElement(DAH); // opposite element
                 else if (this._ditKeyKey === DOWN) this.startElement(DIT); else this._finalizeElement()
             }
-                 
+
         } else { // ending dah element
             // clear dad Memory if key is not pressed
-            if (this._dahKey === UP) this._dahMemory = false            
+            if (this._dahKey === UP) this._dahMemory = false
             // start dit element if memory is set
             if (this._keyerMode === IAMBIC_B) {
-              if (this._ditMemory) this.startElement(DIT); // opposit element
-              else if (this._dahMemory) this.startElement(DAH); else this._finalizeElement()
+                if (this._ditMemory) this.startElement(DIT); // opposit element
+                else if (this._dahMemory) this.startElement(DAH); else this._finalizeElement()
             } else if (this._keyerMode === IAMBIC_A) {
                 if (this._ditMemory || this._ditKey === DOWN) this.startElement(DIT); // opposite element
                 else if (this._dahKey === DOWN) this.startElement(DIT); else this._finalizeElement()
-            }  
+            }
         }
     }
 
@@ -687,29 +689,29 @@ console.log("send array")
         // Schedule the ending of the element
         if (element === DIT) {
             this._cwGain.parameters.get("gain").setValueAtTime(0, now + this._ditLen)
-//            this._cwGain.gain.setValueAtTime(0, now + this._ditLen)
+            //            this._cwGain.gain.setValueAtTime(0, now + this._ditLen)
 
             setTimeout(() => { this.endElement() }, 2 * this._ditLen * 1000, 0)
         } else {
-//            this._cwGain.gain.setValueAtTime(0, now + 3 * this._ditLen)
+            //            this._cwGain.gain.setValueAtTime(0, now + 3 * this._ditLen)
             this._cwGain.parameters.get("gain").setValueAtTime(0, now + 3 * this._ditLen)
             setTimeout(() => { this.endElement() }, 4 * this._ditLen * 1000, 0)
         }
     }
 
     async keydown(key) {
-        await this.start()        
+        await this.start()
         if (key === DAH) {
             // for IAMBIC_A we only set memory during opposide element executed
             // for IAMBIC_B we set memory always
-            if ((this._keyerMode === IAMBIC_A && this._currentElement === DIT ) || this._keyerMode === IAMBIC_B)
-               this._dahMemory = true            
+            if ((this._keyerMode === IAMBIC_A && this._currentElement === DIT) || this._keyerMode === IAMBIC_B)
+                this._dahMemory = true
             this._dahKey = DOWN
-        } else {        
-            if ((this._keyerMode === IAMBIC_A && this._currentElement === DAH ) || this._keyerMode === IAMBIC_B)
-               this._ditMemory = true;
+        } else {
+            if ((this._keyerMode === IAMBIC_A && this._currentElement === DAH) || this._keyerMode === IAMBIC_B)
+                this._ditMemory = true;
             // new sharedArray
-            Atomics.store( this._sharedArray,DIT,1)
+            Atomics.store(this._sharedArray, DIT, 1)
             this._ditKey = DOWN
         }
         if (this._currentElement === NONE) this.startElement(key)
@@ -762,10 +764,10 @@ function startListening() {
 
 function midiMessageReceived(event) {
     const NOTE_ON = 9;
-//    const NOTE_OFF = 8;
+    //    const NOTE_OFF = 8;
 
     const PITCH_DIT = 48;
-//    const PITCH_DAH = 50;
+    //    const PITCH_DAH = 50;
 
     const cmd = event.data[0] >> 4;
     const pitch = event.data[1];
@@ -777,92 +779,171 @@ function midiMessageReceived(event) {
     }
 }
 
-window.onload = function () {
-    connectMIDI();
-    // https://stackoverflow.com/questions/7944460/detect-safari-browser    
-    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+window.onload = () => {
+    const button = document.getElementById("start")
+    console.log("main")
+    button.onclick = async () => {
+        console.log("Start")
+        let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
+        const bandwidth = 200;
+        const center_freq = 700;
 
-    window.focus()
+        let noiseFilterL = ctx.createBiquadFilter();
+        let noiseFilterH = ctx.createBiquadFilter();
+        whiteNoise = ctx.createBufferSource();
 
-    // to stop key repeats that can happen on windows.
-    // We store all keydowns received and set to false once key up.
-    // so if we get keydow twice we will only recognize it one time.
-    var keyAllowed = {}
+        noiseFilterL.type = "lowpass";
+        noiseFilterL.frequency.setValueAtTime(200, ctx.currentTime);
+        noiseFilterL.Q.setValueAtTime(20, ctx.currentTime);
 
-    // restore settings from local storage
-    let setting = JSON.parse(localStorage.getItem("setting"));
-    if (setting) {
-        document.getElementById("vol").value = setting.vol
-        document.getElementById("wpm").value = setting.wpm
-        document.getElementById("freq").value = setting.freq
-        document.getElementById("key").value = setting.key
-    }
+        noiseFilterH.type = "highpass";
+        noiseFilterH.frequency.setValueAtTime(600, ctx.currentTime);
+        noiseFilterH.Q.setValueAtTime(20, ctx.currentTime);        
 
-    let vol = parseInt(document.getElementById("vol").value)
-    let wpm = parseInt(document.getElementById("wpm").value)
-    let freq = parseInt(document.getElementById("freq").value)
-    let key = document.getElementById("key").value
+        var filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 600;
 
-    // define function to update the letters detected
-    const out = document.getElementById("out")
-    const callBack = displayCallback = (text) => {
-        out.textContent += text;
-        out.scrollTop = out.scrollHeight;
-    }
+        var bufferSize = 2 * ctx.sampleRate;
 
-    morseKeyer = new MorseKeyer(vol, wpm, freq, callBack, key)
+        var noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        var noise = noiseBuffer.getChannelData(0);
+        for (var i = 0; i < bufferSize; i++) {
+                noise[i] = Math.random()*0.5 - 1;
+        }     
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+        whiteNoise.start(0);
+        whiteNoise.connect(noiseFilterL);        
+        noiseFilterL.connect(noiseFilterH);
+        noiseFilterH.connect(ctx.destination);        
 
-    const storeSetting = function (e) {
-        let config = {
-            vol: document.getElementById("vol").value,
-            wpm: document.getElementById("wpm").value,
-            freq: document.getElementById("freq").value,
-            key: document.getElementById("key").value,
+   /*     let q = Math.sqrt( Math.pow(2, bandwidth) ) / ( Math.pow(2, bandwidth) - 1 )
+        console.log("q",q)
+        filter.Q.value = center_freq  / bandwidth;
+     */   
+    /*    await ctx.audioWorklet.addModule('noise-generator.js');        
+        let noiseGeneratorNode = new AudioWorkletNode(ctx, 'noise-generator');
+        noiseGeneratorNode.connect(noiseFilterL);
+     */   filter.connect(ctx.destination);
+/*
+        var noiseData = new Float32Array(44100 * 5);
+        var noiseBuffer = null;
+
+        // http://noisehack.com/generate-noise-web-audio-api/
+        var lastOut = 0;
+
+        for (var i = 0, imax = noiseData.length; i < imax; i++) {
+            var white = Math.random() * 2 - 1;
+
+            noiseData[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = noiseData[i];
+            noiseData[i] *= 3.5; // (roughly) compensate for gain       
         }
-        morseKeyer.volume = config.vol
-        morseKeyer.wpm = config.wpm
-        morseKeyer.frequency = config.freq
-        morseKeyer.keyMode = config.key
-        localStorage.setItem("setting", JSON.stringify(config))
+
+        if (noiseBuffer === null) {
+            noiseBuffer = audioContext.createBuffer(1, noiseData.length, audioContext.sampleRate);
+            noiseBuffer.getChannelData(0).set(noiseData);
+        }
+
+
+        let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
+        var bufferSource = audioContext.createBufferSource();
+
+        bufferSource.buffer = noiseBuffer;
+        bufferSource.loop = true;
+
+        this.bufferSource.start()
+        */
     }
-
-    document.getElementById("vol").onchange = storeSetting
-    document.getElementById("freq").onchange = storeSetting
-    document.getElementById("wpm").onchange = storeSetting
-    document.getElementById("key").onchange = storeSetting
-
-    document.getElementById("freq_value").textContent = document.getElementById("freq").value
-    document.getElementById("freq").addEventListener("input", (event) => {
-        document.getElementById("freq_value").textContent = event.target.value;
-    });
-
-
-    document.getElementById("wpm_value").textContent = document.getElementById("wpm").value
-    document.getElementById("wpm").addEventListener("input", (event) => {
-        document.getElementById("wpm_value").textContent = event.target.value;
-    });
-
-    window.onkeydown = function (e) {
-        // Problem in Safari: it return 2nd key down event if both ctrl key pressed instead of keyup
-        // this prevents multiple keydowns on windows 
-        if (!isSafari && keyAllowed[e.code] === false) return;
-        keyAllowed[e.code] = false
-        if (e.code === "ShiftLeft" || e.code === "ControlLeft" || e.code === "Period") {
-            if (isSafari && morseKeyer._ditKey === DOWN) morseKeyer.keyup(DIT);
-            else morseKeyer.keydown(DIT)
+    /*
+    
+        connectMIDI();
+        // https://stackoverflow.com/questions/7944460/detect-safari-browser    
+        var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    
+        window.focus()
+    
+        // to stop key repeats that can happen on windows.
+        // We store all keydowns received and set to false once key up.
+        // so if we get keydow twice we will only recognize it one time.
+        var keyAllowed = {}
+    
+        // restore settings from local storage
+        let setting = JSON.parse(localStorage.getItem("setting"));
+        if (setting) {
+            document.getElementById("vol").value = setting.vol
+            document.getElementById("wpm").value = setting.wpm
+            document.getElementById("freq").value = setting.freq
+            document.getElementById("key").value = setting.key
         }
-        if (e.code === "ShiftRight" || e.code === "ControlRight" || e.code === "Slash") {
-            if (isSafari && morseKeyer._dahKey === DOWN) morseKeyer.keyup(DAH);
-            else morseKeyer.keydown(DAH)
+    
+        let vol = parseInt(document.getElementById("vol").value)
+        let wpm = parseInt(document.getElementById("wpm").value)
+        let freq = parseInt(document.getElementById("freq").value)
+        let key = document.getElementById("key").value
+    
+        // define function to update the letters detected
+        const out = document.getElementById("out")
+        const callBack = displayCallback = (text) => {
+            out.textContent += text;
+            out.scrollTop = out.scrollHeight;
         }
-    }
-    window.onkeyup = function (e) {
-        keyAllowed[e.code] = true;
-        if (e.code == "ShiftLeft" || e.code === "ControlLeft" || e.code === "Period") {
-            morseKeyer.keyup(DIT)
+    
+        morseKeyer = new MorseKeyer(vol, wpm, freq, callBack, key)
+    
+        const storeSetting = function (e) {
+            let config = {
+                vol: document.getElementById("vol").value,
+                wpm: document.getElementById("wpm").value,
+                freq: document.getElementById("freq").value,
+                key: document.getElementById("key").value,
+            }
+            morseKeyer.volume = config.vol
+            morseKeyer.wpm = config.wpm
+            morseKeyer.frequency = config.freq
+            morseKeyer.keyMode = config.key
+            localStorage.setItem("setting", JSON.stringify(config))
         }
-        if (e.code == "ShiftRight" || e.code === "ControlRight" || e.code === "Slash") {
-            morseKeyer.keyup(DAH)
+    
+        document.getElementById("vol").onchange = storeSetting
+        document.getElementById("freq").onchange = storeSetting
+        document.getElementById("wpm").onchange = storeSetting
+        document.getElementById("key").onchange = storeSetting
+    
+        document.getElementById("freq_value").textContent = document.getElementById("freq").value
+        document.getElementById("freq").addEventListener("input", (event) => {
+            document.getElementById("freq_value").textContent = event.target.value;
+        });
+    
+    
+        document.getElementById("wpm_value").textContent = document.getElementById("wpm").value
+        document.getElementById("wpm").addEventListener("input", (event) => {
+            document.getElementById("wpm_value").textContent = event.target.value;
+        });
+    
+        window.onkeydown = function (e) {
+            // Problem in Safari: it return 2nd key down event if both ctrl key pressed instead of keyup
+            // this prevents multiple keydowns on windows 
+            if (!isSafari && keyAllowed[e.code] === false) return;
+            keyAllowed[e.code] = false
+            if (e.code === "ShiftLeft" || e.code === "ControlLeft" || e.code === "Period") {
+                if (isSafari && morseKeyer._ditKey === DOWN) morseKeyer.keyup(DIT);
+                else morseKeyer.keydown(DIT)
+            }
+            if (e.code === "ShiftRight" || e.code === "ControlRight" || e.code === "Slash") {
+                if (isSafari && morseKeyer._dahKey === DOWN) morseKeyer.keyup(DAH);
+                else morseKeyer.keydown(DAH)
+            }
         }
-    }
+        window.onkeyup = function (e) {
+            keyAllowed[e.code] = true;
+            if (e.code == "ShiftLeft" || e.code === "ControlLeft" || e.code === "Period") {
+                morseKeyer.keyup(DIT)
+            }
+            if (e.code == "ShiftRight" || e.code === "ControlRight" || e.code === "Slash") {
+                morseKeyer.keyup(DAH)
+            }
+        }
+    */
 }
