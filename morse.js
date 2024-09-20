@@ -472,6 +472,76 @@ const morse_map = {
     '........': '<error>' // Go ahead, specific named station. 
 }
 
+class MovAvg {
+    constructor() {
+        this.FPasses = 3
+        this.FPoints = 129
+        this.FSamplesInInput = 512
+        this.FDecimateFactor = 1
+        this.FGainDb = 0
+        this._Reset()
+    }
+    _Reset() {
+        let number_of_buffers = this.FPasses + 1
+        let buffer_size = this.FSamplesInInput + this.FPoints
+        let initial_value = 0
+        this.BufRe = Array.from(Array(number_of_buffers), _ => Array(buffer_size).fill(initial_value))
+        this.BufIm = Array.from(Array(number_of_buffers), _ => Array(buffer_size).fill(initial_value))
+        this._CalcScale();
+    }
+    _CalcScale() {
+        this.FNorm = Math.pow(10, 0.05 * this.FGainDb) * Math.pow(this.FPoints, -this.FPasses)
+    }
+    set passes(pass) {
+        this.FPasses = pass
+        this._Reset()
+    }
+
+    set points(p) {
+        this.FPasses = p
+        this._Reset()
+    }
+
+    set samplesInInput(s) {
+        this.FSamplesInInput = s
+        this._Reset()
+    }
+
+    set decimateFactor(d) {
+        this.FDecimateFactor = d
+        this._Reset()
+    }
+
+    set gainDb(g) {
+        this.FGainDb = g
+        this._CalcScale()
+    }
+
+    _DoFilter(AData, ABuf) {
+
+        //put new data at the end of the 0-th buffer
+        this._PushArray(AData, ABuf[0]);
+        //multi-pass
+        // for i:=1 to FPasses do Pass(ABuf[i-1], ABuf[i]);
+        //the sums are in the last buffer now, normalize and decimate result
+        //Result := GetResult(ABuf[FPasses]);
+
+    }
+
+    _PushArray(Src, Dst) {
+        let Len = Dst.length - Src.length
+
+        // shift existing data to the left 
+        for (i = 0; i <= Len; i++) Dst[i] = Dst[Src.length + i]
+        // append new data
+        for (i = 0; i <= Len; i++) Dst[Len + i] = Src[i]
+    }
+
+
+}
+
+
+
 
 class MorseKeyer {
     constructor(volume = 100, wpm = 25, freq = 600, callback, keyMode) {
@@ -782,6 +852,7 @@ function midiMessageReceived(event) {
 window.onload = () => {
     const button = document.getElementById("start")
     console.log("main")
+    let Filter = new MovAvg();
     button.onclick = async () => {
         console.log("Start")
         let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
@@ -798,7 +869,7 @@ window.onload = () => {
 
         noiseFilterH.type = "highpass";
         noiseFilterH.frequency.setValueAtTime(600, ctx.currentTime);
-        noiseFilterH.Q.setValueAtTime(20, ctx.currentTime);        
+        noiseFilterH.Q.setValueAtTime(20, ctx.currentTime);
 
         var filter = ctx.createBiquadFilter();
         filter.type = 'bandpass';
@@ -809,52 +880,52 @@ window.onload = () => {
         var noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         var noise = noiseBuffer.getChannelData(0);
         for (var i = 0; i < bufferSize; i++) {
-                noise[i] = Math.random()*0.5 - 1;
-        }     
+            noise[i] = Math.random() * 0.5 - 1;
+        }
         whiteNoise.buffer = noiseBuffer;
         whiteNoise.loop = true;
         whiteNoise.start(0);
-        whiteNoise.connect(noiseFilterL);        
+        whiteNoise.connect(noiseFilterL);
         noiseFilterL.connect(noiseFilterH);
-        noiseFilterH.connect(ctx.destination);        
+        noiseFilterH.connect(ctx.destination);
 
    /*     let q = Math.sqrt( Math.pow(2, bandwidth) ) / ( Math.pow(2, bandwidth) - 1 )
         console.log("q",q)
         filter.Q.value = center_freq  / bandwidth;
-     */   
+     */
     /*    await ctx.audioWorklet.addModule('noise-generator.js');        
         let noiseGeneratorNode = new AudioWorkletNode(ctx, 'noise-generator');
         noiseGeneratorNode.connect(noiseFilterL);
      */   filter.connect(ctx.destination);
-/*
-        var noiseData = new Float32Array(44100 * 5);
-        var noiseBuffer = null;
-
-        // http://noisehack.com/generate-noise-web-audio-api/
-        var lastOut = 0;
-
-        for (var i = 0, imax = noiseData.length; i < imax; i++) {
-            var white = Math.random() * 2 - 1;
-
-            noiseData[i] = (lastOut + (0.02 * white)) / 1.02;
-            lastOut = noiseData[i];
-            noiseData[i] *= 3.5; // (roughly) compensate for gain       
-        }
-
-        if (noiseBuffer === null) {
-            noiseBuffer = audioContext.createBuffer(1, noiseData.length, audioContext.sampleRate);
-            noiseBuffer.getChannelData(0).set(noiseData);
-        }
-
-
-        let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
-        var bufferSource = audioContext.createBufferSource();
-
-        bufferSource.buffer = noiseBuffer;
-        bufferSource.loop = true;
-
-        this.bufferSource.start()
-        */
+        /*
+                var noiseData = new Float32Array(44100 * 5);
+                var noiseBuffer = null;
+        
+                // http://noisehack.com/generate-noise-web-audio-api/
+                var lastOut = 0;
+        
+                for (var i = 0, imax = noiseData.length; i < imax; i++) {
+                    var white = Math.random() * 2 - 1;
+        
+                    noiseData[i] = (lastOut + (0.02 * white)) / 1.02;
+                    lastOut = noiseData[i];
+                    noiseData[i] *= 3.5; // (roughly) compensate for gain       
+                }
+        
+                if (noiseBuffer === null) {
+                    noiseBuffer = audioContext.createBuffer(1, noiseData.length, audioContext.sampleRate);
+                    noiseBuffer.getChannelData(0).set(noiseData);
+                }
+        
+        
+                let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
+                var bufferSource = audioContext.createBufferSource();
+        
+                bufferSource.buffer = noiseBuffer;
+                bufferSource.loop = true;
+        
+                this.bufferSource.start()
+                */
     }
     /*
     
