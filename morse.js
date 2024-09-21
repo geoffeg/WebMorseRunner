@@ -491,6 +491,8 @@ class MovAvg {
     }
     _CalcScale() {
         this.FNorm = Math.pow(10, 0.05 * this.FGainDb) * Math.pow(this.FPoints, -this.FPasses)
+        console.log("fnorm",this.FNorm)
+   //     debugger;
     }
     set passes(pass) {
         this.FPasses = pass
@@ -498,7 +500,7 @@ class MovAvg {
     }
 
     set points(p) {
-        this.FPasses = p
+        this.FPoints = p
         this._Reset()
     }
 
@@ -517,31 +519,95 @@ class MovAvg {
         this._CalcScale()
     }
 
-    _DoFilter(AData, ABuf) {
+    Filter(AData) {
+        let result = {
+            Re: [],
+            Im: []
+        }
+        result.Re = this._DoFilter(AData.Re, this.BufRe)
+        result.Im = this._DoFilter(AData.Im, this.BufIm)
+        return result
+    }    
 
-        //put new data at the end of the 0-th buffer
+    _DoFilter(AData, ABuf) {
+        // put new data at the end of the 0-th buffer
         this._PushArray(AData, ABuf[0]);
-        //multi-pass
-        // for i:=1 to FPasses do Pass(ABuf[i-1], ABuf[i]);
-        //the sums are in the last buffer now, normalize and decimate result
-        //Result := GetResult(ABuf[FPasses]);
+        // multi-pass
+        for (let i=1; i<= this.FPasses; i++) this._Pass(ABuf[i-1], ABuf[i])
+        // the sums are in the last buffer now, normalize and decimate result
+        return this._GetResult(ABuf[this.FPasses])
 
     }
-
     _PushArray(Src, Dst) {
         let Len = Dst.length - Src.length
-
         // shift existing data to the left 
-        for (i = 0; i <= Len; i++) Dst[i] = Dst[Src.length + i]
+        for (let i = 0; i < Len; i++) Dst[i] = Dst[Src.length + i]
         // append new data
-        for (i = 0; i <= Len; i++) Dst[Len + i] = Src[i]
+        for (let i = 0; i < Src.length; i++) Dst[Len + i] = Src[i]
     }
 
+    _Pass(Src, Dst) {
+        // make some free space in the buffer
+        this._ShiftArray(Dst, this.FSamplesInInput);
+        // calculate moving average recursively
+        for (let i = this.FPoints; i < Src.length; i++) {
+            Dst[i] = Dst[i - 1] - Src[i - this.FPoints] + Src[i]
+        }
+    }
 
+    _ShiftArray(Dst, Count) {
+        // shift data to the left
+        const Len = Dst.length - Count
+        for (let i = 0; i <= Len; i++) Dst[i] = Dst[Count + i]
+    }
+
+    _GetResult(Src) {
+        let result = new Array()
+        for (let i = 0; i < this.FSamplesInInput; i++ )
+            result.push(Src[this.FPoints + i * this.FDecimateFactor] * this.FNorm)
+        return result
+    }
 }
 
+const  complex_noise = () => {
+  const buffer_size = 512
+  const noiseamp = 6000
+  let result = {
+    Re: [],
+    Im: []
+  }
+  for(let i=0;i<buffer_size;i++) {
+    result.Re.push( 3 * noiseamp * (Math.random()-0.5))
+    result.Im.push( 3 * noiseamp * (Math.random()-0.5))    
+  }
+  return result
+}
 
+const DEFAULTRATE = 11025
+const DEFAULTBUFSIZE = 512
+const DEFAULTPASSES = 3
+const BANDWIDTH = 500
 
+const contest = () => {
+    let Filt = new MovAvg()
+    let Filt2 = new MovAvg()    
+
+    Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)  
+    Filt.passes =  DEFAULTPASSES
+    Filt.samplesInInput = DEFAULTBUFSIZE
+    Filt.gainDb = 10 * Math.log10(500/BANDWIDTH)    
+
+    Filt2.passes =  DEFAULTPASSES
+    Filt2.samplesInInput = DEFAULTBUFSIZE
+    Filt2.gainDb = 10 * Math.log10(500/BANDWIDTH)       
+
+    let ReIm = complex_noise()
+    console.log(ReIm)
+    console.log(Filt2.Filter(ReIm))
+ //   console.log(ReIm)
+    debugger;
+   
+}
 
 class MorseKeyer {
     constructor(volume = 100, wpm = 25, freq = 600, callback, keyMode) {
@@ -852,7 +918,8 @@ function midiMessageReceived(event) {
 window.onload = () => {
     const button = document.getElementById("start")
     console.log("main")
-    let Filter = new MovAvg();
+    contest();
+    
     button.onclick = async () => {
         console.log("Start")
         let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
