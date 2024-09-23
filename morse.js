@@ -644,14 +644,14 @@ const  complex_noise = () => {
 const DEFAULTRATE = 11025
 const DEFAULTBUFSIZE = 512
 const DEFAULTPASSES = 3
-const BANDWIDTH = 500
-const PITCH = 400
+const BANDWIDTH = 300
+const PITCH = 600
 
 const contest = () => {
     let Filt = new MovAvg()
     let Filt2 = new MovAvg()  
-    
-
+    const audioCtx = new AudioContext();
+    console.log("Samples per second ",audioCtx.sampleRate)
     Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)  
     Filt.passes =  DEFAULTPASSES
     Filt.samplesInInput = DEFAULTBUFSIZE
@@ -674,7 +674,7 @@ const contest = () => {
 
     console.log(result)
  //   console.log(ReIm)
-    debugger;
+ //   debugger;
 }
 
 class MorseKeyer {
@@ -990,7 +990,73 @@ window.onload = () => {
     
     button.onclick = async () => {
         console.log("Start")
+
+
+        let Filt = new MovAvg()
+        let Filt2 = new MovAvg()  
+        const audioCtx = new AudioContext();
+        console.log("Samples per second ",audioCtx.sampleRate)
+        Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)  
+        Filt.passes =  DEFAULTPASSES
+        Filt.samplesInInput = DEFAULTBUFSIZE
+        Filt.gainDb = 10 * Math.log10(500/BANDWIDTH)    
+    
+        Filt2.passes =  DEFAULTPASSES
+        Filt2.samplesInInput = DEFAULTBUFSIZE
+        Filt2.gainDb = 10 * Math.log10(500/BANDWIDTH)       
+    
+        let Modul = new Modulator()
+        Modul.samplesPerSec = DEFAULTRATE;
+        Modul.carrierFreq = PITCH
+    
+
+
         let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
+
+        const sampleRate = 11025 // samples per second 
+        const numberOfSeconds = 15
+        const myArrayBuffer = ctx.createBuffer(
+            1,
+            sampleRate * numberOfSeconds,
+            sampleRate
+        );
+        const source = ctx.createBufferSource();
+
+        let ReIm = complex_noise()
+        let buffer_pos=0
+        Filt2.Filter(ReIm)
+        ReIm = Filt.Filter(ReIm)
+        let result = Modul.Modulate(ReIm)
+        for (let channel = 0; channel < myArrayBuffer.numberOfChannels; channel++) {
+            // This gives us the actual ArrayBuffer that contains the data
+            const nowBuffering = myArrayBuffer.getChannelData(channel);
+            for (let i = 0; i < myArrayBuffer.length; i++) {
+            
+                if(buffer_pos === DEFAULTBUFSIZE) {
+                    ReIm = complex_noise()
+                    buffer_pos=0
+                    Filt2.Filter(ReIm)
+                    ReIm = Filt.Filter(ReIm)
+                    result = Modul.Modulate(ReIm)                       
+                } 
+                // audio needs to be in [-1.0; 1.0]
+                nowBuffering[i] = result[buffer_pos] / 32800
+                buffer_pos++
+                //console.log(nowBuffering[i])
+
+            }
+        }
+        console.log("finish buffer")
+
+        // set the buffer in the AudioBufferSourceNode
+        source.buffer = myArrayBuffer;
+        // connect the AudioBufferSourceNode to the
+        // destination so we can hear the sound
+        source.connect(ctx.destination);
+        // start the source playing
+        source.start();
+
+/*        
         const bandwidth = 200;
         const center_freq = 700;
 
@@ -1023,7 +1089,7 @@ window.onload = () => {
         whiteNoise.connect(noiseFilterL);
         noiseFilterL.connect(noiseFilterH);
         noiseFilterH.connect(ctx.destination);
-
+*/
    /*     let q = Math.sqrt( Math.pow(2, bandwidth) ) / ( Math.pow(2, bandwidth) - 1 )
         console.log("q",q)
         filter.Q.value = center_freq  / bandwidth;
@@ -1031,7 +1097,9 @@ window.onload = () => {
     /*    await ctx.audioWorklet.addModule('noise-generator.js');        
         let noiseGeneratorNode = new AudioWorkletNode(ctx, 'noise-generator');
         noiseGeneratorNode.connect(noiseFilterL);
-     */   filter.connect(ctx.destination);
+     */  
+    
+    /*    filter.connect(ctx.destination);*/
         /*
                 var noiseData = new Float32Array(44100 * 5);
                 var noiseBuffer = null;
