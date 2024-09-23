@@ -472,6 +472,64 @@ const morse_map = {
     '........': '<error>' // Go ahead, specific named station. 
 }
 
+class Modulator {
+    constructor() {
+        this.FCarrierFreq = 600
+        this.FSamplesPerSec = 5512
+        this.FGain = 1
+        this._CalcSinCos()
+        this.FSampleNo = 0
+    }
+
+    set carrierFreq(Value) {
+      this.FCarrierFreq = Value;
+      this._CalcSinCos()
+      this.FSampleNo = 0
+    }
+
+    set samplesPerSec(Value) {   
+      this.FSamplesPerSec = Value
+      this._CalcSinCos()
+      this.FSampleNo = 0
+    }  
+
+    _CalcSinCos() {
+        let Cnt = Math.round(this.FSamplesPerSec / this.FCarrierFreq)
+        this.FCarrierFreq = this.FSamplesPerSec / Cnt
+        let dFi = (Math.PI * 2) / Cnt
+
+        this._Sn = new Array()
+        this._Cs = new Array()
+
+        this._Sn[0] = 0; this._Sn[1] = Math.sin(dFi)
+        this._Cs[0] = 1; this._Cs[1] = Math.cos(dFi)
+
+        //phase
+        for (let i = 2; i <= Cnt - 1; i++) {
+            this._Cs[i] = this._Cs[1] * this._Cs[i - 1] - this._Sn[1] * this._Sn[i - 1]
+            this._Sn[i] = this._Cs[1] * this._Sn[i - 1] + this._Sn[1] * this._Cs[i - 1]
+        }
+
+        //gain
+        for (let i = 0; i < Cnt; i++) {
+            this._Cs[i] = this._Cs[i] * this.FGain;
+            this._Sn[i] = this._Sn[i] * this.FGain;
+        }
+    }
+
+    Modulate(Data) {
+        let result = new Array()
+
+        for (let i = 0; i < Data.Re.length; i++) {
+            result.push(Data.Re[i] * this._Sn[this.FSampleNo] - Data.Im[i] * this._Cs[this.FSampleNo])
+            this.FSampleNo = (this.FSampleNo + 1) % this._Cs.length
+        }
+        return result
+    }   
+    
+}
+
+
 class MovAvg {
     constructor() {
         this.FPasses = 3
@@ -587,10 +645,12 @@ const DEFAULTRATE = 11025
 const DEFAULTBUFSIZE = 512
 const DEFAULTPASSES = 3
 const BANDWIDTH = 500
+const PITCH = 400
 
 const contest = () => {
     let Filt = new MovAvg()
-    let Filt2 = new MovAvg()    
+    let Filt2 = new MovAvg()  
+    
 
     Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)  
     Filt.passes =  DEFAULTPASSES
@@ -601,12 +661,20 @@ const contest = () => {
     Filt2.samplesInInput = DEFAULTBUFSIZE
     Filt2.gainDb = 10 * Math.log10(500/BANDWIDTH)       
 
+    let Modul = new Modulator()
+    Modul.samplesPerSec = DEFAULTRATE;
+    Modul.carrierFreq = PITCH
+
     let ReIm = complex_noise()
     console.log(ReIm)
-    console.log(Filt2.Filter(ReIm))
+
+    Filt2.Filter(ReIm)
+    ReIm = Filt.Filter(ReIm)
+    let result = Modul.Modulate(ReIm)
+
+    console.log(result)
  //   console.log(ReIm)
     debugger;
-   
 }
 
 class MorseKeyer {
