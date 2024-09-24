@@ -472,6 +472,181 @@ const morse_map = {
     '........': '<error>' // Go ahead, specific named station. 
 }
 
+
+
+const MorseMap = new Map([
+    ['<ka>', '-.-.-'], // Message begins / Start of work 
+    ['<sk>', '...-.-'], //  End of contact / End of work
+    ['<ar>', '.-.-.'], // End of transmission / End of message
+    ['<kn>', '-.--.'], // Go ahead, specific named station.
+    ['=', '-...-'],
+    ['a', '.-'],
+    ['b', '-...'],
+    ['c', '-.-.'],
+    ['d', '-..'],
+    ['e', '.'],
+    ['f', '..-.'],
+    ['g', '--.'],
+    ['h', '....'],
+    ['i', '..'],
+    ['j', '.---'],
+    ['k', '-.-'],
+    ['l', '.-..'],
+    ['m', '--'],
+    ['n', '-.'],
+    ['o', '---'],
+    ['p', '.--.'],
+    ['q', '--.-'],
+    ['r', '.-.'],
+    ['s', '...'],
+    ['t', '-'],
+    ['u', '..-'],
+    ['v', '...-'],
+    ['w', '.--'],
+    ['x', '-..-'],
+    ['y', '-.--'],
+    ['z', '--..'],
+    ['1', '.----'],
+    ['2', '..---'],
+    ['3', '...--'],
+    ['4', '....-'],
+    ['5', '.....'],
+    ['6', '-....'],
+    ['7', '--...'],
+    ['8', '---..'],
+    ['9', '----.'],
+    ['0', '-----'],
+    ['\'', '.-.-.-'],
+    ['?', '..--..'],
+    ['/', '-..-.'],
+    ['.', '.-.-.-']
+])
+
+
+class Keyer {
+    constructor() {
+        this.Rate = 11025
+        this.RiseTime = 0.005
+        this.FRiseTime = 0.005
+        this.Wpm = 20
+        this.BufSize = 512
+        this.MorseMsg = this.Encode('DJ1TF')
+        this._MakeRamp()
+    }
+
+    set riseTime(Value) {
+        this.FRiseTime = Value;
+        this._MakeRamp()
+    }
+
+    _BlackmanHarrisKernel(x) {
+        const a0 = 0.35875
+        const a1 = 0.48829
+        const a2 = 0.14128
+        const a3 = 0.01168
+        return a0 - a1 * Math.cos(2 * Math.PI * x) + a2 * Math.cos(4 * Math.PI * x) - a3 * Math.cos(6 * Math.PI * x)
+    }
+
+    _BlackmanHarrisStepResponse(Len) {
+        let result = new Array()
+        // generate kernel
+        for (let i = 0; i < Len; i++) result.push(this._BlackmanHarrisKernel(i / Len))
+        // integrate
+        for (let i = 1; i < Len; i++) result[i] = result[i - 1] + result[i]
+        // normalize
+        let Scale = 1 / result[Len - 1]
+        for (let i = 0; i < Len; i++) result[i] = result[i] * Scale;
+        return result
+    }
+
+    _MakeRamp() {
+        this._RampLen = Math.round(2.7 * this.FRiseTime * this.Rate)
+        this._RampOn = this._BlackmanHarrisStepResponse(this._RampLen)
+        this._RampOff = new Array()
+        for (let i = 0; i <= this._RampLen - 1; i++)
+            this._RampOff[this._RampLen - i - 1] = this._RampOn[i]
+    }
+
+    Encode(Txt) {
+        let result = ''
+        for (let i = 0; i < Txt.length; i++) {
+            if (Txt[i] === ' ' || Txt[i] === '_') result = result + ' '
+            else result = result + MorseMap.get(Txt[i].toLowerCase()) + ' '
+        }
+        if (result !== '') result += '~'
+        return result
+    }
+
+    GetEnvelope() {
+        let UnitCnt = 0
+        let p = 0
+        let result = new Array()
+
+        const AddRampOn = () => {
+            for (let i = 0; i < this._RampLen; i++) result[p + i] = this._RampOn[i]
+            p += this._RampLen
+        }
+
+        const AddRampOff = () => {
+            for (let i = 0; i < this._RampLen; i++) result[p + i] = this._RampOff[i]
+            p += this._RampLen
+        }
+
+        const AddOff = (Dur) => {
+            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p+i] = 0
+            p += Dur * SamplesInUnit - this._RampLen
+        }
+
+        const AddOn = (Dur) => {
+            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p+i] = 1
+            p += Dur * SamplesInUnit - this._RampLen
+        }
+
+        for (let i = 0; i < this._MorseMsg; i++) {
+            switch (this._MorseMsg[i]) {
+                case '.': UnitCnt += 2
+                    break
+                case '-': UnitCnt += 4
+                    break
+                case ' ': UnitCnt += 2
+                    break
+                case '~': UnitCnt++
+                    break
+
+            }
+        }
+
+        //calc buffer size
+        let SamplesInUnit = Math.round(0.1 * this.Rate * 12 / this.Wpm);
+        //       let TrueEnvelopeLen = UnitCnt * SamplesInUnit + this._RampLen;
+        //       let Len = this.BufSize * Math.ceil(TrueEnvelopeLen / this.BufSize);       
+        result = new Array()
+        for (let i = 0; i < this.MorseMsg.length; i++) {
+            switch (this.MorseMsg[i]) {
+                case '.':
+                    AddRampOn()
+                    AddOn(1)
+                    AddRampOff()
+                    AddOff(1)
+                    break
+                case '-':
+                    AddRampOn()
+                    AddOn(3)
+                    AddRampOff()
+                    AddOff(1)
+                    break
+                case ' ': AddOff(1)
+                    break
+                case '~': AddOff(1)
+                    break
+            }
+
+        }
+        console.log("Envelop", result)
+
+    }
+}
+
 class Modulator {
     constructor() {
         this.FCarrierFreq = 600
@@ -482,16 +657,16 @@ class Modulator {
     }
 
     set carrierFreq(Value) {
-      this.FCarrierFreq = Value;
-      this._CalcSinCos()
-      this.FSampleNo = 0
+        this.FCarrierFreq = Value;
+        this._CalcSinCos()
+        this.FSampleNo = 0
     }
 
-    set samplesPerSec(Value) {   
-      this.FSamplesPerSec = Value
-      this._CalcSinCos()
-      this.FSampleNo = 0
-    }  
+    set samplesPerSec(Value) {
+        this.FSamplesPerSec = Value
+        this._CalcSinCos()
+        this.FSampleNo = 0
+    }
 
     _CalcSinCos() {
         let Cnt = Math.round(this.FSamplesPerSec / this.FCarrierFreq)
@@ -525,8 +700,8 @@ class Modulator {
             this.FSampleNo = (this.FSampleNo + 1) % this._Cs.length
         }
         return result
-    }   
-    
+    }
+
 }
 
 
@@ -549,8 +724,8 @@ class MovAvg {
     }
     _CalcScale() {
         this.FNorm = Math.pow(10, 0.05 * this.FGainDb) * Math.pow(this.FPoints, -this.FPasses)
-        console.log("fnorm",this.FNorm)
-   //     debugger;
+        console.log("fnorm", this.FNorm)
+        //     debugger;
     }
     set passes(pass) {
         this.FPasses = pass
@@ -585,13 +760,13 @@ class MovAvg {
         result.Re = this._DoFilter(AData.Re, this.BufRe)
         result.Im = this._DoFilter(AData.Im, this.BufIm)
         return result
-    }    
+    }
 
     _DoFilter(AData, ABuf) {
         // put new data at the end of the 0-th buffer
         this._PushArray(AData, ABuf[0]);
         // multi-pass
-        for (let i=1; i<= this.FPasses; i++) this._Pass(ABuf[i-1], ABuf[i])
+        for (let i = 1; i <= this.FPasses; i++) this._Pass(ABuf[i - 1], ABuf[i])
         // the sums are in the last buffer now, normalize and decimate result
         return this._GetResult(ABuf[this.FPasses])
 
@@ -621,24 +796,24 @@ class MovAvg {
 
     _GetResult(Src) {
         let result = new Array()
-        for (let i = 0; i < this.FSamplesInInput; i++ )
+        for (let i = 0; i < this.FSamplesInInput; i++)
             result.push(Src[this.FPoints + i * this.FDecimateFactor] * this.FNorm)
         return result
     }
 }
 
-const  complex_noise = () => {
-  const buffer_size = 512
-  const noiseamp = 6000
-  let result = {
-    Re: [],
-    Im: []
-  }
-  for(let i=0;i<buffer_size;i++) {
-    result.Re.push( 3 * noiseamp * (Math.random()-0.5))
-    result.Im.push( 3 * noiseamp * (Math.random()-0.5))    
-  }
-  return result
+const complex_noise = () => {
+    const buffer_size = 512
+    const noiseamp = 6000
+    let result = {
+        Re: [],
+        Im: []
+    }
+    for (let i = 0; i < buffer_size; i++) {
+        result.Re.push(3 * noiseamp * (Math.random() - 0.5))
+        result.Im.push(3 * noiseamp * (Math.random() - 0.5))
+    }
+    return result
 }
 
 const DEFAULTRATE = 11025
@@ -649,17 +824,17 @@ const PITCH = 600
 
 const contest = () => {
     let Filt = new MovAvg()
-    let Filt2 = new MovAvg()  
+    let Filt2 = new MovAvg()
     const audioCtx = new AudioContext();
-    console.log("Samples per second ",audioCtx.sampleRate)
-    Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)  
-    Filt.passes =  DEFAULTPASSES
+    console.log("Samples per second ", audioCtx.sampleRate)
+    Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)
+    Filt.passes = DEFAULTPASSES
     Filt.samplesInInput = DEFAULTBUFSIZE
-    Filt.gainDb = 10 * Math.log10(500/BANDWIDTH)    
+    Filt.gainDb = 10 * Math.log10(500 / BANDWIDTH)
 
-    Filt2.passes =  DEFAULTPASSES
+    Filt2.passes = DEFAULTPASSES
     Filt2.samplesInInput = DEFAULTBUFSIZE
-    Filt2.gainDb = 10 * Math.log10(500/BANDWIDTH)       
+    Filt2.gainDb = 10 * Math.log10(500 / BANDWIDTH)
 
     let Modul = new Modulator()
     Modul.samplesPerSec = DEFAULTRATE;
@@ -673,8 +848,15 @@ const contest = () => {
     let result = Modul.Modulate(ReIm)
 
     console.log(result)
- //   console.log(ReIm)
- //   debugger;
+
+
+    let key = new Keyer()
+    console.log(key.Encode('DJ1TF test'))
+    key.GetEnvelope()
+
+
+    //   console.log(ReIm)
+    //   debugger;
 }
 
 class MorseKeyer {
@@ -987,28 +1169,28 @@ window.onload = () => {
     const button = document.getElementById("start")
     console.log("main")
     contest();
-    
+
     button.onclick = async () => {
         console.log("Start")
 
 
         let Filt = new MovAvg()
-        let Filt2 = new MovAvg()  
+        let Filt2 = new MovAvg()
         const audioCtx = new AudioContext();
-        console.log("Samples per second ",audioCtx.sampleRate)
-        Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)  
-        Filt.passes =  DEFAULTPASSES
+        console.log("Samples per second ", audioCtx.sampleRate)
+        Filt.points = Math.round(0.7 * DEFAULTRATE / BANDWIDTH)
+        Filt.passes = DEFAULTPASSES
         Filt.samplesInInput = DEFAULTBUFSIZE
-        Filt.gainDb = 10 * Math.log10(500/BANDWIDTH)    
-    
-        Filt2.passes =  DEFAULTPASSES
+        Filt.gainDb = 10 * Math.log10(500 / BANDWIDTH)
+
+        Filt2.passes = DEFAULTPASSES
         Filt2.samplesInInput = DEFAULTBUFSIZE
-        Filt2.gainDb = 10 * Math.log10(500/BANDWIDTH)       
-    
+        Filt2.gainDb = 10 * Math.log10(500 / BANDWIDTH)
+
         let Modul = new Modulator()
         Modul.samplesPerSec = DEFAULTRATE;
         Modul.carrierFreq = PITCH
-    
+
 
 
         let ctx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 0 })
@@ -1023,7 +1205,7 @@ window.onload = () => {
         const source = ctx.createBufferSource();
 
         let ReIm = complex_noise()
-        let buffer_pos=0
+        let buffer_pos = 0
         Filt2.Filter(ReIm)
         ReIm = Filt.Filter(ReIm)
         let result = Modul.Modulate(ReIm)
@@ -1031,14 +1213,14 @@ window.onload = () => {
             // This gives us the actual ArrayBuffer that contains the data
             const nowBuffering = myArrayBuffer.getChannelData(channel);
             for (let i = 0; i < myArrayBuffer.length; i++) {
-            
-                if(buffer_pos === DEFAULTBUFSIZE) {
+
+                if (buffer_pos === DEFAULTBUFSIZE) {
                     ReIm = complex_noise()
-                    buffer_pos=0
+                    buffer_pos = 0
                     Filt2.Filter(ReIm)
                     ReIm = Filt.Filter(ReIm)
-                    result = Modul.Modulate(ReIm)                       
-                } 
+                    result = Modul.Modulate(ReIm)
+                }
                 // audio needs to be in [-1.0; 1.0]
                 nowBuffering[i] = result[buffer_pos] / 32800
                 buffer_pos++
@@ -1056,50 +1238,50 @@ window.onload = () => {
         // start the source playing
         source.start();
 
-/*        
-        const bandwidth = 200;
-        const center_freq = 700;
+        /*        
+                const bandwidth = 200;
+                const center_freq = 700;
+        
+                let noiseFilterL = ctx.createBiquadFilter();
+                let noiseFilterH = ctx.createBiquadFilter();
+                whiteNoise = ctx.createBufferSource();
+        
+                noiseFilterL.type = "lowpass";
+                noiseFilterL.frequency.setValueAtTime(200, ctx.currentTime);
+                noiseFilterL.Q.setValueAtTime(20, ctx.currentTime);
+        
+                noiseFilterH.type = "highpass";
+                noiseFilterH.frequency.setValueAtTime(600, ctx.currentTime);
+                noiseFilterH.Q.setValueAtTime(20, ctx.currentTime);
+        
+                var filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 600;
+        
+                var bufferSize = 2 * ctx.sampleRate;
+        
+                var noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                var noise = noiseBuffer.getChannelData(0);
+                for (var i = 0; i < bufferSize; i++) {
+                    noise[i] = Math.random() * 0.5 - 1;
+                }
+                whiteNoise.buffer = noiseBuffer;
+                whiteNoise.loop = true;
+                whiteNoise.start(0);
+                whiteNoise.connect(noiseFilterL);
+                noiseFilterL.connect(noiseFilterH);
+                noiseFilterH.connect(ctx.destination);
+        */
+        /*     let q = Math.sqrt( Math.pow(2, bandwidth) ) / ( Math.pow(2, bandwidth) - 1 )
+             console.log("q",q)
+             filter.Q.value = center_freq  / bandwidth;
+          */
+        /*    await ctx.audioWorklet.addModule('noise-generator.js');        
+            let noiseGeneratorNode = new AudioWorkletNode(ctx, 'noise-generator');
+            noiseGeneratorNode.connect(noiseFilterL);
+         */
 
-        let noiseFilterL = ctx.createBiquadFilter();
-        let noiseFilterH = ctx.createBiquadFilter();
-        whiteNoise = ctx.createBufferSource();
-
-        noiseFilterL.type = "lowpass";
-        noiseFilterL.frequency.setValueAtTime(200, ctx.currentTime);
-        noiseFilterL.Q.setValueAtTime(20, ctx.currentTime);
-
-        noiseFilterH.type = "highpass";
-        noiseFilterH.frequency.setValueAtTime(600, ctx.currentTime);
-        noiseFilterH.Q.setValueAtTime(20, ctx.currentTime);
-
-        var filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.value = 600;
-
-        var bufferSize = 2 * ctx.sampleRate;
-
-        var noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        var noise = noiseBuffer.getChannelData(0);
-        for (var i = 0; i < bufferSize; i++) {
-            noise[i] = Math.random() * 0.5 - 1;
-        }
-        whiteNoise.buffer = noiseBuffer;
-        whiteNoise.loop = true;
-        whiteNoise.start(0);
-        whiteNoise.connect(noiseFilterL);
-        noiseFilterL.connect(noiseFilterH);
-        noiseFilterH.connect(ctx.destination);
-*/
-   /*     let q = Math.sqrt( Math.pow(2, bandwidth) ) / ( Math.pow(2, bandwidth) - 1 )
-        console.log("q",q)
-        filter.Q.value = center_freq  / bandwidth;
-     */
-    /*    await ctx.audioWorklet.addModule('noise-generator.js');        
-        let noiseGeneratorNode = new AudioWorkletNode(ctx, 'noise-generator');
-        noiseGeneratorNode.connect(noiseFilterL);
-     */  
-    
-    /*    filter.connect(ctx.destination);*/
+        /*    filter.connect(ctx.destination);*/
         /*
                 var noiseData = new Float32Array(44100 * 5);
                 var noiseBuffer = null;
