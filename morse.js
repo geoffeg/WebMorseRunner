@@ -523,6 +523,8 @@ const MorseMap = new Map([
 ])
 
 
+
+
 class Keyer {
     constructor() {
         this.Rate = 11025
@@ -593,12 +595,12 @@ class Keyer {
         }
 
         const AddOff = (Dur) => {
-            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p+i] = 0
+            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p + i] = 0
             p += Dur * SamplesInUnit - this._RampLen
         }
 
         const AddOn = (Dur) => {
-            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p+i] = 1
+            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p + i] = 1
             p += Dur * SamplesInUnit - this._RampLen
         }
 
@@ -642,7 +644,7 @@ class Keyer {
             }
 
         }
-        console.log("Envelop", result)
+        return result
 
     }
 }
@@ -705,6 +707,240 @@ class Modulator {
 }
 
 
+
+const DEFAULTRATE = 11025
+const DEFAULTBUFSIZE = 512
+const DEFAULTPASSES = 3
+const BANDWIDTH = 300
+const PITCH = 500
+
+// They Keyer Unit exports a Keyer Variable
+// TODO: Fix this! Temporary we just declair a global object
+let GKeyer = new Keyer()
+
+const NEVER = Number.MAX_VALUE
+
+class Station {
+    static stListening = 1
+    static stCopying = 2
+    static stPreparingToSend = 3
+    static stSending = 4
+
+    constructor() {
+        this._FBfo = 0
+        this._dPhi = 0
+        this.Wpm = 20
+        this.Amplitude = 300000
+    }
+
+    _GetBfo() {
+        let result = this._FBfo
+        this._FBfo = this._FBfo + this._dPhi
+        if (this._FBfo > Math.PI * 2) this._FBfo -= Math.PI * 2
+        return XPathResult
+    }
+    SendText(AMsg) {
+        /*    
+              if Pos('<#>', AMsg) > 0 then
+                begin
+                //with error
+                AMsg := StringReplace(AMsg, '<#>', NrAsText, []);
+                //error cleared
+                AMsg := StringReplace(AMsg, '<#>', NrAsText, [rfReplaceAll]);
+                end;
+            
+              AMsg := StringReplace(AMsg, '<my>', MyCall, [rfReplaceAll]);
+            
+            {
+              if CallsFromKeyer
+                 then AMsg := StringReplace(AMsg, '<his>', ' ', [rfReplaceAll])
+                 else AMsg := StringReplace(AMsg, '<his>', HisCall, [rfReplaceAll]);
+            }
+        */
+        if (this.MsgText) {
+            this.MsgText += ' ' + AMsg
+        } else { this.MsgText = AMsg }
+        this.SendMorse(GKeyer.Encode(this.MsgText))
+    }
+
+    SendMorse(AMorse) {
+
+        if (!this._Envelope) {
+            this._SendPos = 0
+            this._FBfo = 0
+
+        }
+
+        GKeyer.Wpm = this.Wpm;
+        GKeyer.MorseMsg = AMorse;
+        this._Envelope = GKeyer.GetEnvelope()
+        for (let i = 0; i < this._Envelope.length; i++) this._Envelope[i] *= this.Amplitude;
+
+        this.State = this.stSending;
+        this.TimeOut = NEVER;
+    }
+
+    GetBlock() {
+        if (!this._Envelope || this._Envelope === null) {
+            return null
+        }
+        let result = new Array()
+        for (let i = 0; i < DEFAULTBUFSIZE && this._SendPos + i < this._Envelope.length; i++) {
+            result.push(this._Envelope[this._SendPos + i])
+        }
+        // advance TX buffer
+        this._SendPos += DEFAULTBUFSIZE;
+        if (this._SendPos >= this._Envelope.length) this._Envelope = null
+        return result
+    }
+
+
+
+    SetPitch(Value) {
+        this._FPitch = Value;
+        dPhi = Math.PI * 2 * this._FPitch / DEFAULTRATE
+    }
+
+}
+
+
+class Volume {
+    constructor() {
+        this._FMaxOut = 20000
+        this._FNoiseIn = 1
+        this._FNoiseOut = 2000
+        this._CalcBeta()
+        this._FAttackSamples = 28
+        this._FHoldSamples = 28
+        this._MakeAttackShape()
+    }
+
+    set NoiseInDb(Value = 76) {
+        this._FNoiseIn = Math.pow(10, 0.05 * Value)
+        this._CalcBeta()
+    }
+
+    set NoiseOutDb(Value) {
+        this._FNoiseOut = Math.min(0.25 * this._FMaxOut, Math.pow(10, 0.05 * Value))
+        this._CalcBeta()
+    }
+
+    set MaxOut(Value) {
+        this._FMaxOut = Value;
+        this._CalcBeta()
+    }
+
+    set AttackSamples(Value) {
+        this._FAttackSamples = Math.max(1, Value)
+        this._MakeAttackShape()
+    }
+
+    set HoldSamples(Value) {    
+      this._FHoldSamples = Math.max(1, Value)
+      this._MakeAttackShape()
+    }  
+
+    set AgcEnabled(Value) {
+
+        if (Value && !this._FAgcEnabled) this._Reset()
+        this._FAgcEnabled = Value
+    } 
+
+
+    _CalcBeta() {
+        this._FBeta = this._FNoiseIn / Math.log(this._FMaxOut / (this._FMaxOut - this._FNoiseOut))
+        this._FDefaultGain = this._FNoiseOut / this._FNoiseIn
+    }
+
+
+    _MakeAttackShape() {
+        this._FLen = 2 * (this._FAttackSamples + this._FHoldSamples) + 1
+        this._FAttackShape = new Array()
+
+
+        // attack shape
+        for (let i = 0; i < this._FAttackSamples; i++) {
+            this._FAttackShape[i] = Math.log(0.5 - 0.5 * Math.cos((i + 1) * Math.PI / (this._FAttackSamples + 1)))
+            this._FAttackShape[this._FLen - 1 - i] = this._FAttackShape[i]
+        }
+
+        this._Reset()
+    }
+
+    _Reset() {
+        this._FRealBuf = new Float64Array(this._FLen)
+        // TODO: Check if / how we can/should clear out ComplexBuffer?
+        /*
+          ClearReIm(FComplexBuf);
+          SetLengthReIm(FComplexBuf, FLen);     
+        */
+        this._FMagBuf = new Float64Array(this._FLen);
+        console.log("init:", this._FMagBuf)
+        this._FBufIdx = 0
+    }
+
+    CalcAgcGain() {
+        // look at both sides of the sample
+        // and find the max. magnitude, weighed by FAttackShape
+        let Envel = 1E-10
+        let Di = this._FBufIdx
+        for (let Wi = 0; Wi < this._FLen; Wi++) {
+            let Sample = this._FMagBuf[Di] + this._FAttackShape[Wi]
+            if (Sample > Envel) Envel = Sample
+            Di++
+            if (Di === this._FLen) Di = 0
+
+        }
+        // envelope
+        this._FEnvelope = Envel;
+        Envel = Math.exp(Envel)
+
+        // gain
+        let result = this._FMaxOut * (1 - Math.exp(-Envel / this._FBeta)) / Envel
+        return result
+    }
+
+
+    _ApplyAgc(V) {
+        // store data
+        this._FRealBuf[this._FBufIdx] = V
+        this._FMagBuf[this._FBufIdx] = Math.log(Math.abs(V + 1E-10))
+
+        // increment index
+        this._FBufIdx = (this._FBufIdx + 1) % this._FLen
+
+        // output
+        let result = this._FRealBuf[(this._FBufIdx + Math.floor(this._FLen / 2)) % this._FLen] * this.CalcAgcGain()
+        return result
+    }
+
+    _ApplyDefaultGain(V) {
+
+        let result = Math.min(this._FMaxOut, Math.max(-this._FMaxOut, V * this._FDefaultGain))
+        this._FIsOverload = this._FIsOverload || (Math.abs(result) = this._FMaxOut)
+        return result
+    }
+
+    Process(Data) {
+        // Whats this?
+        this._FIsOverload = false
+
+        let result = new Array(Data.length)
+
+        if (this._FAgcEnabled) {
+            for (let i = 0; i < result.length; i++) {
+                result[i] = this._ApplyAgc(Data[i])
+            }
+        } else {
+            for (let i = 0; i < result.length; i++) {
+                result[i] = this._ApplyDefaultGain(Data[i])
+            }
+        }
+        return result
+    }
+
+}
+
 class MovAvg {
     constructor() {
         this.FPasses = 3
@@ -724,8 +960,6 @@ class MovAvg {
     }
     _CalcScale() {
         this.FNorm = Math.pow(10, 0.05 * this.FGainDb) * Math.pow(this.FPoints, -this.FPasses)
-        console.log("fnorm", this.FNorm)
-        //     debugger;
     }
     set passes(pass) {
         this.FPasses = pass
@@ -816,11 +1050,7 @@ const complex_noise = () => {
     return result
 }
 
-const DEFAULTRATE = 11025
-const DEFAULTBUFSIZE = 512
-const DEFAULTPASSES = 3
-const BANDWIDTH = 300
-const PITCH = 600
+
 
 const contest = () => {
     let Filt = new MovAvg()
@@ -847,7 +1077,8 @@ const contest = () => {
     ReIm = Filt.Filter(ReIm)
     let result = Modul.Modulate(ReIm)
 
-    console.log(result)
+
+   // console.log(result)
 
 
     let key = new Keyer()
@@ -1187,6 +1418,18 @@ window.onload = () => {
         Filt2.samplesInInput = DEFAULTBUFSIZE
         Filt2.gainDb = 10 * Math.log10(500 / BANDWIDTH)
 
+
+        let Agc = new Volume()
+        Agc.NoiseInDb = 76
+        Agc.NoiseOutDb = 76
+        Agc.AttackSamples = 155   // AGC attack 5 ms
+        Agc.HoldSamples = 155
+        Agc.AgcEnabled = true
+
+
+        MyStation = new Station()
+        MyStation.SendText("DJ1TF")
+
         let Modul = new Modulator()
         Modul.samplesPerSec = DEFAULTRATE;
         Modul.carrierFreq = PITCH
@@ -1208,7 +1451,9 @@ window.onload = () => {
         let buffer_pos = 0
         Filt2.Filter(ReIm)
         ReIm = Filt.Filter(ReIm)
+        
         let result = Modul.Modulate(ReIm)
+ //       result = Agc.Process(result)
         for (let channel = 0; channel < myArrayBuffer.numberOfChannels; channel++) {
             // This gives us the actual ArrayBuffer that contains the data
             const nowBuffering = myArrayBuffer.getChannelData(channel);
@@ -1216,10 +1461,22 @@ window.onload = () => {
 
                 if (buffer_pos === DEFAULTBUFSIZE) {
                     ReIm = complex_noise()
+                    let blk = MyStation.GetBlock()
+
+                    if (blk && blk !== null) {
+
+                        for (let n = 0; n < blk.length; n++) {
+                            ReIm.Im[n] = 0.59 * blk[n]
+                            ReIm.Re[n] = 0.59 * blk[n]
+                        }
+                    }
                     buffer_pos = 0
                     Filt2.Filter(ReIm)
                     ReIm = Filt.Filter(ReIm)
                     result = Modul.Modulate(ReIm)
+                    result = Agc.Process(result)
+                    
+
                 }
                 // audio needs to be in [-1.0; 1.0]
                 nowBuffering[i] = result[buffer_pos] / 32800
