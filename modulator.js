@@ -25,19 +25,19 @@ class Modulator {
         this.FCarrierFreq = this.FSamplesPerSec / Cnt
         let dFi = (Math.PI * 2) / Cnt
 
-        this._Sn = new Array()
-        this._Cs = new Array()
+        this._Sn = new Float64Array(Cnt) 
+        this._Cs = new Float64Array(Cnt) 
 
         this._Sn[0] = 0; this._Sn[1] = Math.sin(dFi)
         this._Cs[0] = 1; this._Cs[1] = Math.cos(dFi)
 
-        //phase
-        for (let i = 2; i <= Cnt - 1; i++) {
+        // phase
+        for (let i = 2; i < Cnt ; i++) {
             this._Cs[i] = this._Cs[1] * this._Cs[i - 1] - this._Sn[1] * this._Sn[i - 1]
             this._Sn[i] = this._Cs[1] * this._Sn[i - 1] + this._Sn[1] * this._Cs[i - 1]
         }
 
-        //gain
+        // apply gain
         for (let i = 0; i < Cnt; i++) {
             this._Cs[i] = this._Cs[i] * this.FGain;
             this._Sn[i] = this._Sn[i] * this.FGain;
