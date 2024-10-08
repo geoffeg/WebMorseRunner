@@ -169,7 +169,18 @@ window.onload = () => {
         let buffer_pos = 0
         Filt2.Filter(ReIm)
         ReIm = Filt.Filter(ReIm)
-        
+
+
+//-------------------------
+        await ctx.audioWorklet.addModule("noise-generator.js");
+     //   let whiteNoise = ctx.createBufferSource();
+        const whiteNoiseNode = new AudioWorkletNode(
+            ctx,
+            "noise-generator",
+          );
+          whiteNoiseNode.connect(ctx.destination);
+          return
+//--------------------        
         let result = Modul.Modulate(ReIm)
  //       result = Agc.Process(result)
         for (let channel = 0; channel < myArrayBuffer.numberOfChannels; channel++) {

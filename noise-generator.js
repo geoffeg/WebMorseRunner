@@ -1,3 +1,8 @@
+
+import { RingBuffer }  from "./ringbuffer.js"  
+
+
+
 class NoiseGenerator extends AudioWorkletProcessor {
     static get parameterDescriptors() {
       return [{name: 'amplitude', defaultValue: 0.25, minValue: 0, maxValue: 1}];
@@ -15,10 +20,10 @@ class NoiseGenerator extends AudioWorkletProcessor {
         const outputChannel = output[channel];
         for (let i = 0; i < outputChannel.length; ++i) {
           let white = 2 * (Math.random() - 0.5);
-          let brown = (lastOut + (0.02 * white)) / 1.02;
+    //      let brown = (lastOut + (0.02 * white)) / 1.02;
 
-          outputChannel[i] = brown;
-          lastOut = brown;
+          outputChannel[i] = white;
+        //  lastOut = brown;
 
         }
       }
@@ -28,3 +33,4 @@ class NoiseGenerator extends AudioWorkletProcessor {
   }
   
   registerProcessor('noise-generator', NoiseGenerator);
+  console.log("processor")
