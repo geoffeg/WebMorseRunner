@@ -111,6 +111,14 @@ const complex_noise = () => {
 window.onload = () => {
     const button = document.getElementById("start")
     console.log("main")
+
+    var w = new Worker("worker.js", { type: "module" })
+    var sab = new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 1024);
+    w.postMessage(sab);     // send "hi" to the worker
+/*    w.onmessage = function (ev) {
+      console.log(ev.data);  // prints "ho"
+    }
+*/
     //contest();
 
     button.onclick = async () => {
