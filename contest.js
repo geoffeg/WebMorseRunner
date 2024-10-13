@@ -1,22 +1,24 @@
 import { DEFAULT } from "./defaults.js"
-import { Modulator }  from "./modulator.js"
-import { Volume }  from "./volume.js"
-import { MovAvg }  from "./movavg.js"
+import { Modulator } from "./modulator.js"
+import { Volume } from "./volume.js"
+import { MovAvg } from "./movavg.js"
+
+import { Station } from "./station.js"
 
 export class Contest {
     constructor(target_rate) {
         this._targetRate = target_rate
-        this._Filt = new MovAvg()
-        this._Filt2 = new MovAvg()
+        this._Filter1 = new MovAvg()
+        this._Filter2 = new MovAvg()
         // setup Filter
-        this._Filt.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
-        this._Filt.passes = DEFAULT.PASSES
-        this._Filt.samplesInInput = DEFAULT.BUFSIZE
-        this._Filt.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
+        this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
+        this._Filter1.passes = DEFAULT.PASSES
+        this._Filter1.samplesInInput = DEFAULT.BUFSIZE
+        this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
 
-        this._Filt2.passes = DEFAULT.PASSES
-        this._Filt2.samplesInInput = DEFAULT.BUFSIZE
-        this._Filt2.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
+        this._Filter2.passes = DEFAULT.PASSES
+        this._Filter2.samplesInInput = DEFAULT.BUFSIZE
+        this._Filter2.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
 
         // setup automatic gain control
         this._Agc = new Volume()
@@ -32,10 +34,12 @@ export class Contest {
 
         this._deltaRate = DEFAULT.RATE / this._targetRate
 
-        this._src_buffer = new Float32Array(DEFAULT.BUFSIZE) 
+        this._src_buffer = new Float32Array(DEFAULT.BUFSIZE)
         this._src_pos = 0
 
-        this._getSrcBlock()
+
+        this._MyStation = new Station()
+        this._MyStation.SendText("DJ1TF")
         console.log("all setup")
     }
 
@@ -55,52 +59,31 @@ export class Contest {
 
     _getSrcBlock() {
         let ReIm = this._complex_noise()
-        this._Filt2.Filter(ReIm)
-        ReIm = this._Filt.Filter(ReIm)
+        let blk = this._MyStation.GetBlock()
+        if (blk && blk !== null) {
+
+            for (let n = 0; n < blk.length; n++) {
+                ReIm.Im[n] = 0.59 * blk[n]
+                ReIm.Re[n] = 0.59 * blk[n]
+            }
+        }
+        this._Filter2.Filter(ReIm)
+        ReIm = this._Filter1.Filter(ReIm)
         let result = this._Modul.Modulate(ReIm)
         result = this._Agc.Process(result)
 
         // copy in this._src_buffer
-        for(let i = 0;i<result.length;i++) this._src_buffer[i] = result[i]
+        for (let i = 0; i < result.length; i++) this._src_buffer[i] = result[i]
 
     }
-    
-    getBlock( block ) {
-      for(let i= 0;i<block.length;i++) {
-        if (this._src_pos === 0) this._getSrcBlock()
-        block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
-        this._src_pos += this._deltaRate
-        if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
-    }
 
-        /*
+    getBlock(block) {
+        for (let i = 0; i < block.length; i++) {
+            if (this._src_pos === 0) this._getSrcBlock()
+            block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
+            this._src_pos += this._deltaRate
+            if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
+        }
 
-
-                if (buffer_pos === DEFAULTBUFSIZE) {
-                    ReIm = complex_noise()
-                    let blk = MyStation.GetBlock()
-
-                    if (blk && blk !== null) {
-
-                        for (let n = 0; n < blk.length; n++) {
-                            ReIm.Im[n] = 0.59 * blk[n]
-                            ReIm.Re[n] = 0.59 * blk[n]
-                        }
-                    }
-                    buffer_pos = 0
-                    Filt2.Filter(ReIm)
-                    ReIm = Filt.Filter(ReIm)
-                    result = Modul.Modulate(ReIm)
-                    result = Agc.Process(result)
-                    
-
-                }
-
-
-
-        let ReIm = complex_noise()
-        let buffer_pos = 0
-        Filt2.Filter(ReIm)
-        ReIm = Filt.Filter(ReIm)*/
     }
 }

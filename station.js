@@ -1,3 +1,5 @@
+import { Keyer } from "./keyer.js"
+import { DEFAULT } from "./defaults.js"
 
 let GKeyer = new Keyer()
 
@@ -8,7 +10,7 @@ export class Station {
     static stCopying = 2
     static stPreparingToSend = 3
     static stSending = 4
-//    static NEVER = Number.MAX_VALUE
+    //    static NEVER = Number.MAX_VALUE
 
     constructor() {
         this._FBfo = 0
@@ -68,17 +70,17 @@ export class Station {
             return null
         }
         let result = new Array()
-        for (let i = 0; i < DEFAULTBUFSIZE && this._SendPos + i < this._Envelope.length; i++) {
+        for (let i = 0; i < DEFAULT.BUFSIZE && this._SendPos + i < this._Envelope.length; i++) {
             result.push(this._Envelope[this._SendPos + i])
         }
         // advance TX buffer
-        this._SendPos += DEFAULTBUFSIZE;
+        this._SendPos += DEFAULT.BUFSIZE;
         if (this._SendPos >= this._Envelope.length) this._Envelope = null
         return result
     }
 
     SetPitch(Value) {
         this._FPitch = Value;
-        dPhi = Math.PI * 2 * this._FPitch / DEFAULTRATE
+        dPhi = Math.PI * 2 * this._FPitch / DEFAULT.RATE
     }
 }
