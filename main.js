@@ -112,9 +112,12 @@ window.onload = () => {
     const button = document.getElementById("start")
     console.log("main")
 
-    var w = new Worker("worker.js", { type: "module" })
-    var sab = new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 1024);
-    w.postMessage(sab);     // send "hi" to the worker
+  //  var w = new Worker("worker.js", { type: "module" })
+  //  var sab = new SharedArrayBuffer(Float32Array.BYTES_PER_ELEMENT * 1024);
+  //  w.postMessage(sab);     // send "hi" to the worker
+
+
+  
 /*    w.onmessage = function (ev) {
       console.log(ev.data);  // prints "ho"
     }
@@ -172,13 +175,13 @@ window.onload = () => {
 
 
 //-------------------------
-        await ctx.audioWorklet.addModule("noise-generator.js");
+        await ctx.audioWorklet.addModule("contest-processor.js");
      //   let whiteNoise = ctx.createBufferSource();
-        const whiteNoiseNode = new AudioWorkletNode(
+        const ContestNode = new AudioWorkletNode(
             ctx,
-            "noise-generator",
+            "contest-processor",
           );
-          whiteNoiseNode.connect(ctx.destination);
+          ContestNode.connect(ctx.destination);
           return
 //--------------------        
         let result = Modul.Modulate(ReIm)

@@ -69,7 +69,7 @@ class Volume {
           SetLengthReIm(FComplexBuf, FLen);     
         */
         this._FMagBuf = new Float64Array(this._FLen);
-        console.log("init:", this._FMagBuf)
+   //     console.log("init:", this._FMagBuf)
         this._FBufIdx = 0
     }
 
