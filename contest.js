@@ -24,12 +24,12 @@ export class Contest {
         this._Agc = new Volume()
         this._Agc.NoiseInDb = 76
         this._Agc.NoiseOutDb = 76
-        this._Agc.AttackSamples = 155   // AGC attack 5 ms
-        this._Agc.HoldSamples = 155
+        this._Agc.AttackSamples = Math.round(DEFAULT.RATE * 0.014)   // AGC attack 5 ms
+        this._Agc.HoldSamples = Math.round(DEFAULT.RATE * 0.014)
         this._Agc.AgcEnabled = true
         // setup Modulator
         this._Modul = new Modulator()
-        this._Modul.samplesPerSec = DEFAULT.RATE;
+        this._Modul.samplesPerSec = DEFAULT.RATE
         this._Modul.carrierFreq = DEFAULT.PITCH
 
         this._deltaRate = DEFAULT.RATE / this._targetRate

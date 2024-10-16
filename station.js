@@ -17,6 +17,7 @@ export class Station {
         this._dPhi = 0
         this.Wpm = 20
         this.Amplitude = 300000
+        GKeyer.rate = DEFAULT.RATE
     }
 
     _GetBfo() {
