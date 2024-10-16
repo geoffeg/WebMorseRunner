@@ -8,6 +8,7 @@ import { Station } from "./station.js"
 export class Contest {
     constructor(target_rate) {
         this._targetRate = target_rate
+        this._src_buffer_size = DEFAULT.BUFSIZE
         this._Filter1 = new MovAvg()
         this._Filter2 = new MovAvg()
         // setup Filter
@@ -34,8 +35,13 @@ export class Contest {
 
         this._deltaRate = DEFAULT.RATE / this._targetRate
 
-        this._src_buffer = new Float32Array(DEFAULT.BUFSIZE)
+        this._src_buffer = new Float32Array(this._src_buffer_size)
         this._src_pos = 0
+
+        this._src_complex_buffer = {
+            Re: new Float32Array(this._src_buffer_size),
+            Im: new Float32Array(this._src_buffer_size)
+        }        
 
 
         this._MyStation = new Station()
@@ -43,7 +49,13 @@ export class Contest {
         console.log("all setup")
     }
 
-    _complex_noise = () => {
+    _complex_noise = (complex_buffer) => {
+        const noise_amp = 6000
+        for (let i = 0; i <  this._src_buffer_size; i++) {
+            complex_buffer.Re[i] = 3 * noise_amp * (Math.random() - 0.5)
+            complex_buffer.Im[i] = 3 * noise_amp * (Math.random() - 0.5)
+        }
+/*        
         const buffer_size = DEFAULT.BUFSIZE
         const noise_amp = 6000
         let result = {
@@ -53,22 +65,22 @@ export class Contest {
         for (let i = 0; i < buffer_size; i++) {
             result.Re.push(3 * noise_amp * (Math.random() - 0.5))
             result.Im.push(3 * noise_amp * (Math.random() - 0.5))
-        }
-        return result
+        }*/
+        //return result
     }
 
     _getSrcBlock() {
-        let ReIm = this._complex_noise()
+        this._complex_noise(this._src_complex_buffer)
         let blk = this._MyStation.GetBlock()
         if (blk && blk !== null) {
 
             for (let n = 0; n < blk.length; n++) {
-                ReIm.Im[n] = 0.59 * blk[n]
-                ReIm.Re[n] = 0.59 * blk[n]
+                this._src_complex_buffer.Im[n] = 0.59 * blk[n]
+                this._src_complex_buffer.Re[n] = 0.59 * blk[n]
             }
         }
-        this._Filter2.Filter(ReIm)
-        ReIm = this._Filter1.Filter(ReIm)
+      //  this._Filter2.Filter(ReIm)
+        let ReIm = this._Filter1.Filter(this._src_complex_buffer)
         let result = this._Modul.Modulate(ReIm)
         result = this._Agc.Process(result)
 
@@ -78,12 +90,22 @@ export class Contest {
     }
 
     getBlock(block) {
-        for (let i = 0; i < block.length; i++) {
-            if (this._src_pos === 0) this._getSrcBlock()
-            block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
-            this._src_pos += this._deltaRate
-            if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
+        if (this._targetRate !== DEFAULT.RATE) {
+            debugger
+/*
+            for (let i = 0; i < block.length; i++) {
+                if (this._src_pos === 0) this._getSrcBlock()
+                block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
+                this._src_pos += this._deltaRate
+                if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
+            }*/
+        } else {
+            for (let i = 0;i<block.length;i++) {
+                if (this._src_pos === 0) this._getSrcBlock()
+                block[i] = this._src_buffer[this._src_pos] / 32800   
+                this._src_pos++
+                if (this._src_pos >= this._src_buffer.length) this._src_pos = 0
+            }
         }
-
     }
 }
