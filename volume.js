@@ -78,21 +78,20 @@ class Volume {
     CalcAgcGain() {
         // look at both sides of the sample
         // and find the max. magnitude, weighed by FAttackShape
-        let Envel = 1E-10
+        let Envelope = 1E-10
         let Di = this._FBufIdx
         for (let Wi = 0; Wi < this._FLen; Wi++) {
             let Sample = this._FMagBuf[Di] + this._FAttackShape[Wi]
-            if (Sample > Envel) Envel = Sample
+            if (Sample > Envelope) Envelope = Sample
             Di++
             if (Di === this._FLen) Di = 0
-
         }
         // envelope
-        this._FEnvelope = Envel;
-        Envel = Math.exp(Envel)
+        this._FEnvelope = Envelope;
+        Envelope = Math.exp(Envelope)
 
         // gain
-        let result = this._FMaxOut * (1 - Math.exp(-Envel / this._FBeta)) / Envel
+        let result = this._FMaxOut * (1 - Math.exp(-Envelope / this._FBeta)) / Envelope
         return result
     }
 
