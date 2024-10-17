@@ -31,16 +31,16 @@ class Volume {
         this._MakeAttackShape()
     }
 
-    set HoldSamples(Value) {    
-      this._FHoldSamples = Math.max(1, Value)
-      this._MakeAttackShape()
-    }  
+    set HoldSamples(Value) {
+        this._FHoldSamples = Math.max(1, Value)
+        this._MakeAttackShape()
+    }
 
     set AgcEnabled(Value) {
 
         if (Value && !this._FAgcEnabled) this._Reset()
         this._FAgcEnabled = Value
-    } 
+    }
 
 
     _CalcBeta() {
@@ -51,7 +51,7 @@ class Volume {
 
     _MakeAttackShape() {
         this._FLen = 2 * (this._FAttackSamples + this._FHoldSamples) + 1
-        this._FAttackShape = new Array()
+        this._FAttackShape = new Float32Array(this._FLen)
 
 
         // attack shape
@@ -71,7 +71,6 @@ class Volume {
           SetLengthReIm(FComplexBuf, FLen);     
         */
         this._FMagBuf = new Float32Array(this._FLen);
-   //     console.log("init:", this._FMagBuf)
         this._FBufIdx = 0
     }
 
@@ -91,8 +90,7 @@ class Volume {
         Envelope = Math.exp(Envelope)
 
         // gain
-        let result = this._FMaxOut * (1 - Math.exp(-Envelope / this._FBeta)) / Envelope
-        return result
+        return this._FMaxOut * (1 - Math.exp(-Envelope / this._FBeta)) / Envelope
     }
 
 

@@ -15,7 +15,7 @@ window.onload = () => {
     const debug_button = document.getElementById("debug")
     debug_button.onclick = async () => {     
         let MyContest = new Contest(DEFAULT.RATE)
-        let result = new Float32Array(DEFAULT.RATE * 50)
+        let result = new Float32Array(DEFAULT.RATE * 60 * 2)
         MyContest.getBlock(result)
         const debug_button = document.getElementById("debug")
         debug_button.style.backgroundColor = "red"
