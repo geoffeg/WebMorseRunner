@@ -44,13 +44,13 @@ class MovAvg {
     }
 
     Filter(AData) {
-/*        let result = {
+        let result = {
             Re: [],
             Im: []
-        }*/
+        }
         result.Re = this._DoFilter(AData.Re, this.BufRe)
         result.Im = this._DoFilter(AData.Im, this.BufIm)
-//        return result
+        return result
     }
 
     _DoFilter(AData, ABuf) {
