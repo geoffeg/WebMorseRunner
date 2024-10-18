@@ -10,7 +10,7 @@ export class Contest {
         this._targetRate = target_rate
         this._src_buffer_size = DEFAULT.BUFSIZE
         this._Filter1 = new MovAvg()
-        this._Filter2 = new MovAvg()
+    //    this._Filter2 = new MovAvg()
         // setup Filter
         this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
         this._Filter1.passes = DEFAULT.PASSES
