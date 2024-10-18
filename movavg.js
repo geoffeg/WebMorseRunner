@@ -10,9 +10,9 @@ class MovAvg {
     _Reset() {
         let number_of_buffers = this.FPasses + 1
         let buffer_size = this.FSamplesInInput + this.FPoints
-        let initial_value = 0
-        this.BufRe = Array.from(Array(number_of_buffers), _ => Array(buffer_size).fill(initial_value))
-        this.BufIm = Array.from(Array(number_of_buffers), _ => Array(buffer_size).fill(initial_value))
+
+        this.BufRe = Array.from(Array(number_of_buffers), _ => new Float32Array(buffer_size))
+        this.BufIm = Array.from(Array(number_of_buffers), _ => new Float32Array(buffer_size))
         this._CalcScale();
     }
     _CalcScale() {
@@ -44,13 +44,8 @@ class MovAvg {
     }
 
     Filter(AData) {
-        let result = {
-            Re: [],
-            Im: []
-        }
-        result.Re = this._DoFilter(AData.Re, this.BufRe)
-        result.Im = this._DoFilter(AData.Im, this.BufIm)
-        return result
+      this._DoFilter(AData.Re, this.BufRe)
+      this._DoFilter(AData.Im, this.BufIm)
     }
 
     _DoFilter(AData, ABuf) {
@@ -59,7 +54,7 @@ class MovAvg {
         // multi-pass
         for (let i = 1; i <= this.FPasses; i++) this._Pass(ABuf[i - 1], ABuf[i])
         // the sums are in the last buffer now, normalize and decimate result
-        return this._GetResult(ABuf[this.FPasses])
+        this._GetResult(ABuf[this.FPasses],AData)
 
     }
     _PushArray(Src, Dst) {
@@ -85,11 +80,9 @@ class MovAvg {
         for (let i = 0; i <= Len; i++) Dst[i] = Dst[Count + i]
     }
 
-    _GetResult(Src) {
-        let result = new Array()
+    _GetResult(Source,Target) {        
         for (let i = 0; i < this.FSamplesInInput; i++)
-            result.push(Src[this.FPoints + i * this.FDecimateFactor] * this.FNorm)
-        return result
+            Target[i] = Source[this.FPoints + i * this.FDecimateFactor] * this.FNorm
     }
 }
 

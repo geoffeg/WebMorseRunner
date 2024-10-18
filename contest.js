@@ -55,18 +55,6 @@ export class Contest {
             complex_buffer.Re[i] = 3 * noise_amp * (Math.random() - 0.5)
             complex_buffer.Im[i] = 3 * noise_amp * (Math.random() - 0.5)
         }
-/*        
-        const buffer_size = DEFAULT.BUFSIZE
-        const noise_amp = 6000
-        let result = {
-            Re: [],
-            Im: []
-        }
-        for (let i = 0; i < buffer_size; i++) {
-            result.Re.push(3 * noise_amp * (Math.random() - 0.5))
-            result.Im.push(3 * noise_amp * (Math.random() - 0.5))
-        }*/
-        //return result
     }
 
     _getSrcBlock() {
@@ -80,8 +68,8 @@ export class Contest {
             }
         }
       //  this._Filter2.Filter(ReIm)
-        let ReIm = this._Filter1.Filter(this._src_complex_buffer)
-        let result = this._Modul.Modulate(ReIm)
+        this._Filter1.Filter(this._src_complex_buffer)
+        let result = this._Modul.Modulate(this._src_complex_buffer)
         result = this._Agc.Process(result)
 
         // copy in this._src_buffer
