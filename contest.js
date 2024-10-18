@@ -17,9 +17,9 @@ export class Contest {
         this._Filter1.samplesInInput = DEFAULT.BUFSIZE
         this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
 
-        this._Filter2.passes = DEFAULT.PASSES
-        this._Filter2.samplesInInput = DEFAULT.BUFSIZE
-        this._Filter2.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
+ //       this._Filter2.passes = DEFAULT.PASSES
+  //      this._Filter2.samplesInInput = DEFAULT.BUFSIZE
+ //       this._Filter2.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
 
         // setup automatic gain control
         this._Agc = new Volume()
