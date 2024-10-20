@@ -6,10 +6,23 @@ let GKeyer = new Keyer()
 const NEVER = Number.MAX_VALUE
 
 export class Station {
-    static stListening = 1
-    static stCopying = 2
-    static stPreparingToSend = 3
-    static stSending = 4
+
+    // States 
+    static State = {
+        Listening: 1,
+        Copying: 2,
+        PreparingToSend: 3,
+        Sending: 4
+    }
+
+    // Events
+    static Event = {
+        Timeout: 1, 
+        MsgSent: 2, 
+        MeStarted: 3, 
+        MeFinished: 4
+    }
+
     //    static NEVER = Number.MAX_VALUE
 
     constructor() {

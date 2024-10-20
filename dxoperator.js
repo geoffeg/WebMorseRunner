@@ -1,4 +1,4 @@
-import { DEFAULT } from "./defaults.js"
+import { DEFAULT, StationMessage } from "./defaults.js"
 
 
 const OperatorState = {
@@ -12,31 +12,7 @@ const OperatorState = {
     Failed: 7
 }
 
-const StationMessage = {
-    None: 0,
-    CQ: 1,
-    NR: 2,
-    TU: 3,
-    MyCall: 4,
-    HisCall: 5,
-    B4: 6,
-    Qm: 7,
-    Nil: 8,
-    Garbage: 9,
-    R_NR: 10,
-    R_NR2: 11,
-    DeMyCall1: 12,
-    DeMyCall2: 13,
-    DeMyCallNr1: 14,
-    DeMyCallNr2: 15,
-    NrQm: 16,
-    LongCQ: 17,
-    MyCallNr2: 18,
-    Qrl: 19,
-    Qrl2: 20,
-    Qsy: 21,
-    Agn: 22
-}
+
 
 
 const NEVER = Number.MAX_SAFE_INTEGER
@@ -197,6 +173,36 @@ export class DxOperator {
         if (this.State === OperatorState.Done) return
         this.Patience--
         if (this.Patience < 1) this.State = OperatorState.Failed
+    }
+
+
+    GetReply() {
+      switch (this.State) {
+        case OperatorState.NeedPrevEnd || OperatorState.Done || OperatorState.Failed: 
+          return StationMessage.None;
+        case OperatorState.NeedQso: 
+          return StationMessage.MyCall
+        case OperatorState.NeedNr:
+          if (this.Patience === (FULL_PATIENCE-1) || (Math.random() < 0.3))
+            return StationMessage.NrQm
+            else return  StationMessage.Agn  
+        case OperatorState.NeedCall:
+          if ((DEFAULT.RUNMODE === RunMode.Hst) || (Math.random() > 0.5))
+            return StationMessage.DeMyCallNr1
+          else if (Math.random() > 0.25) return StationMessage.DeMyCallNr2
+          else return StationMessage.MyCallNr2
+    
+        case OperatorState.NeedCallNr:
+          if ((DEFAULT.RunMode === RunMode.Hst) || (MAth.random() > 0.5))
+            return StationMessage.DeMyCall1
+            else return StationMessage.DeMyCall2
+    
+        default: //osNeedEnd:
+          if (this.Patience < (FULL_PATIENCE-1)) return StationMessage.NR
+          else if ((DEFAULT.RunMode === RunMode.Hst) || (Math.random() < 0.9)) 
+            return StationMessage.R_NR
+          else StationMessage.R_NR2    
+    }
     }
 
 
