@@ -1,5 +1,5 @@
 import { Keyer } from "./keyer.js"
-import { DEFAULT } from "./defaults.js"
+import { DEFAULT, StationMessage } from "./defaults.js"
 
 let GKeyer = new Keyer()
 
@@ -17,9 +17,9 @@ export class Station {
 
     // Events
     static Event = {
-        Timeout: 1, 
-        MsgSent: 2, 
-        MeStarted: 3, 
+        Timeout: 1,
+        MsgSent: 2,
+        MeStarted: 3,
         MeFinished: 4
     }
 
@@ -39,6 +39,85 @@ export class Station {
         if (this._FBfo > Math.PI * 2) this._FBfo -= Math.PI * 2
         return XPathResult
     }
+
+    SendMsg(AMsg) {
+        if (!this._Envelope) this._Msg = new Array()
+        if (AMsg === StationMessage.None) {
+            this._State = State.Listening
+            return
+        }
+        this._Msg.push(AMsg)
+
+        switch (AMsg) {
+            case StationMessage.CQ:
+                this.SendText('CQ <my> TEST')
+                break
+            case StationMessage.NR:
+                this.SendText('<#>')
+                break
+            case StateMessage.TU:
+                this.SendText('TU')
+                break
+            case StationMessage.MyCall:
+                this.SendText('<my>')
+                break
+            case StationMessage.HisCall:
+                SendText('<his>')
+                break
+            case StationMessage.B4:
+                SendText('QSO B4')
+                break
+            case StationMessage.Qm:
+                SendText('?')
+                break
+            case StationMessage.Nil:
+                SendText('NIL')
+                break
+            case StationMessage.R_NR:
+                SendText('R <#>')
+                break
+            case StationMessage.R_NR2:
+                SendText('R <#> <#>')
+                break
+            case StationMessage.DeMyCall1:
+                SendText('DE <my>')
+                break
+            case StationMessage.DeMyCall2:
+                SendText('DE <my> <my>')
+                break
+            case StationMessage.DeMyCallNr1:
+                SendText('DE <my> <#>')
+                break
+            case StationMessage.DeMyCallNr2:
+                SendText('DE <my> <my> <#>')
+                break
+            case StationMessage.MyCallNr2:
+                SendText('<my> <my> <#>')
+                break
+            case StationMessage.NrQm:
+                SendText('NR?')
+                break
+            case StationMessage.LongCQ:
+                SendText('CQ CQ TEST <my> <my> TEST')
+                break
+            case StationMessage.Qrl:
+                SendText('QRL?')
+                break
+            case StationMessage.Qrl2:
+                SendText('QRL?   QRL?')
+                break
+            case StationMessage.Qsy:
+                SendText('<his>  QSY QSY')
+                break
+            case StationMessage.Agn:
+                SendText('AGN')
+                break
+        }
+    }
+
+
+
+
     SendText(AMsg) {
         /*    
               if Pos('<#>', AMsg) > 0 then
