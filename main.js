@@ -1,7 +1,10 @@
 import { DEFAULT } from "./defaults.js"
 import { Contest } from "./contest.js"
 
+import { Station } from "./station.js"
+
 window.onload = () => {
+    Station.NrAsText(599,29)
     const start_button = document.getElementById("start")
     start_button.onclick = async () => {
         let ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })

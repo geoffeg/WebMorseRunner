@@ -1,5 +1,5 @@
 import { Keyer } from "./keyer.js"
-import { DEFAULT, StationMessage } from "./defaults.js"
+import { DEFAULT, RunMode, StationMessage } from "./defaults.js"
 
 let GKeyer = new Keyer()
 
@@ -30,6 +30,12 @@ export class Station {
         this._dPhi = 0
         this.Wpm = 20
         this.Amplitude = 300000
+        this._NrWithError = false
+        this.MyCall = 'DJ1TF'
+        this.HisCall = 'DL1XX'
+        this.NR = 1
+        this.RST = 599
+      //  this.CallsFromKeyer = false
         GKeyer.rate = DEFAULT.RATE
     }
 
@@ -115,27 +121,9 @@ export class Station {
         }
     }
 
-
-
-
     SendText(AMsg) {
-        /*    
-              if Pos('<#>', AMsg) > 0 then
-                begin
-                //with error
-                AMsg := StringReplace(AMsg, '<#>', NrAsText, []);
-                //error cleared
-                AMsg := StringReplace(AMsg, '<#>', NrAsText, [rfReplaceAll]);
-                end;
-            
-              AMsg := StringReplace(AMsg, '<my>', MyCall, [rfReplaceAll]);
-            
-            {
-              if CallsFromKeyer
-                 then AMsg := StringReplace(AMsg, '<his>', ' ', [rfReplaceAll])
-                 else AMsg := StringReplace(AMsg, '<his>', HisCall, [rfReplaceAll]);
-            }
-        */
+        AMsg = AMsg.replaceAll('<#>',Station.NrAsText(this.RST, this.NR))    
+        AMsg = AMsg.replaceAll('my>',this.MyCall)    
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
@@ -146,7 +134,6 @@ export class Station {
         if (!this._Envelope) {
             this._SendPos = 0
             this._FBfo = 0
-
         }
 
         GKeyer.Wpm = this.Wpm;
@@ -176,4 +163,36 @@ export class Station {
         this._FPitch = Value;
         dPhi = Math.PI * 2 * this._FPitch / DEFAULT.RATE
     }
+
+    static NrAsText(rst, nr) {
+        let rst_str = rst.toString().padStart(3, '0')
+        let nr_str = nr.toString().padStart(3, '0')
+        let result = `${rst_str}${nr_str}`
+        if (this._NrWithError) {
+            let Idx = result.length - 1
+            if (!/[2-7]/.test(result[Idx])) Idx--
+            if (/[2-7]/.test(result[Idx])) {
+                let code = result.charCodeAt(Idx)
+                if (Math.random() < 0.5) code--; else code++
+
+                result = result.substring(0, Idx) + String.fromCharCode(code) + result.substring(Idx + 1);
+                result += `EEEEE ${nr_str}`
+            }
+        }
+        result = result.replaceAll('599', '5NN')
+        if (DEFAULT.RUNMODE !== RunMode.Hst) {
+            result = result.replaceAll('000', 'TTT')
+            result = result.replaceAll('00', 'TT')
+            if (Math.random() < 0.4) {
+                result = result.replaceAll('0', 'O')
+            } else if (Math.random() < 0.97) {
+                result = result.replaceAll('0', 'T')
+            }
+            if (Math.random() < 0.97) {
+                result = result.replaceAll('9', 'N')
+            }
+        }
+    }
+
+
 }
