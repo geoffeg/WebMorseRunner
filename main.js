@@ -2,6 +2,7 @@ import { DEFAULT } from "./defaults.js"
 import { Contest } from "./contest.js"
 
 //import { Station } from "./station.js"
+import { DxOperator } from "./dxoperator.js"
 
 
 
@@ -23,6 +24,7 @@ const functionKey = () => {
 }
 
 window.onload = () => {
+    DxOperator.IsMyCall('DJ1TF', 'DJ1?')
     functionKey()
     wipeFields()
     // allow only number input on RST and NR
