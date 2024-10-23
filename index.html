@@ -1,22 +1,38 @@
 <!DOCTYPE html>
 <html>
-  <!--
+<!--
 
- -->  
+ -->
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#000000" />  
+  <meta name="theme-color" content="#000000" />
   <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
-  <title>Morse Keyer</title>
+  <title>Morse Runner</title>
 </head>
 
 <body>
-
-
   <h1>WebMorseRunner</h1>
-  <button id="start" >start</button>
-  <button id="debug">Debug</button> 
+  <div class="block" id="input">
+    <div class="left">
+      <label for="call">Call</label>
+      <input id="call" type="text" value="" name="call" style="text-transform: uppercase">
+    </div>
+    <div class="left">
+      <label for="rst">RST</label>
+      <input id="rst" class="NR" maxlength="3" size="3" type="text" value="" name="rst">
+    </div>
+    <div>
+      <label for="nr">Nr.</label>
+      <input id="nr" class="NR" maxlength="3" size="3" type="text" value="" name="nr">
+    </div>
+  </div>
+
+  <div class="block">
+    <button id="start">Run</button>
+    <button id="debug">Debug</button>
+  </div>
   <script type="module" src="main.js"></script>
 </body>
 
