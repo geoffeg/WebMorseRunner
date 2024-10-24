@@ -3,11 +3,13 @@ import { Modulator } from "./modulator.js"
 import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
 
-import { Station } from "./station.js"
+//import { Station } from "./station.js"
+import { MyStation } from "./mystation.js"
+
 
 export class Contest {
-    constructor(target_rate) {
-        this._targetRate = target_rate
+    constructor() {
+        this._targetRate = DEFAULT.RATE
         this._src_buffer_size = DEFAULT.BUFSIZE
         this._Filter1 = new MovAvg()
     //    this._Filter2 = new MovAvg()
@@ -44,7 +46,7 @@ export class Contest {
         }        
 
 
-        this._MyStation = new Station()
+        this._MyStation = new MyStation()
         this._MyStation.SendText("DJ1TF")
         console.log("all setup")
     }
@@ -97,3 +99,5 @@ export class Contest {
         }
     }
 }
+
+export const Tst = new Contest()

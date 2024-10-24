@@ -1,11 +1,11 @@
 
-import { Contest } from "./contest.js"
+import { Tst } from "./contest.js"
 
 class ContestWorkletProcessor extends AudioWorkletProcessor {
 
   constructor(options) {
     super();
-    this._contest = new Contest(sampleRate)
+    this._contest = Tst //new Contest()
     this._block = new Float32Array(128)
   }
 
@@ -18,7 +18,6 @@ class ContestWorkletProcessor extends AudioWorkletProcessor {
         outputChannel[i] = this._block[i];
       }
     }
-
     return true;
   }
 }

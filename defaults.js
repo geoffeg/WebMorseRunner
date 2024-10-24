@@ -42,4 +42,5 @@ export class DEFAULT {
     static PITCH = 500
     static RUNMODE = RunMode.Single
     static CALL = 'DJ1TF'
+    static WPM = 20
 }

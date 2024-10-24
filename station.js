@@ -43,7 +43,7 @@ export class Station {
         let result = this._FBfo
         this._FBfo = this._FBfo + this._dPhi
         if (this._FBfo > Math.PI * 2) this._FBfo -= Math.PI * 2
-        return XPathResult
+        return result
     }
 
     SendMsg(AMsg) {

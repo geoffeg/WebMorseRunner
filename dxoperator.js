@@ -137,27 +137,31 @@ export class DxOperator {
             return
         }
         if (AMsg.includes(StationMessage.HisCall)) {
-
-            /*
-    
-        case IsMyCall of
-          mcYes:
-            if State in [osNeedPrevEnd, osNeedQso] then SetState(osNeedNr)
-            else if State = osNeedCallNr then SetState(osNeedNr)
-            else if State = osNeedCall then SetState(osNeedEnd);
-    
-          mcAlmost:
-            if State in [osNeedPrevEnd, osNeedQso] then SetState(osNeedCallNr)
-            else if State = osNeedNr then SetState(osNeedCallNr)
-            else if State = osNeedEnd then SetState(osNeedCall);
-    
-          mcNo:
-            if State = osNeedQso then State := osNeedPrevEnd
-            else if State in [osNeedNr, osNeedCall, osNeedCallNr] then State := osFailed
-            else if State = osNeedEnd then State := osDone;
-          end;  
-    
-            */
+            switch (this.IsMyCall(this.Call, this.Call)) {
+                case CallCheckResult.Yes:
+                    if (this.State === OperatorState.NeedPrevEnd ||
+                        this.State === OperatorState.NeedQso)
+                        this._SetState(OperatorState.NeedNr);
+                    else if (this.State === OperatorState.NeedCallNr)
+                        this._SetState(OperatorState.NeedNr)
+                    else if (this.State === OperatorState.NeedCall)
+                        this._SetState(OperatorState.NeedEnd)
+                    break
+                case CallCheckResult.Almost:
+                    if (this.State === OperatorState.NeedPrevEnd ||
+                        this.State === OperatorState.NeedQso)
+                        this._SetState(OperatorState.NeedCallNr)
+                    else if (this.State === OperatorState.NeedNr) this._SetState(OperatorState.NeedCallNr)
+                    else if (this.State === OperatorState.NeedEnd) this._SetState(OperatorState.NeedCall);
+                    break
+                case CallCheckResult.No:
+                    if (this.State === OperatorState.NeedQso) this.State = OperatorState.NeedPrevEnd
+                    else if (this.State === OperatorState.NeedNr ||
+                        this.State === OperatorState.NeedCall ||
+                        this.State === OperatorState.NeedCallNr) this.State = OperatorState.Failed;
+                    else if (this.State === OperatorState.NeedEnd) this.State = OperatorState.Done;
+                    break
+            }
         }
 
         if (AMsg.includes(StationMessage.B4)) {
