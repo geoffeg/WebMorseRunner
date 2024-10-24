@@ -14,7 +14,6 @@ const OperatorState = {
 
 
 
-
 const NEVER = Number.MAX_SAFE_INTEGER
 const FULL_PATIENCE = 5
 
@@ -27,6 +26,12 @@ export class DxOperator {
         this.State = OperatorState.Done
     }
 
+    static CallCheckResult = {
+        No: 0,
+        Yes: 1,
+        Almost: 2
+    }
+
     static IsMyCall(My, His) {
         const W_X = 2
         const W_Y = 2
@@ -35,6 +40,7 @@ export class DxOperator {
         let C0 = My
         let C = His
 
+        let result = this.CallCheckResult.No
         let M = Array.from(Array(C.length + 1), () => new Array(C0.length + 1))
 
         for (let y = 0; y < C0.length + 1; y++) M[0][y] = 0
@@ -57,8 +63,24 @@ export class DxOperator {
                 if (!(C[x] === C0[y] || (C[x] === '?'))) D += W_D
                 M[x][y] = Math.min(T, D, L)
             }
-        console.log(M)
-        console.log(M[C.length][C0.length])
+
+        //classify by penalty
+        switch (M[C.length][C0.length]) {
+            case 0:
+                result = this.CallCheckResult.Yes
+                break
+            case 1, 2:
+                result = this.CallCheckResult.Almost
+                break
+            default:
+                result = this.CallCheckResult.No
+        }
+
+        // partial match too short
+        let no_questionmark = C.replaceAll('?', '')
+        if (no_questionmark.length < 2) result = this.CallCheckResult.No
+
+        return result
     }
 
     // Delay before reply, keying speed and exchange number are functions
