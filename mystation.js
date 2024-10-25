@@ -72,8 +72,7 @@ export class MyStation extends Station {
       let result = super.GetBlock()
       if (this._Envelope) {
 
-        this.Pieces.shift()
-        console.log(this.Pieces)        
+        this.Pieces.shift()   
         if (this.Pieces.length > 0) this.SendNextPiece()
         //cursor to exchange field
         //MainForm.Advance;

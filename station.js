@@ -155,9 +155,7 @@ export class Station {
         }
         // advance TX buffer
         this._SendPos += DEFAULT.BUFSIZE;
-        console.log("s",this._SendPos,this._Envelope.length)
         if (this._SendPos >= this._Envelope.length ) {
-            console.log("DELETE*****")
             this.MsgText = ''
             this.State = Station.State.Listening
             this._Envelope = null

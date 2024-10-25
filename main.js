@@ -25,7 +25,7 @@ const functionKey = () => {
 
 window.onload = () => {
     let ContestNode = null
-    console.log(DxOperator.IsMyCall('DJ1TF', 'DJ?'))
+//    console.log(DxOperator.IsMyCall('DJ1TF', 'DJ?'))
     functionKey()
     wipeFields()
     // allow only number input on RST and NR
