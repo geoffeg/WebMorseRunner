@@ -141,7 +141,7 @@ export class Station {
         this._Envelope = GKeyer.GetEnvelope()
         for (let i = 0; i < this._Envelope.length; i++) this._Envelope[i] *= this.Amplitude;
 
-        this.State = this.stSending;
+        this.State = Station.State.Sending;
         this.TimeOut = NEVER;
     }
 
@@ -155,7 +155,13 @@ export class Station {
         }
         // advance TX buffer
         this._SendPos += DEFAULT.BUFSIZE;
-        if (this._SendPos >= this._Envelope.length) this._Envelope = null
+        console.log("s",this._SendPos,this._Envelope.length)
+        if (this._SendPos >= this._Envelope.length ) {
+            console.log("DELETE*****")
+            this.MsgText = ''
+            this.State = Station.State.Listening
+            this._Envelope = null
+        }
         return result
     }
 

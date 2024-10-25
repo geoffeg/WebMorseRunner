@@ -47,8 +47,12 @@ export class Contest {
 
 
         this._MyStation = new MyStation()
-        this._MyStation.SendText("DJ1TF")
-        console.log("all setup")
+//        this._MyStation.SendText("DJ1TF")
+    }
+
+
+    onmessage = (message) => {
+        this._MyStation.SendText(message)
     }
 
     _complex_noise = (complex_buffer) => {

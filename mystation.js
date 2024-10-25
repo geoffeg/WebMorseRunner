@@ -65,7 +65,20 @@ export class MyStation extends Station {
                 (!(DEFAULT.RUNMODE === RunMode.Hst
                     || DEFAULT.RUNMODE === RunMode.Wpx)))
                 super.SendText(' ')
-            else this.SendText(this.HisCall)
+            else super.SendText(this.HisCall)
+    }
+
+    GetBlock() {
+      let result = super.GetBlock()
+      if (this._Envelope) {
+
+        this.Pieces.shift()
+        console.log(this.Pieces)        
+        if (this.Pieces.length > 0) this.SendNextPiece()
+        //cursor to exchange field
+        //MainForm.Advance;
+      }
+      return result
     }
 
 

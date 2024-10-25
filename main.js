@@ -24,6 +24,7 @@ const functionKey = () => {
 }
 
 window.onload = () => {
+    let ContestNode = null
     console.log(DxOperator.IsMyCall('DJ1TF', 'DJ?'))
     functionKey()
     wipeFields()
@@ -47,7 +48,7 @@ window.onload = () => {
         wipeFields()
         let ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
         await ctx.audioWorklet.addModule("contest-processor.js");
-        const ContestNode = new AudioWorkletNode(
+        ContestNode = new AudioWorkletNode(
             ctx,
             "contest-processor",
         );
@@ -61,4 +62,9 @@ window.onload = () => {
         const debug_button = document.getElementById("debug")
         debug_button.style.backgroundColor = "red"
     }
+    const cq_button = document.getElementById("cq")
+    cq_button.onclick = async () => {
+        ContestNode.port.postMessage("CQ")
+
+    }    
 }
