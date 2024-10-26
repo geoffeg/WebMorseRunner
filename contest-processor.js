@@ -5,6 +5,7 @@ class ContestWorkletProcessor extends AudioWorkletProcessor {
 
   constructor(options) {
     super();
+    Tst.processor = this
     this._contest = Tst //new Contest()
     this._block = new Float32Array(128)
     this.port.onmessage = (e) => {

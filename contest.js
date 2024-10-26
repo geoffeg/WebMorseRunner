@@ -50,6 +50,10 @@ export class Contest {
 //        this._MyStation.SendText("DJ1TF")
     }
 
+    set processor(p) {
+        this._processor = p
+    }
+
 
     onmessage = (message) => {
         this._MyStation.SendText(message)
@@ -67,7 +71,7 @@ export class Contest {
         this._complex_noise(this._src_complex_buffer)
         let blk = this._MyStation.GetBlock()
         if (blk && blk !== null) {
-
+            this.post("TEST")
             for (let n = 0; n < blk.length; n++) {
                 this._src_complex_buffer.Im[n] = 0.59 * blk[n]
                 this._src_complex_buffer.Re[n] = 0.59 * blk[n]
@@ -101,6 +105,10 @@ export class Contest {
                 if (this._src_pos >= this._src_buffer.length) this._src_pos = 0
             }
         }
+    }
+
+    post(m) {
+        this._processor.port.postMessage(m)
     }
 }
 

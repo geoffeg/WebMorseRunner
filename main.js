@@ -1,5 +1,6 @@
 import { DEFAULT } from "./defaults.js"
 import { Contest } from "./contest.js"
+import { Calls } from "./call.js"
 
 //import { Station } from "./station.js"
 import { DxOperator } from "./dxoperator.js"
@@ -24,6 +25,8 @@ const functionKey = () => {
 }
 
 window.onload = () => {
+    let calls = new Calls()
+    calls.fetch_calls() 
     let ContestNode = null
 //    console.log(DxOperator.IsMyCall('DJ1TF', 'DJ?'))
     functionKey()
@@ -52,6 +55,7 @@ window.onload = () => {
             ctx,
             "contest-processor",
         );
+        ContestNode.port.onmessage = (e) => console.log(e.data)
         ContestNode.connect(ctx.destination);
     }
     const debug_button = document.getElementById("debug")
