@@ -26,9 +26,9 @@ const functionKey = () => {
 
 window.onload = () => {
     let calls = new Calls()
-    calls.fetch_calls() 
+    calls.fetch_calls()
     let ContestNode = null
-//    console.log(DxOperator.IsMyCall('DJ1TF', 'DJ?'))
+    //    console.log(DxOperator.IsMyCall('DJ1TF', 'DJ?'))
     functionKey()
     wipeFields()
     // allow only number input on RST and NR
@@ -55,7 +55,22 @@ window.onload = () => {
             ctx,
             "contest-processor",
         );
-        ContestNode.port.onmessage = (e) => console.log(e.data)
+        ContestNode.port.onmessage = (e) => {
+            console.log(e.data)
+            let type = e.data.type
+
+            switch (type) {
+                case 'request_dx':
+
+                    ContestNode.port.postMessage({
+                        type: "create_dx",
+                        text: calls.get_random()
+                    })
+
+
+                    break
+            }
+        }
         ContestNode.connect(ctx.destination);
     }
     const debug_button = document.getElementById("debug")
@@ -68,7 +83,10 @@ window.onload = () => {
     }
     const cq_button = document.getElementById("cq")
     cq_button.onclick = async () => {
-        ContestNode.port.postMessage("CQ")
+        ContestNode.port.postMessage({
+            type: "send",
+            text: "CQ"
+        })
 
-    }    
+    }
 }

@@ -47,6 +47,10 @@ export class Contest {
 
 
         this._MyStation = new MyStation()
+
+        this._dx_count = 0
+        this.Stations = Array.new()
+
 //        this._MyStation.SendText("DJ1TF")
     }
 
@@ -56,7 +60,18 @@ export class Contest {
 
 
     onmessage = (message) => {
-        this._MyStation.SendText(message)
+        switch (message.type) {
+            case 'send':
+                this._MyStation.SendText(message.text)
+                break
+            case 'create_dx':
+                console.log("create",message.text)
+                
+                break
+            default:
+                console.log('ERROR: Unknown: ',message)
+        }
+        
     }
 
     _complex_noise = (complex_buffer) => {
@@ -71,7 +86,7 @@ export class Contest {
         this._complex_noise(this._src_complex_buffer)
         let blk = this._MyStation.GetBlock()
         if (blk && blk !== null) {
-            this.post("TEST")
+
             for (let n = 0; n < blk.length; n++) {
                 this._src_complex_buffer.Im[n] = 0.59 * blk[n]
                 this._src_complex_buffer.Re[n] = 0.59 * blk[n]
@@ -81,6 +96,13 @@ export class Contest {
         this._Filter1.Filter(this._src_complex_buffer)
         let result = this._Modul.Modulate(this._src_complex_buffer)
         result = this._Agc.Process(result)
+
+        if(this._dx_count === 0) {
+            this.post({ 
+                type: 'request_dx'
+            })            
+            this._dx_count++
+        }
 
         // copy in this._src_buffer
         for (let i = 0; i < result.length; i++) this._src_buffer[i] = result[i]
@@ -105,6 +127,7 @@ export class Contest {
                 if (this._src_pos >= this._src_buffer.length) this._src_pos = 0
             }
         }
+
     }
 
     post(m) {
