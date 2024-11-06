@@ -2,6 +2,7 @@ import { DEFAULT } from "./defaults.js"
 import { Modulator } from "./modulator.js"
 import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
+import { DxStation } from "./dxstation.js"
 
 //import { Station } from "./station.js"
 import { MyStation } from "./mystation.js"
@@ -49,7 +50,7 @@ export class Contest {
         this._MyStation = new MyStation()
 
         this._dx_count = 0
-        this.Stations = Array.new()
+        this.Stations = new Array()
 
 //        this._MyStation.SendText("DJ1TF")
     }
@@ -66,6 +67,7 @@ export class Contest {
                 break
             case 'create_dx':
                 console.log("create",message.text)
+                this.Stations.push(new DxStation(message.text))
                 
                 break
             default:

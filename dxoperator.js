@@ -1,17 +1,4 @@
-import { DEFAULT, StationMessage } from "./defaults.js"
-
-
-const OperatorState = {
-    NeedPrevEnd: 0,
-    NeedQso: 1,
-    NeedNr: 2,
-    NeedCall: 3,
-    NeedCallNr: 4,
-    NeedEnd: 5,
-    Done: 6,
-    Failed: 7
-}
-
+import { DEFAULT, StationMessage, OperatorState } from "./defaults.js"
 
 
 const NEVER = Number.MAX_SAFE_INTEGER

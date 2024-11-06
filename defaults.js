@@ -25,6 +25,16 @@ export const StationMessage = {
   Agn: 22
 }
 
+export const OperatorState = {
+  NeedPrevEnd: 0,
+  NeedQso: 1,
+  NeedNr: 2,
+  NeedCall: 3,
+  NeedCallNr: 4,
+  NeedEnd: 5,
+  Done: 6,
+  Failed: 7
+}
 
 export const RunMode = {
     Stop: 0, 
