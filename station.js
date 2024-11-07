@@ -3,10 +3,10 @@ import { DEFAULT, RunMode, StationMessage } from "./defaults.js"
 
 let GKeyer = new Keyer()
 
-const NEVER = Number.MAX_VALUE
+//export const NEVER = Number.MAX_VALUE
 
 export class Station {
-
+    static NEVER = Number.MAX_VALUE
     // States 
     static State = {
         Listening: 1,
@@ -142,7 +142,7 @@ export class Station {
         for (let i = 0; i < this._Envelope.length; i++) this._Envelope[i] *= this.Amplitude;
 
         this.State = Station.State.Sending;
-        this.TimeOut = NEVER;
+        this.TimeOut = Station.NEVER;
     }
 
     GetBlock() {

@@ -1,5 +1,5 @@
 import { DEFAULT, StationMessage, OperatorState } from "./defaults.js"
-
+import * as random from './random.js'
 
 const NEVER = Number.MAX_SAFE_INTEGER
 const FULL_PATIENCE = 5
@@ -222,6 +222,15 @@ export class DxOperator {
         if (this.Patience < 1) this.State = OperatorState.Failed
     }
 
+
+    GetReplyTimeout() {
+        let result = 0
+        if (this.RunMode === RunMode.Hst)
+            result = random.SecondsToBlocks(60 / Wpm)
+        else result = random.SecondsToBlocks(6 - this.Skills)
+        result = Math.round(random.RndGaussLim(result, result / 2))
+
+    }
 
     GetReply() {
         switch (this.State) {
