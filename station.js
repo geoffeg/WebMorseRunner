@@ -3,7 +3,6 @@ import { DEFAULT, RunMode, StationMessage } from "./defaults.js"
 
 let GKeyer = new Keyer()
 
-//export const NEVER = Number.MAX_VALUE
 
 export class Station {
     static NEVER = Number.MAX_VALUE
@@ -23,7 +22,7 @@ export class Station {
         MeFinished: 4
     }
 
-    //    static NEVER = Number.MAX_VALUE
+
 
     constructor() {
         this._FBfo = 0
