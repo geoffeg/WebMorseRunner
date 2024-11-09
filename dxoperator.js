@@ -84,13 +84,13 @@ export class DxOperator {
          return result   
     }
 
-    GetWpm() {
-        return DEFAULT.RATE
+    get Wpm() {
+        return DEFAULT.WPM
     }
 
 
-    GetNR(){
-        return 1 + Math.round(Math.random * 3)//Tst.Minute * Skills);
+    get NR(){
+        return 1 + Math.round(Math.random() * 3)//Tst.Minute * Skills);
     }
 
     // Process an incoming message

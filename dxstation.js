@@ -17,7 +17,7 @@ export class DxStation extends Station {
     this.Oper = new DxOperator()
     this.Oper._SetState(OperatorState.NeedPrevEnd)
     this.Wpm = this.Oper.Wpm
-    this.NR = this.Oper.GetNR()
+    this.NR = this.Oper.NR
     /*
       Qsb := TQsb.Create;
     
