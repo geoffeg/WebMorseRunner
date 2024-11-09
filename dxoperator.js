@@ -9,7 +9,7 @@ export class DxOperator {
         this.Call = "DJ1TF"
         this.Skills = 0
         this.Patience = FULL_PATIENCE
-        this.RepeatCnt = 0
+        this.RepeatCnt = 1
         this.State = OperatorState.Done
     }
 
@@ -81,10 +81,16 @@ export class DxOperator {
                 then Result := SecondsToBlocks(0.05 + 0.5*Random * 10/Wpm)
               else
                 Result := SecondsToBlocks(0.1 + 0.5*Random);*/
+         return result   
     }
 
     GetWpm() {
         return DEFAULT.RATE
+    }
+
+
+    GetNR(){
+        return 1 + Math.round(Math.random * 3)//Tst.Minute * Skills);
     }
 
     // Process an incoming message
@@ -209,7 +215,7 @@ export class DxOperator {
     _SetState(AState) {
         this.State = AState
         if (AState === OperatorState.NeedQso)
-            this.Patience = Math.round(this.RndRayleigh(4))
+            this.Patience = Math.round(random.RndRayleigh(4))
         else this.Patience = FULL_PATIENCE
     }
     static RndRayleigh(AMean) {

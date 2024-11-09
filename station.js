@@ -34,6 +34,8 @@ export class Station {
         this.HisCall = 'DL1XX'
         this.NR = 1
         this.RST = 599
+        this._Msg = new Array()
+        this.TimeOut = 0
       //  this.CallsFromKeyer = false
         GKeyer.rate = DEFAULT.RATE
     }
@@ -60,7 +62,7 @@ export class Station {
             case StationMessage.NR:
                 this.SendText('<#>')
                 break
-            case StateMessage.TU:
+            case StationMessage.TU:
                 this.SendText('TU')
                 break
             case StationMessage.MyCall:
@@ -165,6 +167,21 @@ export class Station {
     SetPitch(Value) {
         this._FPitch = Value;
         dPhi = Math.PI * 2 * this._FPitch / DEFAULT.RATE
+    }
+
+
+    Tick() {
+        // just finished sending
+        if (this.State === Station.State.Sending && ! this._Envelope) {
+            this.MsgText = ''
+            this.State = this.State.Listening
+            this.ProcessEvent(this.Event.MsgSent)
+        }
+        // check timeout
+        else if (this.State !== Station.State.Sending) {
+            if (this.TimeOut > -1) this.TimeOut--
+            if (this.TimeOut === 0) this.ProcessEvent(Station.Event.Timeout)
+        }
     }
 
     static NrAsText(rst, nr) {

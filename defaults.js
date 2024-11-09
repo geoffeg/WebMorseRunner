@@ -53,4 +53,5 @@ export class DEFAULT {
     static RUNMODE = RunMode.Single
     static CALL = 'DJ1TF'
     static WPM = 20
+    static RIT = 0
 }

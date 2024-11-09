@@ -17,7 +17,7 @@ export class DxStation extends Station {
     this.Oper = new DxOperator()
     this.Oper._SetState(OperatorState.NeedPrevEnd)
     this.Wpm = this.Oper.Wpm
-    this.NR = this.Oper.NR
+    this.NR = this.Oper.GetNR()
     /*
       Qsb := TQsb.Create;
     
@@ -28,15 +28,12 @@ export class DxStation extends Station {
     this.Pitch = Math.round(random.RndGaussLim(0, 300))
     this.TimeOut = Station.NEVER
     this.State = Station.State.Copying
-    console.log(Tst._MyStation)
   }
-
-
 
 
   ProcessEvent(AEvent) {
     if (this.Oper.State === OperatorState.Done) return
-    switch (this.Oper.State) {
+    switch (AEvent) {
       case Station.Event.MsgSent:
         if (Tst._MyStation.State === Station.Sending)
           this.TimeOut = Station.NEVER
@@ -73,19 +70,21 @@ export class DxStation extends Station {
           switch (this.State) {
             case Station.State.Copying:
               this.Oper.MsgReceived(Tst._MyStation._Msg)
+              break
             case Station.State.Listening || Station.State.PreparingToSend:
               // these messages can be copied even if partially received
               if (Tst._MyStation._Msg.includes(StationMessage.CQ) ||
                 Tst._MyStation._Msg.includes(StationMessage.TU) ||
-                Tst.Me._Msg.includes(StationMessage.Nil))
+                Tst._MyStation._Msg.includes(StationMessage.Nil))
                 this.Oper.MsgReceived(Tst.MyCall._Msg)
-              else this.Oper.MsgReceived([StationMessage.Garbage]);
+              else this.Oper.MsgReceived([StationMessage.Garbage])
+              break
           }
 
           //react to the message
           if (this.Oper.State === OperatorState.Failed)
             return        //give up
-          else this.TimeOut = this.Oper.GetSendDelay //reply or switch to standby
+          else this.TimeOut = this.Oper.GetSendDelay() //reply or switch to standby
           this.State = Station.State.PreparingToSend;
         }
         break

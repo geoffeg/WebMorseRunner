@@ -10,11 +10,14 @@ export const RndGaussLim = (AMean, ALim) => {
     return result
 }
 
-
 export const RndUShaped = () => {
     return Math.sin(Math.PI * (Math.random() - 0.5))
 }
 
 export const SecondsToBlocks = (Sec) => {
   return Math.round(DEFAULT.RATE / DEFAULT.BUFSIZE * Sec)
+}
+
+export const RndRayleigh = (AMean) => {
+  return  AMean * Math.sqrt(-Math.log(Math.random()) - Math.log(Math.random()))
 }

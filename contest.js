@@ -1,7 +1,8 @@
-import { DEFAULT } from "./defaults.js"
+import { DEFAULT, StationMessage } from "./defaults.js"
 import { Modulator } from "./modulator.js"
 import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
+import { Station } from "./station.js"
 import { DxStation } from "./dxstation.js"
 
 //import { Station } from "./station.js"
@@ -10,19 +11,20 @@ import { MyStation } from "./mystation.js"
 
 export class Contest {
     constructor() {
+
         this._targetRate = DEFAULT.RATE
         this._src_buffer_size = DEFAULT.BUFSIZE
         this._Filter1 = new MovAvg()
-    //    this._Filter2 = new MovAvg()
+        //    this._Filter2 = new MovAvg()
         // setup Filter
         this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
         this._Filter1.passes = DEFAULT.PASSES
         this._Filter1.samplesInInput = DEFAULT.BUFSIZE
         this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
 
- //       this._Filter2.passes = DEFAULT.PASSES
-  //      this._Filter2.samplesInInput = DEFAULT.BUFSIZE
- //       this._Filter2.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
+        //       this._Filter2.passes = DEFAULT.PASSES
+        //      this._Filter2.samplesInInput = DEFAULT.BUFSIZE
+        //       this._Filter2.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
 
         // setup automatic gain control
         this._Agc = new Volume()
@@ -44,15 +46,14 @@ export class Contest {
         this._src_complex_buffer = {
             Re: new Float32Array(this._src_buffer_size),
             Im: new Float32Array(this._src_buffer_size)
-        }        
+        }
 
 
         this._MyStation = new MyStation()
 
         this._dx_count = 0
         this.Stations = new Array()
-
-//        this._MyStation.SendText("DJ1TF")
+        this.RitPhase = 0
     }
 
     set processor(p) {
@@ -66,19 +67,22 @@ export class Contest {
                 this._MyStation.SendText(message.text)
                 break
             case 'create_dx':
-                console.log("create",message.text)
-                this.Stations.push(new DxStation(message.text))
-                
+                console.log("create", message.text)
+                let dx = new DxStation(message.text)
+                this.Stations.push(dx)
+                this._MyStation._Msg = [StationMessage.CQ]
+                dx.ProcessEvent(Station.Event.MeFinished)
+
                 break
             default:
-                console.log('ERROR: Unknown: ',message)
+                console.log('ERROR: Unknown: ', message)
         }
-        
+
     }
 
     _complex_noise = (complex_buffer) => {
         const noise_amp = 6000
-        for (let i = 0; i <  this._src_buffer_size; i++) {
+        for (let i = 0; i < this._src_buffer_size; i++) {
             complex_buffer.Re[i] = 3 * noise_amp * (Math.random() - 0.5)
             complex_buffer.Im[i] = 3 * noise_amp * (Math.random() - 0.5)
         }
@@ -86,6 +90,22 @@ export class Contest {
 
     _getSrcBlock() {
         this._complex_noise(this._src_complex_buffer)
+        for (let Stn = 0; Stn < this.Stations.length; Stn++) {
+            if (this.Stations[Stn].State === Station.State.Sending) {
+                let Blk = this.Stations[Stn].GetBlock()                
+                for (let i = 0; Blk.length; i++) {
+                    let Bfo = this.Stations[Stn].Bfo - this.RitPhase - i * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE;
+                    this._src_complex_buffer.Re[i] = this._src_complex_buffer.Re[i] + Blk[i] * Cos(Bfo)
+                    this._src_complex_buffer.Im[i] = this._src_complex_buffer.Im[i] - Blk[i] * Sin(Bfo) 
+                }
+            }
+        }
+        // Rit
+        this.RitPhase = this.RitPhase + DEFAULT.BUFSIZE * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE
+        while (this.RitPhase > Math.PI * 2) this.RitPhase = RitPhase - Math.PI * 2
+        while (this.RitPhase < -Math.PI * 2) this.RitPhase = this.RitPhase + Math.PI * 2
+
+
         let blk = this._MyStation.GetBlock()
         if (blk && blk !== null) {
 
@@ -94,15 +114,21 @@ export class Contest {
                 this._src_complex_buffer.Re[n] = 0.59 * blk[n]
             }
         }
-      //  this._Filter2.Filter(ReIm)
+        //  this._Filter2.Filter(ReIm)
         this._Filter1.Filter(this._src_complex_buffer)
         let result = this._Modul.Modulate(this._src_complex_buffer)
         result = this._Agc.Process(result)
 
-        if(this._dx_count === 0) {
-            this.post({ 
+
+
+        //timer tick
+        this._MyStation.Tick()
+        for (let Stn = this.Stations.length - 1; Stn >= 0; Stn--) this.Stations[Stn].Tick()
+
+        if (this._dx_count === 0) {
+            this.post({
                 type: 'request_dx'
-            })            
+            })
             this._dx_count++
         }
 
@@ -114,17 +140,17 @@ export class Contest {
     getBlock(block) {
         if (this._targetRate !== DEFAULT.RATE) {
             debugger
-/*
+            /*
+                        for (let i = 0; i < block.length; i++) {
+                            if (this._src_pos === 0) this._getSrcBlock()
+                            block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
+                            this._src_pos += this._deltaRate
+                            if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
+                        }*/
+        } else {
             for (let i = 0; i < block.length; i++) {
                 if (this._src_pos === 0) this._getSrcBlock()
-                block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
-                this._src_pos += this._deltaRate
-                if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
-            }*/
-        } else {
-            for (let i = 0;i<block.length;i++) {
-                if (this._src_pos === 0) this._getSrcBlock()
-                block[i] = this._src_buffer[this._src_pos] / 32800   
+                block[i] = this._src_buffer[this._src_pos] / 32800
                 this._src_pos++
                 if (this._src_pos >= this._src_buffer.length) this._src_pos = 0
             }
