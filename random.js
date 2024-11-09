@@ -1,11 +1,11 @@
 import { DEFAULT } from "./defaults.js"
 
 export const RndNormal = () => {
-    return Math.sqrt(-2 * Math.ln(Math.random())) * Math.cos(Math.PI * 2 * Math.random())
+    return Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(Math.PI * 2 * Math.random())
 }
 
 export const RndGaussLim = (AMean, ALim) => {
-    let result = AMean + RndNormal * 0.5 * ALim;
+    let result = AMean + RndNormal() * 0.5 * ALim;
     result = Math.max(AMean - ALim, Math.min(AMean + ALim, result))
     return result
 }
