@@ -231,7 +231,7 @@ export class DxOperator {
             result = random.SecondsToBlocks(60 / Wpm)
         else result = random.SecondsToBlocks(6 - this.Skills)
         result = Math.round(random.RndGaussLim(result, result / 2))
-
+        return result
     }
 
     GetReply() {

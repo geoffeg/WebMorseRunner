@@ -31,16 +31,16 @@ export class DxStation extends Station {
     if (this.Oper.State === OperatorState.Done) return
     switch (AEvent) {
       case Station.Event.MsgSent:
-        if (Tst._MyStation.State === Station.Sending)
+        if (Tst._MyStation.State === Station.State.Sending)
           this.TimeOut = Station.NEVER
-        else this.Oper.GetReplyTimeout()
+        else this.TimeOut = this.Oper.GetReplyTimeout()
         break
       case Station.Event.Timeout:
         // he did not reply, quit or try again
         if (this.State === Station.State.Listening) {
-          Oper.MsgReceived([StationMessage.None])
+          this.Oper.MsgReceived([StationMessage.None])
           if (this.Oper.State === OperatorState.Failed) return
-          this.State = State.PreparingToSend
+          this.State = Station.State.PreparingToSend
         }
         // preparations to send are done, now send
         if (this.State === Station.State.PreparingToSend)

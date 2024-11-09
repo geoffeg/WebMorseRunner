@@ -22,8 +22,6 @@ export class Station {
         MeFinished: 4
     }
 
-
-
     constructor() {
         this._FBfo = 0
         this._dPhi = 0
@@ -38,6 +36,7 @@ export class Station {
         this.TimeOut = 0
       //  this.CallsFromKeyer = false
         GKeyer.rate = DEFAULT.RATE
+        this.State = Station.State.Listening
     }
 
     get Bfo() {
@@ -156,11 +155,7 @@ export class Station {
         }
         // advance TX buffer
         this._SendPos += DEFAULT.BUFSIZE;
-        if (this._SendPos >= this._Envelope.length ) {
-            this.MsgText = ''
-            this.State = Station.State.Listening
-            this._Envelope = null
-        }
+        if (this._SendPos >= this._Envelope.length ) this._Envelope = null
         return result
     }
 
@@ -174,8 +169,8 @@ export class Station {
         // just finished sending
         if (this.State === Station.State.Sending && this._Envelope === null) {
             this.MsgText = ''
-            this.State = this.State.Listening
-            this.ProcessEvent(this.Event.MsgSent)
+            this.State = Station.State.Listening
+            this.ProcessEvent(Station.Event.MsgSent)
         }
         // check timeout
         else if (this.State !== Station.State.Sending) {
