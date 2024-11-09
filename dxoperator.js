@@ -1,4 +1,4 @@
-import { DEFAULT, StationMessage, OperatorState } from "./defaults.js"
+import { DEFAULT, StationMessage, OperatorState, RunMode } from "./defaults.js"
 import * as random from './random.js'
 
 const NEVER = Number.MAX_SAFE_INTEGER
@@ -76,11 +76,9 @@ export class DxOperator {
         let result = 0
         if (this.State === OperatorState.NeedPrevEnd)
             result = NEVER;
-        else result = 1
-        /*        if (this.RunMode === RunMode.Hst) {}
-                then Result := SecondsToBlocks(0.05 + 0.5*Random * 10/Wpm)
-              else
-                Result := SecondsToBlocks(0.1 + 0.5*Random);*/
+        else if (DEFAULT.RUNMODE = RunMode.Hst) {
+           result =  random.SecondsToBlocks(0.05 + 0.5*Math.random() * 10/this.Wpm)
+        } else result = random.SecondsToBlocks(0.1 + 0.5*Math.random())
          return result   
     }
 
