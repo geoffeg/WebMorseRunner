@@ -102,7 +102,7 @@ export class Contest {
         }
         // Rit
         this.RitPhase = this.RitPhase + DEFAULT.BUFSIZE * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE
-        while (this.RitPhase > Math.PI * 2) this.RitPhase = RitPhase - Math.PI * 2
+        while (this.RitPhase > Math.PI * 2) this.RitPhase = this.RitPhase - Math.PI * 2
         while (this.RitPhase < -Math.PI * 2) this.RitPhase = this.RitPhase + Math.PI * 2
 
 

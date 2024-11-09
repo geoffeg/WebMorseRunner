@@ -77,14 +77,15 @@ export class DxOperator {
         let result = 0
         if (this.State === OperatorState.NeedPrevEnd)
             result = NEVER;
-        else if (DEFAULT.RUNMODE = RunMode.Hst) {
+        else if (DEFAULT.RUNMODE === RunMode.Hst) {
            result =  random.SecondsToBlocks(0.05 + 0.5*Math.random() * 10/this.Wpm)
         } else result = random.SecondsToBlocks(0.1 + 0.5*Math.random())
          return result   
     }
 
     get Wpm() {
-        return DEFAULT.WPM
+        if(DEFAULT.RUNMODE === RunMode.Hst) return DEFAULT.WPM
+          else return Math.round(DEFAULT.WPM * 0.5 * (1 + Math.random()))
     }
 
 
