@@ -245,24 +245,24 @@ export class DxOperator {
                 if (this.Patience === (FULL_PATIENCE - 1) || (Math.random() < 0.3))
                     return StationMessage.NrQm
                 else return StationMessage.Agn
+                break
             case OperatorState.NeedCall:
                 if ((DEFAULT.RUNMODE === RunMode.Hst) || (Math.random() > 0.5))
                     return StationMessage.DeMyCallNr1
                 else if (Math.random() > 0.25) return StationMessage.DeMyCallNr2
                 else return StationMessage.MyCallNr2
-
+                break
             case OperatorState.NeedCallNr:
                 if ((DEFAULT.RUNMODE === RunMode.Hst) || (MAth.random() > 0.5))
                     return StationMessage.DeMyCall1
                 else return StationMessage.DeMyCall2
-
+                break
             default: //osNeedEnd:
                 if (this.Patience < (FULL_PATIENCE - 1)) return StationMessage.NR
                 else if ((DEFAULT.RUNMODE === RunMode.Hst) || (Math.random() < 0.9))
                     return StationMessage.R_NR
                 else StationMessage.R_NR2
+                break
         }
     }
-
-
 }
