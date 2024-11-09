@@ -1,5 +1,6 @@
 import { DEFAULT, StationMessage, OperatorState, RunMode } from "./defaults.js"
 import * as random from './random.js'
+import { Tst } from "./contest.js"
 
 const NEVER = Number.MAX_SAFE_INTEGER
 const FULL_PATIENCE = 5
@@ -88,7 +89,7 @@ export class DxOperator {
 
 
     get NR(){
-        return 1 + Math.round(Math.random() * 3)//Tst.Minute * Skills);
+        return 1 + Math.round(Math.random() * Tst.Minute * this.Skills)
     }
 
     // Process an incoming message
@@ -216,9 +217,6 @@ export class DxOperator {
             this.Patience = Math.round(random.RndRayleigh(4))
         else this.Patience = FULL_PATIENCE
     }
-    static RndRayleigh(AMean) {
-        return AMean * Math.sqrt(-Math.Ln(Math.random) - Math.Ln(Math.random))
-    }
 
     _DecPatience() {
         if (this.State === OperatorState.Done) return
@@ -253,13 +251,13 @@ export class DxOperator {
                 else return StationMessage.MyCallNr2
 
             case OperatorState.NeedCallNr:
-                if ((DEFAULT.RunMode === RunMode.Hst) || (MAth.random() > 0.5))
+                if ((DEFAULT.RUNMODE === RunMode.Hst) || (MAth.random() > 0.5))
                     return StationMessage.DeMyCall1
                 else return StationMessage.DeMyCall2
 
             default: //osNeedEnd:
                 if (this.Patience < (FULL_PATIENCE - 1)) return StationMessage.NR
-                else if ((DEFAULT.RunMode === RunMode.Hst) || (Math.random() < 0.9))
+                else if ((DEFAULT.RUNMODE === RunMode.Hst) || (Math.random() < 0.9))
                     return StationMessage.R_NR
                 else StationMessage.R_NR2
         }

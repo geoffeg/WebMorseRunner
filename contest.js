@@ -4,14 +4,13 @@ import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
 import { Station } from "./station.js"
 import { DxStation } from "./dxstation.js"
-
-//import { Station } from "./station.js"
+import * as random from './random.js'
 import { MyStation } from "./mystation.js"
 
 
 export class Contest {
     constructor() {
-
+        this.BlockNumber = 0
         this._targetRate = DEFAULT.RATE
         this._src_buffer_size = DEFAULT.BUFSIZE
         this._Filter1 = new MovAvg()
@@ -89,6 +88,7 @@ export class Contest {
     }
 
     _getSrcBlock() {
+        this.BlockNumber++
         this._complex_noise(this._src_complex_buffer)
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
             if (this.Stations[Stn].State === Station.State.Sending) {
@@ -156,6 +156,10 @@ export class Contest {
             }
         }
 
+    }
+
+    get Minute() {    
+      return random.BlocksToSeconds(this.BlockNumber) / 60
     }
 
     post(m) {

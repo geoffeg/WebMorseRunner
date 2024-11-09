@@ -1,12 +1,8 @@
 import { DEFAULT, StationMessage, RunMode, OperatorState } from "./defaults.js";
 import { Station } from "./station.js"
 import { DxOperator } from "./dxoperator.js"
-
 import * as random from './random.js'
-
 import { Tst } from "./contest.js"
-
-
 
 
 export class DxStation extends Station {

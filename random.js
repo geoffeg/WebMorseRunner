@@ -18,6 +18,10 @@ export const SecondsToBlocks = (Sec) => {
   return Math.round(DEFAULT.RATE / DEFAULT.BUFSIZE * Sec)
 }
 
+export const BlocksToSeconds = (Blocks) => {
+  return Blocks * DEFAULT.BUFSIZE / DEFAULT.RATE
+}
+
 export const RndRayleigh = (AMean) => {
   return  AMean * Math.sqrt(-Math.log(Math.random()) - Math.log(Math.random()))
 }
