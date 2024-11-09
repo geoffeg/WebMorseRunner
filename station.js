@@ -40,7 +40,7 @@ export class Station {
         GKeyer.rate = DEFAULT.RATE
     }
 
-    _GetBfo() {
+    get Bfo() {
         let result = this._FBfo
         this._FBfo = this._FBfo + this._dPhi
         if (this._FBfo > Math.PI * 2) this._FBfo -= Math.PI * 2
@@ -124,7 +124,7 @@ export class Station {
 
     SendText(AMsg) {
         AMsg = AMsg.replaceAll('<#>',Station.NrAsText(this.RST, this.NR))    
-        AMsg = AMsg.replaceAll('my>',this.MyCall)    
+        AMsg = AMsg.replaceAll('<my>',this.MyCall)    
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
