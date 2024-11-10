@@ -66,8 +66,6 @@ window.onload = () => {
                         type: "create_dx",
                         text: calls.get_random()
                     })
-
-
                     break
             }
         }
