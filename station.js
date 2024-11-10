@@ -159,9 +159,10 @@ export class Station {
         return result
     }
 
-    SetPitch(Value) {
+    set Pitch(Value) {
         this._FPitch = Value;
-        dPhi = Math.PI * 2 * this._FPitch / DEFAULT.RATE
+        this.dPhi = Math.PI * 2 * this._FPitch / DEFAULT.RATE
+        console.log(this.dPhi)
     }
 
 
