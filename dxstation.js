@@ -10,7 +10,7 @@ export class DxStation extends Station {
     super()
     this.MyCall = call
     this.HisCall = DEFAULT.CALL
-    this.Oper = new DxOperator()
+    this.Oper = new DxOperator(this.MyCall)
     this.Oper._SetState(OperatorState.NeedPrevEnd)
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR

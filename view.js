@@ -29,7 +29,7 @@ export class View {
             if (e.code === 'Enter') {
                this.sendMessage({
                  type: AudioMessage.send_msg,
-                 text: "DJ1TF"
+                 text: this.random_call
 
                })
             }
@@ -65,10 +65,11 @@ export class View {
             let type = e.data.type
 
             switch (type) {
-                case 'request_dx':
+                case AudioMessage.request_dx:
+                    this.random_call = this.calls.get_random()
                     this.ContestNode.port.postMessage({
                         type: AudioMessage.create_dx,
-                        text: this.calls.get_random()
+                        text: this.random_call
                     })
                     break
             }

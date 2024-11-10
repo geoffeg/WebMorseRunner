@@ -6,8 +6,8 @@ const NEVER = Number.MAX_SAFE_INTEGER
 const FULL_PATIENCE = 5
 
 export class DxOperator {
-    constructor() {
-        this.Call = "DJ1TF"
+    constructor(call) {
+        this.Call = call
         this.Skills = 0
         this.Patience = FULL_PATIENCE
         this.RepeatCnt = 1
@@ -78,18 +78,18 @@ export class DxOperator {
         if (this.State === OperatorState.NeedPrevEnd)
             result = NEVER;
         else if (DEFAULT.RUNMODE === RunMode.Hst) {
-           result =  random.SecondsToBlocks(0.05 + 0.5*Math.random() * 10/this.Wpm)
-        } else result = random.SecondsToBlocks(0.1 + 0.5*Math.random())
-         return result   
+            result = random.SecondsToBlocks(0.05 + 0.5 * Math.random() * 10 / this.Wpm)
+        } else result = random.SecondsToBlocks(0.1 + 0.5 * Math.random())
+        return result
     }
 
     get Wpm() {
-        if(DEFAULT.RUNMODE === RunMode.Hst) return DEFAULT.WPM
-          else return Math.round(DEFAULT.WPM * 0.5 * (1 + Math.random()))
+        if (DEFAULT.RUNMODE === RunMode.Hst) return DEFAULT.WPM
+        else return Math.round(DEFAULT.WPM * 0.5 * (1 + Math.random()))
     }
 
 
-    get NR(){
+    get NR() {
         return 1 + Math.round(Math.random() * Tst.Minute * this.Skills)
     }
 
@@ -121,7 +121,7 @@ export class DxOperator {
                 case OperatorState.NeedQso:
                     this._DecPatience()
                     break
-0
+                    0
                 case OperatorState.NeedNr || OperatorState.NeedCall ||
                     OperatorState.NeedCallNr || OperatorState.NeedEnd:
                     this.State = OperatorState.Failed
