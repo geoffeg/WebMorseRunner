@@ -1,6 +1,7 @@
 
 import { DEFAULT, StationMessage, RunMode } from "./defaults.js";
 import { Station } from "./station.js"
+import { Tst } from "./contest.js"
 
 export class MyStation extends Station {
     constructor() {
@@ -29,19 +30,23 @@ export class MyStation extends Station {
 
 
     SendText(AMsg) {
-
         this._AddToPieces(AMsg)
         if (this.State !== Station.State.Sending) {
             this._SendNextPiece()
-            //    Tst.OnMeStartedSending;
+            Tst.OnMeStartedSending()
         }
     }
+
+    
+  ProcessEvent(AEvent) {
+    if (AEvent === Station.Event.MsgSent) Tst.OnMeFinishedSending()    
+  }
 
     _AddToPieces(AMsg) {
         //split into pieces
         //special processing of callsign
         let p = AMsg.indexOf('<his>')
-        while (p > 0) {
+        while (p >= 0) {
 
             this.Pieces.push(AMsg.substr(1, p - 1))
             this.Pieces.push('@')  //his callsign indicator
@@ -57,20 +62,21 @@ export class MyStation extends Station {
 
     _SendNextPiece() {
         let MsgText = ''
-
         if (this.Pieces[0] !== '@')
             super.SendText(this.Pieces[0]);
         else
-            if ( /*CallsFromKeyer && */
-                (!(DEFAULT.RUNMODE === RunMode.Hst
-                    || DEFAULT.RUNMODE === RunMode.Wpx)))
-                super.SendText(' ')
-            else super.SendText(this.HisCall)
+  //            if ( /*CallsFromKeyer && */
+//                (!(DEFAULT.RUNMODE === RunMode.Hst
+ //                   || DEFAULT.RUNMODE === RunMode.Wpx)))
+ //               super.SendText(' ')
+ //           else */
+            
+            super.SendText(this.HisCall)
     }
 
     GetBlock() {
       let result = super.GetBlock()
-      if (this._Envelope) {
+      if (!this._Envelope || this._Envelope === null) {
 
         this.Pieces.shift()   
         if (this.Pieces.length > 0) this.SendNextPiece()

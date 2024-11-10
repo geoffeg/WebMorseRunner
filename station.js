@@ -68,55 +68,55 @@ export class Station {
                 this.SendText('<my>')
                 break
             case StationMessage.HisCall:
-                SendText('<his>')
+                this.SendText('<his>')
                 break
             case StationMessage.B4:
-                SendText('QSO B4')
+                this.SendText('QSO B4')
                 break
             case StationMessage.Qm:
-                SendText('?')
+                this.SendText('?')
                 break
             case StationMessage.Nil:
-                SendText('NIL')
+                this.SendText('NIL')
                 break
             case StationMessage.R_NR:
-                SendText('R <#>')
+                this.SendText('R <#>')
                 break
             case StationMessage.R_NR2:
-                SendText('R <#> <#>')
+                this.SendText('R <#> <#>')
                 break
             case StationMessage.DeMyCall1:
-                SendText('DE <my>')
+                this.SendText('DE <my>')
                 break
             case StationMessage.DeMyCall2:
-                SendText('DE <my> <my>')
+                this.SendText('DE <my> <my>')
                 break
             case StationMessage.DeMyCallNr1:
-                SendText('DE <my> <#>')
+                this.SendText('DE <my> <#>')
                 break
             case StationMessage.DeMyCallNr2:
-                SendText('DE <my> <my> <#>')
+                this.SendText('DE <my> <my> <#>')
                 break
             case StationMessage.MyCallNr2:
-                SendText('<my> <my> <#>')
+                this.SendText('<my> <my> <#>')
                 break
             case StationMessage.NrQm:
-                SendText('NR?')
+                this.SendText('NR?')
                 break
             case StationMessage.LongCQ:
-                SendText('CQ CQ TEST <my> <my> TEST')
+                this.SendText('CQ CQ TEST <my> <my> TEST')
                 break
             case StationMessage.Qrl:
-                SendText('QRL?')
+                this.SendText('QRL?')
                 break
             case StationMessage.Qrl2:
-                SendText('QRL?   QRL?')
+                this.SendText('QRL?   QRL?')
                 break
             case StationMessage.Qsy:
-                SendText('<his>  QSY QSY')
+                this.SendText('<his>  QSY QSY')
                 break
             case StationMessage.Agn:
-                SendText('AGN')
+                this.SendText('AGN')
                 break
         }
     }

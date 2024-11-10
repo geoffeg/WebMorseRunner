@@ -1,4 +1,4 @@
-import { DEFAULT, StationMessage } from "./defaults.js"
+import { DEFAULT, StationMessage, RunMode, AudioMessage } from "./defaults.js"
 import { Modulator } from "./modulator.js"
 import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
@@ -65,18 +65,21 @@ export class Contest {
             case 'send':
                 this._MyStation.SendText(message.text)
                 break
-            case 'create_dx':
+            case AudioMessage.create_dx:
                 console.log("create", message.text)
                 let dx = new DxStation(message.text)
                 this.Stations.push(dx)
                 this._MyStation._Msg = [StationMessage.CQ]
                 dx.ProcessEvent(Station.Event.MeFinished)
-
+                break
+            case AudioMessage.send_msg:
+                console.log(message.text)
+                this._MyStation.HisCall = message.text
+                this._MyStation.SendMsg(StationMessage.HisCall)
                 break
             default:
                 console.log('ERROR: Unknown: ', message)
         }
-
     }
 
     _complex_noise = (complex_buffer) => {
@@ -165,6 +168,27 @@ export class Contest {
     post(m) {
         this._processor.port.postMessage(m)
     }
+
+    OnMeStartedSending() {
+      //tell callers that I started sending
+      for (let i = this.Stations.length-1;i>=0;i--) 
+        this.Stations[i].ProcessEvent(Station.Event.MeStarted)
+    }
+
+    OnMeFinishedSending() {
+      //the stations heard my CQ and want to call
+   /*   if (! (DEFAULT.RUNMODE === RunMode.Single || DEFAULT.RUNMODE === RunMode.Hst)) 
+
+        if ( MyStation._Msg.include(StationMessage.CQ)) ||
+           ((this.QsoList.length === 0) && (this.MyStation._Msg.include(StationMessage.TU ) &&
+            (this.MyStation._Msg.include(StationMessage.MyCall) ))) 
+        for (let i=0; random.RndPoisson(this.Activity / 2)) this.Stations.AddCaller();
+    */
+      // tell callers that I finished sending
+      for (let i = this.Stations.length-1;i>=0;i--) 
+        this.Stations[i].ProcessEvent(Station.Event.MeFinished)
+    }
+
 }
 
 export const Tst = new Contest()

@@ -1,3 +1,8 @@
+export const AudioMessage = {
+  request_dx:  'request_dx',
+  send_msg: 'send_msg',
+  create_dx: "create_dx"
+}
 
 export const StationMessage = {
   None: 0,

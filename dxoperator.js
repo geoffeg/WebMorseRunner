@@ -121,7 +121,7 @@ export class DxOperator {
                 case OperatorState.NeedQso:
                     this._DecPatience()
                     break
-
+0
                 case OperatorState.NeedNr || OperatorState.NeedCall ||
                     OperatorState.NeedCallNr || OperatorState.NeedEnd:
                     this.State = OperatorState.Failed
@@ -130,8 +130,8 @@ export class DxOperator {
             return
         }
         if (AMsg.includes(StationMessage.HisCall)) {
-            switch (this.IsMyCall(this.Call, this.Call)) {
-                case CallCheckResult.Yes:
+            switch (DxOperator.IsMyCall(this.Call, Tst._MyStation.HisCall)) {
+                case DxOperator.CallCheckResult.Yes:
                     if (this.State === OperatorState.NeedPrevEnd ||
                         this.State === OperatorState.NeedQso)
                         this._SetState(OperatorState.NeedNr);
@@ -140,14 +140,14 @@ export class DxOperator {
                     else if (this.State === OperatorState.NeedCall)
                         this._SetState(OperatorState.NeedEnd)
                     break
-                case CallCheckResult.Almost:
+                case DxOperator.CallCheckResult.Almost:
                     if (this.State === OperatorState.NeedPrevEnd ||
                         this.State === OperatorState.NeedQso)
                         this._SetState(OperatorState.NeedCallNr)
                     else if (this.State === OperatorState.NeedNr) this._SetState(OperatorState.NeedCallNr)
                     else if (this.State === OperatorState.NeedEnd) this._SetState(OperatorState.NeedCall);
                     break
-                case CallCheckResult.No:
+                case DxOperator.CallCheckResult.No:
                     if (this.State === OperatorState.NeedQso) this.State = OperatorState.NeedPrevEnd
                     else if (this.State === OperatorState.NeedNr ||
                         this.State === OperatorState.NeedCall ||

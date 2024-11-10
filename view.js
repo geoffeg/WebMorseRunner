@@ -1,5 +1,5 @@
 import { Calls } from "./call.js"
-import { DEFAULT } from "./defaults.js"
+import { DEFAULT, AudioMessage } from "./defaults.js"
 
 export class View {
     constructor() {
@@ -19,11 +19,19 @@ export class View {
         this.setFocus('call')
     }
 
+    sendMessage(data) {        
+        this.ContestNode.port.postMessage(data)        
+    }
+
     functionKey() {
         document.getElementById('input').addEventListener("keydown", (e) => {
             console.log(e.code)
             if (e.code === 'Enter') {
-    
+               this.sendMessage({
+                 type: AudioMessage.send_msg,
+                 text: "DJ1TF"
+
+               })
             }
         });
     } 
@@ -58,9 +66,8 @@ export class View {
 
             switch (type) {
                 case 'request_dx':
-
                     this.ContestNode.port.postMessage({
-                        type: "create_dx",
+                        type: AudioMessage.create_dx,
                         text: this.calls.get_random()
                     })
                     break
