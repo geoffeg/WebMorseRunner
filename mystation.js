@@ -1,5 +1,5 @@
 
-import { DEFAULT, StationMessage, RunMode } from "./defaults.js";
+import { DEFAULT, StationMessage, RunMode, AudioMessage } from "./defaults.js";
 import { Station } from "./station.js"
 import { Tst } from "./contest.js"
 
@@ -37,10 +37,10 @@ export class MyStation extends Station {
         }
     }
 
-    
-  ProcessEvent(AEvent) {
-    if (AEvent === Station.Event.MsgSent) Tst.OnMeFinishedSending()    
-  }
+
+    ProcessEvent(AEvent) {
+        if (AEvent === Station.Event.MsgSent) Tst.OnMeFinishedSending()
+    }
 
     _AddToPieces(AMsg) {
         //split into pieces
@@ -61,29 +61,31 @@ export class MyStation extends Station {
     }
 
     _SendNextPiece() {
-        let MsgText = ''
+        this.MsgText = ''
         if (this.Pieces[0] !== '@')
             super.SendText(this.Pieces[0]);
         else
-  //            if ( /*CallsFromKeyer && */
-//                (!(DEFAULT.RUNMODE === RunMode.Hst
- //                   || DEFAULT.RUNMODE === RunMode.Wpx)))
- //               super.SendText(' ')
- //           else */
-            
+            //            if ( /*CallsFromKeyer && */
+            //                (!(DEFAULT.RUNMODE === RunMode.Hst
+            //                   || DEFAULT.RUNMODE === RunMode.Wpx)))
+            //               super.SendText(' ')
+            //           else */
+
             super.SendText(this.HisCall)
     }
 
     GetBlock() {
-      let result = super.GetBlock()
-      if (!this._Envelope || this._Envelope === null) {
+        let result = super.GetBlock()
+        if (this._Envelope === null) {
 
-        this.Pieces.shift()   
-        if (this.Pieces.length > 0) this.SendNextPiece()
-        //cursor to exchange field
-        //MainForm.Advance;
-      }
-      return result
+            this.Pieces.shift()
+            if (this.Pieces.length > 0) {
+                this._SendNextPiece()
+                //cursor to exchange field
+                Tst.post({ type: AudioMessage.advance })
+            }
+        }
+        return result
     }
 
 

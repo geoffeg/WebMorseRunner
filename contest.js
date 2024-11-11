@@ -63,20 +63,22 @@ export class Contest {
     onmessage = (message) => {
         switch (message.type) {
             case 'send':
-                this._MyStation.SendText(message.text)
+                this._MyStation.SendText(message.data)
                 break
             case AudioMessage.create_dx:
-                console.log("create", message.text)
-                let dx = new DxStation(message.text)
+                console.log("create", message.data)
+                let dx = new DxStation(message.data)
                 this.Stations.push(dx)
                 this._MyStation._Msg = [StationMessage.CQ]
                 dx.ProcessEvent(Station.Event.MeFinished)
                 break
-            case AudioMessage.send_msg:
-                console.log(message.text)
-                this._MyStation.HisCall = message.text
+            case AudioMessage.send_his:
+                this._MyStation.HisCall = message.data
                 this._MyStation.SendMsg(StationMessage.HisCall)
                 break
+            case AudioMessage.send_nr:
+                    this._MyStation.SendMsg(StationMessage.NR)
+                    break                
             default:
                 console.log('ERROR: Unknown: ', message)
         }

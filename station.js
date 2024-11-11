@@ -207,6 +207,7 @@ export class Station {
                 result = result.replaceAll('9', 'N')
             }
         }
+        return result
     }
 
 

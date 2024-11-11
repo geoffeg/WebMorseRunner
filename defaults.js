@@ -1,7 +1,10 @@
 export const AudioMessage = {
   request_dx:  'request_dx',
   send_msg: 'send_msg',
-  create_dx: "create_dx"
+  send_his: 'send_his',
+  send_nr: 'send_nr',
+  create_dx: 'create_dx',
+  advance: 'advance'
 }
 
 export const StationMessage = {

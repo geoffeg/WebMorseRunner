@@ -7,6 +7,10 @@ export class View {
       this.ContestNode = null      
       this.calls = new Calls()
       this.calls.fetch_calls()      
+      this.MustAdvance = true
+      this.call = document.getElementById('call')
+      this.rst = document.getElementById('rst')
+      this.nr = document.getElementById('nr')
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -23,15 +27,23 @@ export class View {
         this.ContestNode.port.postMessage(data)        
     }
 
+
+    processEnter() {
+        this.sendMessage({
+            type: AudioMessage.send_his,
+            data: this.random_call
+          })        
+        this.sendMessage({
+            type: AudioMessage.send_nr,
+          })        
+
+    }
+
     functionKey() {
         document.getElementById('input').addEventListener("keydown", (e) => {
             console.log(e.code)
             if (e.code === 'Enter') {
-               this.sendMessage({
-                 type: AudioMessage.send_msg,
-                 text: this.random_call
-
-               })
+               this.processEnter()
             }
         });
     } 
@@ -52,6 +64,18 @@ export class View {
         })    
     }
 
+    advance() {
+       if (!this.MustAdvance) return    
+       if (this.rst.value === '') this.rst.value = 599
+
+       if (this.call.value.indexOf('?') === -1) {
+        this.setFocus('nr')
+       }
+       this.MustAdvance = false
+    }
+
+
+
     async startContest() {
         this.wipeFields()
         this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
@@ -69,9 +93,15 @@ export class View {
                     this.random_call = this.calls.get_random()
                     this.ContestNode.port.postMessage({
                         type: AudioMessage.create_dx,
-                        text: this.random_call
+                        data: this.random_call
                     })
                     break
+                case AudioMessage.advance:
+                    this.advance()
+                    break
+                default:
+                    console.log("ERROR: Unsupported message")
+                    debugger;
             }
         }
         this.ContestNode.connect(this.ctx.destination);
