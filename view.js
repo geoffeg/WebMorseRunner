@@ -73,6 +73,7 @@ export class View {
                 type: AudioMessage.send_tu
             })   
 //              Log.SaveQso
+                this.wipeFields()
             }
             else
              this.MustAdvance = true 
@@ -84,7 +85,7 @@ export class View {
 
     functionKey() {
         document.getElementById('input').addEventListener("keydown", (e) => {
-            console.log(e.code)
+         //   console.log(e.code)
             if (e.code === 'Enter') {
                this.processEnter()
             }
