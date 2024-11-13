@@ -77,8 +77,14 @@ export class Contest {
                 this._MyStation.SendMsg(StationMessage.HisCall)
                 break
             case AudioMessage.send_nr:
-                    this._MyStation.SendMsg(StationMessage.NR)
-                    break                
+                this._MyStation.SendMsg(StationMessage.NR)
+                break
+            case AudioMessage.send_tu:
+                this._MyStation.SendMsg(StationMessage.TU)
+                break
+            case AudioMessage.send_qm:
+                this._MyStation.SendMsg(StationMessage.Qm)
+                break
             default:
                 console.log('ERROR: Unknown: ', message)
         }
@@ -97,11 +103,11 @@ export class Contest {
         this._complex_noise(this._src_complex_buffer)
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
             if (this.Stations[Stn].State === Station.State.Sending) {
-                let Blk = this.Stations[Stn].GetBlock()                
+                let Blk = this.Stations[Stn].GetBlock()
                 for (let i = 0; i < Blk.length; i++) {
                     let Bfo = this.Stations[Stn].Bfo - this.RitPhase - i * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE;
                     this._src_complex_buffer.Re[i] = this._src_complex_buffer.Re[i] + Blk[i] * Math.cos(Bfo)
-                    this._src_complex_buffer.Im[i] = this._src_complex_buffer.Im[i] - Blk[i] * Math.sin(Bfo) 
+                    this._src_complex_buffer.Im[i] = this._src_complex_buffer.Im[i] - Blk[i] * Math.sin(Bfo)
                 }
             }
         }
@@ -163,8 +169,8 @@ export class Contest {
 
     }
 
-    get Minute() {    
-      return random.BlocksToSeconds(this.BlockNumber) / 60
+    get Minute() {
+        return random.BlocksToSeconds(this.BlockNumber) / 60
     }
 
     post(m) {
@@ -172,23 +178,23 @@ export class Contest {
     }
 
     OnMeStartedSending() {
-      //tell callers that I started sending
-      for (let i = this.Stations.length-1;i>=0;i--) 
-        this.Stations[i].ProcessEvent(Station.Event.MeStarted)
+        //tell callers that I started sending
+        for (let i = this.Stations.length - 1; i >= 0; i--)
+            this.Stations[i].ProcessEvent(Station.Event.MeStarted)
     }
 
     OnMeFinishedSending() {
-      //the stations heard my CQ and want to call
-   /*   if (! (DEFAULT.RUNMODE === RunMode.Single || DEFAULT.RUNMODE === RunMode.Hst)) 
-
-        if ( MyStation._Msg.include(StationMessage.CQ)) ||
-           ((this.QsoList.length === 0) && (this.MyStation._Msg.include(StationMessage.TU ) &&
-            (this.MyStation._Msg.include(StationMessage.MyCall) ))) 
-        for (let i=0; random.RndPoisson(this.Activity / 2)) this.Stations.AddCaller();
-    */
-      // tell callers that I finished sending
-      for (let i = this.Stations.length-1;i>=0;i--) 
-        this.Stations[i].ProcessEvent(Station.Event.MeFinished)
+        //the stations heard my CQ and want to call
+        /*   if (! (DEFAULT.RUNMODE === RunMode.Single || DEFAULT.RUNMODE === RunMode.Hst)) 
+     
+             if ( MyStation._Msg.include(StationMessage.CQ)) ||
+                ((this.QsoList.length === 0) && (this.MyStation._Msg.include(StationMessage.TU ) &&
+                 (this.MyStation._Msg.include(StationMessage.MyCall) ))) 
+             for (let i=0; random.RndPoisson(this.Activity / 2)) this.Stations.AddCaller();
+         */
+        // tell callers that I finished sending
+        for (let i = this.Stations.length - 1; i >= 0; i--)
+            this.Stations[i].ProcessEvent(Station.Event.MeFinished)
     }
 
 }

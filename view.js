@@ -11,6 +11,9 @@ export class View {
       this.call = document.getElementById('call')
       this.rst = document.getElementById('rst')
       this.nr = document.getElementById('nr')
+
+      this.CallSend = false
+      this.NrSend = false
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -21,6 +24,10 @@ export class View {
         document.getElementById('rst').value = ''
         document.getElementById('nr').value = ''
         this.setFocus('call')
+
+        this.CallSend = false
+        this.NrSend = false
+        
     }
 
     sendMessage(data) {        
@@ -29,13 +36,49 @@ export class View {
 
 
     processEnter() {
-        this.sendMessage({
-            type: AudioMessage.send_his,
-            data: this.random_call
-          })        
-        this.sendMessage({
-            type: AudioMessage.send_nr,
-          })        
+        this.MustAdvance = false
+
+        // send CQ if call is empty
+        if (this.call.value === '')
+            this.sendMessage({
+                type: AudioMessage.send_cq
+            })
+
+        let C = this.CallSend
+        let N = this.NrSend
+        let R = this.nr.value !== ''
+
+        if (!C || (!N && !R)) {
+            this.CallSend = true
+            this.sendMessage({
+                type: AudioMessage.send_his,
+                data: this.random_call
+            }) 
+        }   
+        if (!N) {
+            this.NrSend = true
+            this.sendMessage({
+                type: AudioMessage.send_nr
+            })  
+        }
+        // send ?            
+        if (N && !R) 
+            this.sendMessage({
+                type: AudioMessage.send_qm
+            })        
+
+
+        if (R && (C || N)) {            
+            this.sendMessage({
+                type: AudioMessage.send_tu
+            })   
+//              Log.SaveQso
+            }
+            else
+             this.MustAdvance = true 
+
+
+
 
     }
 
