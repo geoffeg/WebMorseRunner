@@ -11,6 +11,7 @@ export class DxStation extends Station {
     this.MyCall = call
     this.HisCall = DEFAULT.CALL
     this.Oper = new DxOperator(this.MyCall)
+    this.Oper.Skills = 1 + Math.random() * 2;
     this.Oper._SetState(OperatorState.NeedPrevEnd)
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR

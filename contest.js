@@ -1,4 +1,4 @@
-import { DEFAULT, StationMessage, RunMode, AudioMessage } from "./defaults.js"
+import { DEFAULT, StationMessage, RunMode, AudioMessage, OperatorState } from "./defaults.js"
 import { Modulator } from "./modulator.js"
 import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
@@ -76,6 +76,9 @@ export class Contest {
                 this._MyStation.HisCall = message.data
                 this._MyStation.SendMsg(StationMessage.HisCall)
                 break
+            case AudioMessage.send_cq:
+                this._MyStation.SendMsg(StationMessage.CQ)
+                break
             case AudioMessage.send_nr:
                 this._MyStation.SendMsg(StationMessage.NR)
                 break
@@ -134,7 +137,18 @@ export class Contest {
 
         //timer tick
         this._MyStation.Tick()
-        for (let Stn = this.Stations.length - 1; Stn >= 0; Stn--) this.Stations[Stn].Tick()
+
+
+        this.Stations = this.Stations.filter((Stn) => {
+            return Stn.Oper.State !== OperatorState.Done
+        })
+        this._dx_count = this.Stations.length
+
+        for (let Stn = this.Stations.length - 1; Stn >= 0; Stn--) {
+            this.Stations[Stn].Tick()
+        }
+
+
 
         if (this._dx_count === 0) {
             this.post({

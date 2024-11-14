@@ -12,6 +12,8 @@ export class View {
       this.rst = document.getElementById('rst')
       this.nr = document.getElementById('nr')
 
+
+      this.prev_call = ''
       this.CallSend = false
       this.NrSend = false
     }
@@ -36,23 +38,26 @@ export class View {
 
 
     processEnter() {
+        let new_call = this.call.value.toUpperCase()
         this.MustAdvance = false
 
         // send CQ if call is empty
-        if (this.call.value === '')
+        if (this.call.value === '') {
             this.sendMessage({
                 type: AudioMessage.send_cq
             })
-
+            return
+        }
         let C = this.CallSend
         let N = this.NrSend
         let R = this.nr.value !== ''
 
         if (!C || (!N && !R)) {
             this.CallSend = true
+            this.prev_call = new_call
             this.sendMessage({
                 type: AudioMessage.send_his,
-                data: this.random_call
+                data: new_call
             }) 
         }   
         if (!N) {
@@ -85,7 +90,10 @@ export class View {
 
     functionKey() {
         document.getElementById('input').addEventListener("keydown", (e) => {
-         //   console.log(e.code)
+            if (this.call.value.toUpperCase() !== this.prev_call) {
+                this.prev_call = ''
+                this.CallSend = false
+            }
             if (e.code === 'Enter') {
                this.processEnter()
             }

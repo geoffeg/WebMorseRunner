@@ -253,7 +253,7 @@ export class DxOperator {
                 else return StationMessage.MyCallNr2
                 break
             case OperatorState.NeedCallNr:
-                if ((DEFAULT.RUNMODE === RunMode.Hst) || (MAth.random() > 0.5))
+                if ((DEFAULT.RUNMODE === RunMode.Hst) || (Math.random() > 0.5))
                     return StationMessage.DeMyCall1
                 else return StationMessage.DeMyCall2
                 break
