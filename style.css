@@ -57,7 +57,7 @@ button {
 }
 
 .block {
-  margin: 30px;
+  margin: 15px;
 }
 
 input,
@@ -68,4 +68,18 @@ label {
 .setclear {
   clear: both;
   margin-bottom: 1em;
+}
+
+#log {
+  font-family: 'Courier New', monospace;
+  height: 150px;  
+  overflow-y: auto;
+  display: inline-block;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 2;  
+  background-color: black;
 }

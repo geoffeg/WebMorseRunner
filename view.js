@@ -1,5 +1,6 @@
 import { Calls } from "./call.js"
 import { DEFAULT, AudioMessage } from "./defaults.js"
+import { Log } from "./log.js"
 
 export class View {
     constructor() {
@@ -161,6 +162,11 @@ export class View {
 
 
     onLoad() {
+
+
+      let log = new Log()
+      log.addEntry()
+        
       this.functionKey()
       this.wipeFields()
       this.numberFields()
