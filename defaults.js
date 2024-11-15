@@ -4,8 +4,11 @@ export const AudioMessage = {
   send_his: 'send_his',
   send_nr: 'send_nr',
   send_tu: 'send_tu',
-  send_qu: 'send_qm', 
+  send_qm: 'send_qm', 
   send_cq: 'send_cq',   
+  send_my: 'send_my',   
+  send_b4: 'send_b4',  
+  send_nil: 'send_nil',        
   create_dx: 'create_dx',
   advance: 'advance'
 

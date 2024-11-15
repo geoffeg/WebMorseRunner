@@ -88,6 +88,15 @@ export class Contest {
             case AudioMessage.send_qm:
                 this._MyStation.SendMsg(StationMessage.Qm)
                 break
+            case AudioMessage.send_my:
+                this._MyStation.SendMsg(StationMessage.MyCall)
+                break
+            case AudioMessage.send_b4:
+                this._MyStation.SendMsg(StationMessage.B4)
+                break
+            case AudioMessage.send_nil:
+                this._MyStation.SendMsg(StationMessage.Nil)
+                break
             default:
                 console.log('ERROR: Unknown: ', message)
         }

@@ -73,7 +73,7 @@ export class DxStation extends Station {
               if (Tst._MyStation._Msg.includes(StationMessage.CQ) ||
                 Tst._MyStation._Msg.includes(StationMessage.TU) ||
                 Tst._MyStation._Msg.includes(StationMessage.Nil))
-                this.Oper.MsgReceived(Tst.MyCall._Msg)
+                this.Oper.MsgReceived(Tst._MyStation._Msg)
               else this.Oper.MsgReceived([StationMessage.Garbage])
               break
           }

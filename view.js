@@ -4,25 +4,24 @@ import { Log } from "./log.js"
 
 export class View {
     constructor() {
-      this.running = false
-      this.ContestNode = null      
-      this.calls = new Calls()
-      this.calls.fetch_calls()      
-      this.MustAdvance = true
-      this.call = document.getElementById('call')
-      this.rst = document.getElementById('rst')
-      this.nr = document.getElementById('nr')
+        this.running = false
+        this.ContestNode = null
+        this.calls = new Calls()
+        this.calls.fetch_calls()
+        this.MustAdvance = true
+        this.call = document.getElementById('call')
+        this.rst = document.getElementById('rst')
+        this.nr = document.getElementById('nr')
 
-
-      this.prev_call = ''
-      this.CallSend = false
-      this.NrSend = false
+        this.prev_call = ''
+        this.CallSend = false
+        this.NrSend = false
     }
     setFocus(id) {
         document.getElementById(id).focus();
     }
 
-    wipeFields(){
+    wipeFields() {
         document.getElementById('call').value = ''
         document.getElementById('rst').value = ''
         document.getElementById('nr').value = ''
@@ -30,11 +29,11 @@ export class View {
 
         this.CallSend = false
         this.NrSend = false
-        
+
     }
 
-    sendMessage(data) {        
-        this.ContestNode.port.postMessage(data)        
+    sendMessage(data) {
+        this.ContestNode.port.postMessage(data)
     }
 
 
@@ -59,48 +58,97 @@ export class View {
             this.sendMessage({
                 type: AudioMessage.send_his,
                 data: new_call
-            }) 
-        }   
+            })
+        }
         if (!N) {
             this.NrSend = true
             this.sendMessage({
                 type: AudioMessage.send_nr
-            })  
+            })
         }
         // send ?            
-        if (N && !R) 
+        if (N && !R)
             this.sendMessage({
                 type: AudioMessage.send_qm
-            })        
+            })
 
 
-        if (R && (C || N)) {            
+        if (R && (C || N)) {
             this.sendMessage({
                 type: AudioMessage.send_tu
-            })   
-//              Log.SaveQso
-                this.wipeFields()
-            }
-            else
-             this.MustAdvance = true 
-
-
-
-
+            })
+            //              Log.SaveQso
+            this.wipeFields()
+        }
+        else
+            this.MustAdvance = true
     }
 
     functionKey() {
         document.getElementById('input').addEventListener("keydown", (e) => {
+            //           console.log(e.code)
             if (this.call.value.toUpperCase() !== this.prev_call) {
                 this.prev_call = ''
                 this.CallSend = false
             }
-            if (e.code === 'Enter') {
-               this.processEnter()
+            switch (e.code) {
+                case 'Enter':
+                    this.processEnter()
+                    break
+                case 'F1':
+                    this.sendMessage({
+                        type: AudioMessage.send_cq
+                    })
+                    break
+                case 'F2':
+                    this.sendMessage({
+                        type: AudioMessage.send_nr
+                    })
+                    break
+                case 'F3':
+                    this.sendMessage({
+                        type: AudioMessage.send_tu
+                    })
+                    break
+                case 'F4':
+                    this.sendMessage({
+                        type: AudioMessage.send_my
+                    })
+                    break
+                case 'F5':
+                    this.sendMessage({
+                        type: AudioMessage.send_my
+                    })
+                    break
+                case 'F6':
+                    this.sendMessage({
+                        type: AudioMessage.send_b4,
+                    })
+                    break
+                case 'F6':
+                    this.sendMessage({
+                        type: AudioMessage.send_his,
+                        data: this.His
+                    })
+                    break
+                case 'F7':
+                    this.sendMessage({
+                        type: AudioMessage.send_qm,                    
+                    })
+                    break
+                case 'F8':
+                    this.sendMessage({
+                        type: AudioMessage.send_nil,
+                    })
+                    break
             }
-        });
-    } 
-    
+        })
+    }
+
+    get His() {
+        return this.call.value.toUpperCase()
+    }
+
     numberFields() {
         var nr_input = document.querySelectorAll('.NR')
         Array.from(nr_input).forEach(input => {
@@ -114,17 +162,17 @@ export class View {
                 }
                 return
             })
-        })    
+        })
     }
 
     advance() {
-       if (!this.MustAdvance) return    
-       if (this.rst.value === '') this.rst.value = 599
+        if (!this.MustAdvance) return
+        if (this.rst.value === '') this.rst.value = 599
 
-       if (this.call.value.indexOf('?') === -1) {
-        this.setFocus('nr')
-       }
-       this.MustAdvance = false
+        if (this.call.value.indexOf('?') === -1) {
+            this.setFocus('nr')
+        }
+        this.MustAdvance = false
     }
 
 
@@ -164,34 +212,44 @@ export class View {
     onLoad() {
 
 
-      let log = new Log()
-      log.addEntry()
-        
-      this.functionKey()
-      this.wipeFields()
-      this.numberFields()
- 
-      const start_button = document.getElementById("start")
-      start_button.onclick = async () => {
-        this.startContest()
-      }
+        let log = new Log()
+        log.addEntry()
 
-      const debug_button = document.getElementById("debug")
-      debug_button.onclick = async () => {
-          let MyContest = new Contest(DEFAULT.RATE)
-          let result = new Float32Array(DEFAULT.RATE * 60 * 2)
-          MyContest.getBlock(result)
-          const debug_button = document.getElementById("debug")
-          debug_button.style.backgroundColor = "red"
-      }
-      const cq_button = document.getElementById("cq")
-      cq_button.onclick = async () => {
-          ContestNode.port.postMessage({
-              type: "send",
-              text: "CQ"
-          })
-  
-      }
+        const send_buttons = document.querySelectorAll('.send button')
+        send_buttons.forEach((button) => {
+            button.addEventListener("mousedown", (e) => {
+                // avoid loosing focus of input fields 
+                e.preventDefault()
+            })
+        })
+
+
+        this.functionKey()
+        this.wipeFields()
+        this.numberFields()
+
+        const start_button = document.getElementById("start")
+        start_button.onclick = async () => {
+            this.startContest()
+        }
+        /*
+                const debug_button = document.getElementById("debug")
+                debug_button.onclick = async () => {
+                    let MyContest = new Contest(DEFAULT.RATE)
+                    let result = new Float32Array(DEFAULT.RATE * 60 * 2)
+                    MyContest.getBlock(result)
+                    const debug_button = document.getElementById("debug")
+                    debug_button.style.backgroundColor = "red"
+                }
+                const cq_button = document.getElementById("cq")
+                cq_button.onclick = async () => {
+                    ContestNode.port.postMessage({
+                        type: "send",
+                        text: "CQ"
+                    })
+        
+                }
+        */
 
     }
 
