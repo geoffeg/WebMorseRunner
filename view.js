@@ -33,7 +33,7 @@ export class View {
     }
 
     sendMessage(data) {
-        this.ContestNode.port.postMessage(data)
+        if (this.ContestNode) this.ContestNode.port.postMessage(data)
     }
 
 

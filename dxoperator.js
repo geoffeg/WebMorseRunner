@@ -195,7 +195,7 @@ export class DxOperator {
         if (AMsg.includes(StationMessage.TU)) {
             switch (this.State) {
                 case OperatorState.NeedPrevEnd:
-                    this._SetState(osNeedQso)
+                    this._SetState(OperatorState.NeedQso)
                     break
                 case OperatorState.NeedEnd:
                     this.State = OperatorState.Done
