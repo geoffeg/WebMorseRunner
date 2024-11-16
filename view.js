@@ -15,7 +15,7 @@ export class View {
 
         this.prev_call = ''
         this.CallSend = false
-        this.NrSend = false        
+        this.NrSend = false
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -108,18 +108,13 @@ export class View {
                 break
             case 'F5':
                 this.sendMessage({
-                    type: AudioMessage.send_my
+                    type: AudioMessage.send_his,
+                    data: this.His
                 })
                 break
             case 'F6':
                 this.sendMessage({
                     type: AudioMessage.send_b4,
-                })
-                break
-            case 'F6':
-                this.sendMessage({
-                    type: AudioMessage.send_his,
-                    data: this.His
                 })
                 break
             case 'F7':
@@ -140,10 +135,9 @@ export class View {
         document.querySelector("#title").style.display = 'none'
     }
 
-    functionKey() {        
+    functionKey() {
         const send_buttons = document.querySelectorAll('.send button')
         send_buttons.forEach((button) => {
-            
             button.addEventListener("mousedown", (e) => {
                 this.startContest()
                 // avoid loosing focus of input fields 
@@ -246,10 +240,10 @@ export class View {
         this.wipeFields()
         this.numberFields()
 
-    /*    const start_button = document.getElementById("start")
-        start_button.onclick = async () => {
-            this.startContest()
-        }*/
+        /*    const start_button = document.getElementById("start")
+            start_button.onclick = async () => {
+                this.startContest()
+            }*/
 
     }
 
