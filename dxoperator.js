@@ -175,7 +175,7 @@ export class DxOperator {
                 case OperatorState.NeedPrevEnd:
                     break
                 case OperatorState.NeedQso:
-                    this.State = OperatingState.NeedPrevEnd
+                    this.State = OperatorState.NeedPrevEnd
                     break
                 case OperatorState.NeedNr:
                     if (Math.random() < 0.9 /*|| RunMode = rmHst*/)

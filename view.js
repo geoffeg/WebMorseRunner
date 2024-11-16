@@ -84,6 +84,58 @@ export class View {
             this.MustAdvance = true
     }
 
+    processFunctionKey(key) {
+        switch (key) {
+            case 'F1':
+                this.sendMessage({
+                    type: AudioMessage.send_cq
+                })
+                break
+            case 'F2':
+                this.sendMessage({
+                    type: AudioMessage.send_nr
+                })
+                break
+            case 'F3':
+                this.sendMessage({
+                    type: AudioMessage.send_tu
+                })
+                break
+            case 'F4':
+                this.sendMessage({
+                    type: AudioMessage.send_my
+                })
+                break
+            case 'F5':
+                this.sendMessage({
+                    type: AudioMessage.send_my
+                })
+                break
+            case 'F6':
+                this.sendMessage({
+                    type: AudioMessage.send_b4,
+                })
+                break
+            case 'F6':
+                this.sendMessage({
+                    type: AudioMessage.send_his,
+                    data: this.His
+                })
+                break
+            case 'F7':
+                this.sendMessage({
+                    type: AudioMessage.send_qm,                    
+                })
+                break
+            case 'F8':
+                this.sendMessage({
+                    type: AudioMessage.send_nil,
+                })
+                break
+        }
+
+    }
+
     functionKey() {
         document.getElementById('input').addEventListener("keydown", (e) => {
             //           console.log(e.code)
@@ -95,53 +147,9 @@ export class View {
                 case 'Enter':
                     this.processEnter()
                     break
-                case 'F1':
-                    this.sendMessage({
-                        type: AudioMessage.send_cq
-                    })
-                    break
-                case 'F2':
-                    this.sendMessage({
-                        type: AudioMessage.send_nr
-                    })
-                    break
-                case 'F3':
-                    this.sendMessage({
-                        type: AudioMessage.send_tu
-                    })
-                    break
-                case 'F4':
-                    this.sendMessage({
-                        type: AudioMessage.send_my
-                    })
-                    break
-                case 'F5':
-                    this.sendMessage({
-                        type: AudioMessage.send_my
-                    })
-                    break
-                case 'F6':
-                    this.sendMessage({
-                        type: AudioMessage.send_b4,
-                    })
-                    break
-                case 'F6':
-                    this.sendMessage({
-                        type: AudioMessage.send_his,
-                        data: this.His
-                    })
-                    break
-                case 'F7':
-                    this.sendMessage({
-                        type: AudioMessage.send_qm,                    
-                    })
-                    break
-                case 'F8':
-                    this.sendMessage({
-                        type: AudioMessage.send_nil,
-                    })
-                    break
-            }
+                default:
+                    this.processFunctionKey(e.code)  
+            }    
         })
     }
 
@@ -219,6 +227,7 @@ export class View {
         send_buttons.forEach((button) => {
             button.addEventListener("mousedown", (e) => {
                 // avoid loosing focus of input fields 
+                this.processFunctionKey(e.target.id)
                 e.preventDefault()
             })
         })
