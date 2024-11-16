@@ -15,7 +15,7 @@ export class View {
 
         this.prev_call = ''
         this.CallSend = false
-        this.NrSend = false
+        this.NrSend = false        
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -124,7 +124,7 @@ export class View {
                 break
             case 'F7':
                 this.sendMessage({
-                    type: AudioMessage.send_qm,                    
+                    type: AudioMessage.send_qm,
                 })
                 break
             case 'F8':
@@ -136,9 +136,26 @@ export class View {
 
     }
 
-    functionKey() {
+    hideTitle() {
+        document.querySelector("#title").style.display = 'none'
+    }
+
+    functionKey() {        
+        const send_buttons = document.querySelectorAll('.send button')
+        send_buttons.forEach((button) => {
+            
+            button.addEventListener("mousedown", (e) => {
+                this.startContest()
+                // avoid loosing focus of input fields 
+                this.processFunctionKey(e.target.id)
+                e.preventDefault()
+            })
+        })
+
+
+
         document.getElementById('input').addEventListener("keydown", (e) => {
-            //           console.log(e.code)
+            this.startContest()
             if (this.call.value.toUpperCase() !== this.prev_call) {
                 this.prev_call = ''
                 this.CallSend = false
@@ -148,8 +165,8 @@ export class View {
                     this.processEnter()
                     break
                 default:
-                    this.processFunctionKey(e.code)  
-            }    
+                    this.processFunctionKey(e.code)
+            }
         })
     }
 
@@ -186,6 +203,9 @@ export class View {
 
 
     async startContest() {
+        if (this.running === true) return
+        this.hideTitle()
+        this.running = true
         this.wipeFields()
         this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
         await this.ctx.audioWorklet.addModule("contest-processor.js");
@@ -217,48 +237,19 @@ export class View {
     }
 
 
+
     onLoad() {
-
-
         let log = new Log()
         log.addEntry()
-
-        const send_buttons = document.querySelectorAll('.send button')
-        send_buttons.forEach((button) => {
-            button.addEventListener("mousedown", (e) => {
-                // avoid loosing focus of input fields 
-                this.processFunctionKey(e.target.id)
-                e.preventDefault()
-            })
-        })
-
 
         this.functionKey()
         this.wipeFields()
         this.numberFields()
 
-        const start_button = document.getElementById("start")
+    /*    const start_button = document.getElementById("start")
         start_button.onclick = async () => {
             this.startContest()
-        }
-        /*
-                const debug_button = document.getElementById("debug")
-                debug_button.onclick = async () => {
-                    let MyContest = new Contest(DEFAULT.RATE)
-                    let result = new Float32Array(DEFAULT.RATE * 60 * 2)
-                    MyContest.getBlock(result)
-                    const debug_button = document.getElementById("debug")
-                    debug_button.style.backgroundColor = "red"
-                }
-                const cq_button = document.getElementById("cq")
-                cq_button.onclick = async () => {
-                    ContestNode.port.postMessage({
-                        type: "send",
-                        text: "CQ"
-                    })
-        
-                }
-        */
+        }*/
 
     }
 
