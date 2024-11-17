@@ -1,9 +1,8 @@
 export class Log {
 
-
-
     constructor() {
-        this.data = [{
+        this.data = []
+        this.data1 = [{
             UTC: '00:00:00',
             Call: 'DJ1TF',
             RecvNr: '001',
@@ -15,6 +14,60 @@ export class Log {
 
         }
         ]
+    }
+
+    addQso(qso) {
+        this.data.push(qso)
+        this.addTable(qso)
+    }
+
+
+    static ExtractPrefix(Call) {
+        let call = Call.toUpperCase()
+        let dig = ''
+        call = call.replace(/\/QRP$/, '')
+        call = call.replace(/\/MM$/, '')
+        call = call.replace(/\/M$/, '')
+        call = call.replace(/\/P$/, '')
+
+
+        call = call.replace(/^\//, '')
+        call = call.replace(/\/$/, '')
+
+        if (call.length < 2) return ''
+        let s1 = call.replace(/\/.*$/, '')
+        let s2 = call.replace(/^.*\//, '')
+        if (/^\d$/.test(s1)) {
+            call = s2
+            dig = s1
+        } else {
+            if (/^\d$/.test(s2)) {
+                call = s1
+                dig = s2
+            } else if (s1.length <= s2.length) call = s1; else call = s2
+        }
+        if (call.indexOf('/') >= 0) return ''
+
+        call = call.replace(/[^\d]*$/, '')
+
+
+        // ensure digit
+        if (!(/^\d$/.test(call[call.length - 1] ))) call += '0'
+        // replace digit
+        if (dig.length === 1) call = call.replace( /.$/ , dig)
+
+        return call
+    }
+
+    addTable(qso) {
+        const el = document.querySelector("#log > table");
+        let row = el.insertRow(-1);
+        row.insertCell().textContent = `${qso.UTC}`
+        row.insertCell().textContent = `${qso.Call}`
+        row.insertCell().textContent = `${qso.RecvRST + ' ' + qso.RecvNr}`
+        row.insertCell().textContent = `${qso.SendRST + ' ' + qso.SendNr}`
+        row.insertCell().textContent = `${qso.Pref}`
+        row.insertCell().textContent = `${qso.Check}`
     }
 
     addEntry() {

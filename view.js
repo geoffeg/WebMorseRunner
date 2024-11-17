@@ -16,6 +16,9 @@ export class View {
         this.prev_call = ''
         this.CallSend = false
         this.NrSend = false
+
+        this.log = new Log()
+//        log.addEntry()        
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -77,7 +80,19 @@ export class View {
             this.sendMessage({
                 type: AudioMessage.send_tu
             })
-            //              Log.SaveQso
+            this.log.addQso(
+                {
+                    UTC: '00:00:00',
+                    Call: this.Call,
+                    RecvNr: String(this.Nr).padStart(3, '0'),
+                    RecvRST: String(this.Rst),
+                    SendNr: '002',
+                    SendRST: '599',
+                    Pref: Log.ExtractPrefix(this.Call),
+                    Check: 'DUP'
+        
+                }                
+            )
             this.wipeFields()
         }
         else
@@ -109,7 +124,7 @@ export class View {
             case 'F5':
                 this.sendMessage({
                     type: AudioMessage.send_his,
-                    data: this.His
+                    data: this.Call
                 })
                 break
             case 'F6':
@@ -164,9 +179,20 @@ export class View {
         })
     }
 
-    get His() {
+    get Call() {
         return this.call.value.toUpperCase()
     }
+
+    get Nr() {
+        let nr = this.nr.value
+        if (nr === '') return 0
+        return parseInt(nr)
+    }    
+    get Rst() {
+        let rst = this.rst.value
+        if (rst === '') return 599        
+        return parseInt(rst)
+    }        
 
     numberFields() {
         var nr_input = document.querySelectorAll('.NR')
@@ -233,9 +259,8 @@ export class View {
 
 
     onLoad() {
-        let log = new Log()
-        log.addEntry()
 
+      //  console.log(Log.ExtractPrefix("dj1tF/2"))
         this.functionKey()
         this.wipeFields()
         this.numberFields()

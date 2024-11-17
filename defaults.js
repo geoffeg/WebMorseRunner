@@ -8,7 +8,8 @@ export const AudioMessage = {
   send_cq: 'send_cq',   
   send_my: 'send_my',   
   send_b4: 'send_b4',  
-  send_nil: 'send_nil',        
+  send_nil: 'send_nil', 
+  qso_to_check_log: 'check_log',       
   create_dx: 'create_dx',
   advance: 'advance'
 
