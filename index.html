@@ -14,53 +14,58 @@
 
 <body>
   <!-- <h1 class="block">WebMorseRunner</h1> -->
+   <div>
   <div id="container">
-  <div class="block" id="log">
-    <table>
-      <tr>
-        <th>UTC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-        <th>Call&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-        <th>Recv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-        <th>Send&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-        <th>Prev&nbsp;</th>
-        <th>Chk&nbsp;</th>
-      </tr>
-    </table>
-  </div>
-  <div id="title">
-     <div class="large"> Web Morse Runner 0.1&alpha;</div><div> by DJ1TF - Thomas Fritzsche</div>
-  </div>
-</div>
-  <div class="block" id="input">
-    <div class="left">
-      <label for="call">Call</label>
-      <input autocomplete="off" id="call" type="text" value="" name="call" style="text-transform: uppercase">
+    <div class="block" id="log">
+      <table>
+        <tr>
+          <th>UTC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+          <th>Call&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+          <th>Recv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+          <th>Send&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+          <th>Prev&nbsp;</th>
+          <th>Chk&nbsp;</th>
+        </tr>
+      </table>
     </div>
-    <div class="left">
-      <label for="rst">RST</label>
-      <input autocomplete="off" id="rst" class="NR" maxlength="3" size="3" type="text" value="" name="rst">
+    <div id="title">
+      <div class="large"> Web Morse Runner 0.1&alpha;</div>
+      <div> by DJ1TF - Thomas Fritzsche</div>
     </div>
-    <div>
-      <label for="nr">Nr.</label>
-      <input autocomplete="off" id="nr" class="NR" maxlength="3" size="3" type="text" value="" name="nr">
+  </div></div>
+  <span  style="display: inline-block;">
+    <div class="block" id="input" >
+      <div class="left">
+        <label for="call">Call</label>
+        <input autocomplete="off" id="call" type="text" value="" name="call" style="text-transform: uppercase">
+      </div>
+      <div class="left">
+        <label for="rst">RST</label>
+        <input autocomplete="off" id="rst" class="NR" maxlength="3" size="3" type="text" value="" name="rst">
+      </div>
+      <div >
+        <label for="nr" style="display: inline;">Nr.</label>
+        <input autocomplete="off" id="nr" class="NR" maxlength="3" size="3" type="text" value="" name="nr">
+      </div>
     </div>
-  </div>
 
-  <div class="block send">
-    <div>
-      <button id="F1">F1 CQ</button>
-      <button id="F2">F2 &lt;#&gt;</button>
-      <button id="F3">F3 TU</button>
-      <button id="F4">F4 &lt;my&gt;</button>
+    <div class="block send"  >
+      <div>
+        <button id="F1">F1 CQ</button>
+        <button id="F2">F2 &lt;#&gt;</button>
+        <button id="F3">F3 TU</button>
+        <button id="F4">F4 &lt;my&gt;</button>
+      </div>
+      <div >
+        <button id="F5">F5 &lt;his&gt;</button>
+        <button id="F6">F6 B4</button>
+        <button id="F7">F7 &quest;</button>
+        <button id="F8">F8 NIL</button>
+      </div>
     </div>
-    <div>
-      <button id="F5">F5 &lt;his&gt;</button>
-      <button id="F6">F6 B4</button>
-      <button id="F7">F7 &quest;</button>
-      <button id="F8">F8 NIL</button>
-    </div>
-  </div>
-   <!--
+  </span>
+  <span id="clock">00:00:00</span>
+  <!--
   <div class="block">
     <button id="start">Run</button>
   </div>
