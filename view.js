@@ -136,6 +136,7 @@ export class View {
                 this.sendMessage({
                     type: AudioMessage.send_qm,
                 })
+                //this.stopContest()
                 break
             case 'F8':
                 this.sendMessage({
@@ -257,6 +258,17 @@ export class View {
             }
         }
         this.ContestNode.connect(this.ctx.destination);
+        this.sendMessage({
+            type: AudioMessage.start_contest
+        })        
+    }
+
+    stopContest() {
+        this.running = false
+        this.sendMessage({
+            type: AudioMessage.stop_contest
+        })         
+
     }
 
 

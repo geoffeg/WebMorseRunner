@@ -11,8 +11,9 @@ export const AudioMessage = {
   send_nil: 'send_nil', 
   qso_to_check_log: 'check_log',       
   create_dx: 'create_dx',
-  advance: 'advance'
-
+  advance: 'advance',
+  start_contest: 'start_contest',
+  stop_contest: 'stop_contest' 
 }
 
 export const StationMessage = {

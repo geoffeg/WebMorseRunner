@@ -53,6 +53,7 @@ export class Contest {
         this._dx_count = 0
         this.Stations = new Array()
         this.RitPhase = 0
+        this.running = false
     }
 
     set processor(p) {
@@ -65,6 +66,12 @@ export class Contest {
             case 'send':
                 this._MyStation.SendText(message.data)
                 break
+            case AudioMessage.start_contest:
+                this.running = true
+                break
+            case AudioMessage.stop_contest:
+                this.running = false
+                break                
             case AudioMessage.create_dx:
                 console.log("create", message.data)
                 let dx = new DxStation(message.data)
