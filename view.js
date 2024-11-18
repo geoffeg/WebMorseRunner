@@ -142,7 +142,10 @@ export class View {
                     type: AudioMessage.send_nil,
                 })
                 break
+            default:
+                return false    
         }
+        return true
 
     }
 
@@ -150,7 +153,7 @@ export class View {
         document.querySelector("#title").style.display = 'none'
     }
 
-    functionKey() {
+    sendButton() {
         const send_buttons = document.querySelectorAll('.send button')
         send_buttons.forEach((button) => {
             button.addEventListener("mousedown", (e) => {
@@ -174,7 +177,7 @@ export class View {
                     this.processEnter()
                     break
                 default:
-                    this.processFunctionKey(e.code)
+                    if(this.processFunctionKey(e.code)) e.preventDefault()
             }
         })
     }
@@ -261,7 +264,7 @@ export class View {
     onLoad() {
 
       //  console.log(Log.ExtractPrefix("dj1tF/2"))
-        this.functionKey()
+        this.sendButton()
         this.wipeFields()
         this.numberFields()
 
