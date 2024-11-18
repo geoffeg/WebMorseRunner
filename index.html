@@ -33,38 +33,36 @@
       <div> by DJ1TF - Thomas Fritzsche</div>
     </div>
   </div></div>
-  <span  style="display: inline-block;">
+  <div class="flex">
+  <div  id="low_row">
     <div class="block" id="input" >
-      <div class="left">
+      <div>
         <label for="call">Call</label>
         <input autocomplete="off" id="call" type="text" value="" name="call" style="text-transform: uppercase">
       </div>
-      <div class="left">
+      <div>
         <label for="rst">RST</label>
         <input autocomplete="off" id="rst" class="NR" maxlength="3" size="3" type="text" value="" name="rst">
       </div>
-      <div >
-        <label for="nr" style="display: inline;">Nr.</label>
+      <div>
+        <label for="nr">Nr.</label>
         <input autocomplete="off" id="nr" class="NR" maxlength="3" size="3" type="text" value="" name="nr">
       </div>
     </div>
 
-    <div class="block send"  >
-      <div>
+    <div class="block send" id="send_buttom" >
         <button id="F1">F1 CQ</button>
         <button id="F2">F2 &lt;#&gt;</button>
         <button id="F3">F3 TU</button>
         <button id="F4">F4 &lt;my&gt;</button>
-      </div>
-      <div >
         <button id="F5">F5 &lt;his&gt;</button>
         <button id="F6">F6 B4</button>
         <button id="F7">F7 &quest;</button>
         <button id="F8">F8 NIL</button>
-      </div>
     </div>
-  </span>
-  <span id="clock">00:00:00</span>
+  </div>
+  <div id="clock">00:00:00</div>
+</div>
   <!--
   <div class="block">
     <button id="start">Run</button>

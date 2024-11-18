@@ -32,7 +32,6 @@ h2 {
   background-color: rgb(28, 161, 202);
 }
 
-
 .nodisplay {
   display: none;
 }
@@ -41,7 +40,6 @@ h2 {
 button {
   background-color: gray;
   border: none;
-  margin: 3px;
   color: white;
   padding: 3px 3px;
   text-align: center;
@@ -82,7 +80,7 @@ label {
   width: 5em;
   font-size: 11pt;
   display: inline;
-  margin-right: 0px;
+ /* margin-right: 0px;*/
 }
 
 th {
@@ -128,4 +126,29 @@ th {
   font-size: 18pt;
   color: rgb(28, 161, 202);
   display: inline-block;
+}
+
+#send_buttom {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(4,1fr);
+}
+
+#input {
+  display: flex;
+  gap: 10px;
+}
+
+#low_row {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+#low_row > * {
+  flex-grow: 0;
+}
+
+.flex {
+  display: flex;
 }
