@@ -25,7 +25,7 @@ class ContestWorkletProcessor extends AudioWorkletProcessor {
         }
       }
       return true;
-    } else return true;
+    } else return false;
   }
 }
 

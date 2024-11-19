@@ -10,6 +10,10 @@ import { MyStation } from "./mystation.js"
 
 export class Contest {
     constructor() {
+      this.init()
+    }
+
+    init() {
         this.BlockNumber = 0
         this._targetRate = DEFAULT.RATE
         this._src_buffer_size = DEFAULT.BUFSIZE
@@ -60,18 +64,26 @@ export class Contest {
         this._processor = p
     }
 
+    reset() {
+
+        this._dx_count = 0
+        this.Stations = new Array()
+    }
 
     onmessage = (message) => {
         switch (message.type) {
+            /*
             case 'send':
                 this._MyStation.SendText(message.data)
-                break
-            case AudioMessage.start_contest:
+                break*/
+            case AudioMessage.start_contest:                
+                this.init()
                 this.running = true
                 break
-            case AudioMessage.stop_contest:
+            case AudioMessage.stop_contest:                
+                this.init()
                 this.running = false
-                break                
+                break
             case AudioMessage.create_dx:
                 console.log("create", message.data)
                 let dx = new DxStation(message.data)
@@ -179,24 +191,12 @@ export class Contest {
     }
 
     getBlock(block) {
-        if (this._targetRate !== DEFAULT.RATE) {
-            debugger
-            /*
-                        for (let i = 0; i < block.length; i++) {
-                            if (this._src_pos === 0) this._getSrcBlock()
-                            block[i] = this._src_buffer[Math.floor(this._src_pos)] / 32800
-                            this._src_pos += this._deltaRate
-                            if (Math.floor(this._src_pos) >= this._src_buffer.length) this._src_pos = 0
-                        }*/
-        } else {
-            for (let i = 0; i < block.length; i++) {
-                if (this._src_pos === 0) this._getSrcBlock()
-                block[i] = this._src_buffer[this._src_pos] / 32800
-                this._src_pos++
-                if (this._src_pos >= this._src_buffer.length) this._src_pos = 0
-            }
+        for (let i = 0; i < block.length; i++) {
+            if (this._src_pos === 0) this._getSrcBlock()
+            block[i] = this._src_buffer[this._src_pos] / 32800
+            this._src_pos++
+            if (this._src_pos >= this._src_buffer.length) this._src_pos = 0
         }
-
     }
 
     get Minute() {

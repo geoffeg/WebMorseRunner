@@ -12,13 +12,13 @@ export class View {
         this.call = document.getElementById('call')
         this.rst = document.getElementById('rst')
         this.nr = document.getElementById('nr')
+        this.clock = document.getElementById('clock')
 
         this.prev_call = ''
         this.CallSend = false
         this.NrSend = false
 
         this.log = new Log()
-//        log.addEntry()        
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -28,6 +28,7 @@ export class View {
         document.getElementById('call').value = ''
         document.getElementById('rst').value = ''
         document.getElementById('nr').value = ''
+
         this.setFocus('call')
 
         this.CallSend = false
@@ -82,7 +83,7 @@ export class View {
             })
             this.log.addQso(
                 {
-                    UTC: '00:00:00',
+                    UTC: this.getClock(),
                     Call: this.Call,
                     RecvNr: String(this.Nr).padStart(3, '0'),
                     RecvRST: String(this.Rst),
@@ -90,8 +91,8 @@ export class View {
                     SendRST: '599',
                     Pref: Log.ExtractPrefix(this.Call),
                     Check: 'DUP'
-        
-                }                
+
+                }
             )
             this.wipeFields()
         }
@@ -144,7 +145,7 @@ export class View {
                 })
                 break
             default:
-                return false    
+                return false
         }
         return true
 
@@ -165,8 +166,6 @@ export class View {
             })
         })
 
-
-
         document.getElementById('input').addEventListener("keydown", (e) => {
             this.startContest()
             if (this.call.value.toUpperCase() !== this.prev_call) {
@@ -178,7 +177,7 @@ export class View {
                     this.processEnter()
                     break
                 default:
-                    if(this.processFunctionKey(e.code)) e.preventDefault()
+                    if (this.processFunctionKey(e.code)) e.preventDefault()
             }
         })
     }
@@ -191,12 +190,12 @@ export class View {
         let nr = this.nr.value
         if (nr === '') return 0
         return parseInt(nr)
-    }    
+    }
     get Rst() {
         let rst = this.rst.value
-        if (rst === '') return 599        
+        if (rst === '') return 599
         return parseInt(rst)
-    }        
+    }
 
     numberFields() {
         var nr_input = document.querySelectorAll('.NR')
@@ -224,6 +223,22 @@ export class View {
         this.MustAdvance = false
     }
 
+    formatTimer(sec) {
+        let hours = Math.floor(sec / 3600)
+        let minutes = Math.floor((sec - (hours * 3600)) / 60)
+        let seconds = Math.floor(sec - (hours * 3600) - (minutes * 60))
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    }
+
+    updateTimer() {
+        if (!this.running === true) return
+        this.clock.innerText = this.getClock()
+    }
+
+    getClock() {
+        let t = this.ctx.currentTime - this.start_time
+        return this.formatTimer(t)
+    }
 
 
     async startContest() {
@@ -231,12 +246,24 @@ export class View {
         this.hideTitle()
         this.running = true
         this.wipeFields()
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
+        this.toggleRunButton()
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
+        if (this.ctx.state === "suspended") {
+            await this.ctx.resume()
+        }
+
         await this.ctx.audioWorklet.addModule("contest-processor.js");
         this.ContestNode = new AudioWorkletNode(
             this.ctx,
             "contest-processor",
         );
+
+        this.start_time = this.ctx.currentTime
+        this.updateTimer()
+        this.timer_id = window.setInterval(() => {
+            this.updateTimer()
+        }, 500)
+        console.log("time", this.start_time)
         this.ContestNode.port.onmessage = (e) => {
             console.log(e.data)
             let type = e.data.type
@@ -260,31 +287,48 @@ export class View {
         this.ContestNode.connect(this.ctx.destination);
         this.sendMessage({
             type: AudioMessage.start_contest
-        })        
+        })
+
     }
 
     stopContest() {
         this.running = false
+        this.toggleRunButton()
         this.sendMessage({
             type: AudioMessage.stop_contest
-        })         
+        })
+
+        this.ContestNode.disconnect()
+        this.ctx.suspend()
+        if (this.timer_id) window.clearInterval(this.timer_id)
+    }
+
+    toggleRunButton() {
+        if (this.running) {
+            this.run.classList.add('stop')
+            this.run.innerHTML = '&#9724; Stop'
+        } else {
+            this.run.classList.remove('stop')
+            this.run.innerHTML = '&#9654; Run'
+        }
 
     }
 
+    initRunButton() {
+        this.run = document.getElementById("run")
+        this.run.addEventListener("click",
+            (e) => {
+                if (this.running) this.stopContest(); else this.startContest()
+            }
+        )
 
+    }
 
     onLoad() {
-
-      //  console.log(Log.ExtractPrefix("dj1tF/2"))
+        this.initRunButton()
         this.sendButton()
         this.wipeFields()
         this.numberFields()
-
-        /*    const start_button = document.getElementById("start")
-            start_button.onclick = async () => {
-                this.startContest()
-            }*/
-
     }
 
 

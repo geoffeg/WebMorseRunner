@@ -70,7 +70,7 @@ label {
 
 #log {
   font-family: 'Courier New', monospace;
-  height: 150px;
+  height: 190px;
   overflow-y: auto;
   display: inline-block;
 }
@@ -132,7 +132,7 @@ th {
  /* padding: 50px 0 50px;*/
 }
 
-#send_buttom {
+#send_button {
   display: grid;
   gap: 4px;
   grid-template-columns: repeat(4,1fr);
@@ -188,19 +188,16 @@ fieldset {
   align-items: baseline;
 }
 
-#start {
-  width: 5em;
+#run {
+  width: 8em;
   height: 30px;
   background-color:darkgreen;
 }
 
-/*
-.grid_result {
-  display: grid;
-  gap: 3px; 
-  font-size: 10pt;
-  grid-template-columns: 0fr 0fr 0fr;
-}*/
+.stop {
+  background-color:darkred !important;
+}
+
 
 .grid_result {
   display: grid;
