@@ -14,7 +14,7 @@
 
 <body>
   <!-- <h1 class="block">WebMorseRunner</h1> -->
-  <div>
+  <div class="flex">
     <div id="container">
       <div class="block" id="log">
         <table>
@@ -32,6 +32,42 @@
         <div class="large"> Web Morse Runner 0.1&alpha;</div>
         <div> by DJ1TF - Thomas Fritzsche</div>
       </div>
+    </div>
+    <div>
+      <div class="grid">
+        <fieldset class="grid">
+          <legend>Station</legend>
+          <div class="flex_form">
+            <label for="my_call">Call</label>
+            <input autocomplete="off" id="my_call" size="6" name="my_call" value="DJ1TF" />
+            <div class="small_width"></div>
+            <input type="checkbox" id="qsk" name="qsk" value="K" />
+            <label for="qsk">QSK</label>
+
+          </div>
+          <div class="grid_form">
+            <label for="wpm">CW Speed</label>
+            <input autocomplete="off" id="wpm" size="4" name="wpm" value="21" />
+            <div>WPM</div>
+            <label for="pitch">Pitch</label>
+            <input autocomplete="off" id="pitch" size="4" name="pitch" value="" />
+            <div></div>
+            <label for="bandwidth">RX Bandwidth</label>
+            <input autocomplete="off" id="bandwidth" size="4" name="bandwidth" value="" />
+          </div>
+          <div class="flex_form">
+            <label for="volume">Mon. Level</label>
+            <input type="range" id="volume" name="volume" min="0" max="11" />
+          </div>
+        </fieldset>
+        <div class="flex_form">
+          <button id="start">&#9654; &#9724; Run</button>
+          <div>for</div>
+          <input autocomplete="off" id="time" size="4" name="time" value="" />
+          <label for="time">min.</label>
+        </div>
+      </div>
+
     </div>
   </div>
   <div class="flex">
@@ -62,13 +98,49 @@
         <button id="F8">F8 NIL</button>
       </div>
     </div>
-    <div id="clock">00:00:00</div>
+    <div class="box">
+      <div id="clock">00:00:00</div>
+      <table class="table_result">
+        <tr>
+          <th></th>
+          <th>Raw</th>
+          <th>Verified</th>
+        </tr>
+        <tr>
+          <td>Pts</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Mult</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Score</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>                
+      </table>
+      <!-- 
+      
+      <div class="grid_result">
+        <div></div>
+        <div>Raw</div>
+        <div>Verified</div>
+        <div>Pts</div>
+        <div></div>
+        <div></div>
+        <div>Mult</div>
+        <div></div>
+        <div></div>  
+        <div>Score</div>
+        <div></div>
+        <div></div>                        
+      </div>
+      -->
+    </div>
   </div>
-  <!--
-  <div class="block">
-    <button id="start">Run</button>
-  </div>
-  -->
   <script type="module" src="main.js"></script>
 </body>
 

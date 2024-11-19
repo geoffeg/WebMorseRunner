@@ -121,11 +121,15 @@ th {
 }
 
 #clock {
-  vertical-align: top;
-  margin: 30px;
+  vertical-align: bottom;
+  /*margin: 30px;*/
+  text-align: center;
   font-size: 18pt;
   color: rgb(28, 161, 202);
-  display: inline-block;
+ /* display: inline-block;*/
+  border-style: solid;
+  border-color: gray;
+ /* padding: 50px 0 50px;*/
 }
 
 #send_buttom {
@@ -151,4 +155,70 @@ th {
 
 .flex {
   display: flex;
+}
+
+
+legend {
+  padding: 3px 6px;
+}
+
+fieldset {
+  padding: 6px;
+}
+
+.small_width {
+  width: 1em;
+}
+
+.grid {
+  display: grid;
+  gap: 7px; 
+}
+
+
+.grid_form {
+  display: grid;
+  gap: 7px; 
+  grid-template-columns: 1fr 0fr 0fr;
+}
+
+.flex_form {
+  display: flex;
+  gap: 7px;  
+  align-items: baseline;
+}
+
+#start {
+  width: 5em;
+  height: 30px;
+  background-color:darkgreen;
+}
+
+/*
+.grid_result {
+  display: grid;
+  gap: 3px; 
+  font-size: 10pt;
+  grid-template-columns: 0fr 0fr 0fr;
+}*/
+
+.grid_result {
+  display: grid;
+  gap: 3px; 
+  font-size: 10pt;
+  grid-template-columns: 0fr 0fr 0fr;
+}
+
+.table_result {
+  font-size: 11pt;
+  border-spacing: 8px 0px;
+  gap: 30px;
+}
+
+.table_result tr td:nth-child(n+1) { 
+  text-align: right;
+}
+
+.box {
+  padding: 10px;
 }
