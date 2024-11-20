@@ -84,6 +84,9 @@ export class Contest {
                 this.init()
                 this.running = false
                 break
+            case AudioMessage.update_nr:
+                this._MyStation.NR = message.data
+                break                
             case AudioMessage.create_dx:
                 console.log("create", message.data)
                 let dx = new DxStation(message.data)

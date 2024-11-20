@@ -87,13 +87,12 @@ export class View {
                     Call: this.Call,
                     RecvNr: String(this.Nr).padStart(3, '0'),
                     RecvRST: String(this.Rst),
-                    SendNr: '002',
-                    SendRST: '599',
-                    Pref: Log.ExtractPrefix(this.Call),
-                    Check: 'DUP'
-
                 }
             )
+            this.sendMessage({
+                type: AudioMessage.update_nr,
+                data: this.log.NR
+            })
             this.wipeFields()
         }
         else
