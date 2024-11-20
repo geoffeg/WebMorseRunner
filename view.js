@@ -266,7 +266,7 @@ export class View {
         this.ContestNode.port.onmessage = (e) => {
             console.log(e.data)
             let type = e.data.type
-
+            let data = e.data.data
             switch (type) {
                 case AudioMessage.request_dx:
                     this.random_call = this.calls.get_random()
@@ -278,6 +278,9 @@ export class View {
                 case AudioMessage.advance:
                     this.advance()
                     break
+                case AudioMessage.check_log:
+                    this.log.checkQSO(data) 
+                    break;   
                 default:
                     console.log("ERROR: Unsupported message")
                     debugger;

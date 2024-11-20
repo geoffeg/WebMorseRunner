@@ -4,9 +4,9 @@ export class Calls {
     }
 
     async fetch_calls() {
-        this.calls = (await (await fetch('calls.txt')).text()).split('\n').filter(
+        this.calls = (await (await fetch('calls.txt')).text()).split('\n').map( e => e.trim()).filter(
             (c) => {
-                return c.length <= 5
+                return c.length >2 && c.length < 8
             })
     }
 

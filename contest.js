@@ -10,7 +10,7 @@ import { MyStation } from "./mystation.js"
 
 export class Contest {
     constructor() {
-      this.init()
+        this.init()
     }
 
     init() {
@@ -76,17 +76,17 @@ export class Contest {
             case 'send':
                 this._MyStation.SendText(message.data)
                 break*/
-            case AudioMessage.start_contest:                
+            case AudioMessage.start_contest:
                 this.init()
                 this.running = true
                 break
-            case AudioMessage.stop_contest:                
+            case AudioMessage.stop_contest:
                 this.init()
                 this.running = false
                 break
             case AudioMessage.update_nr:
                 this._MyStation.NR = message.data
-                break                
+                break
             case AudioMessage.create_dx:
                 console.log("create", message.data)
                 let dx = new DxStation(message.data)
@@ -169,10 +169,17 @@ export class Contest {
         //timer tick
         this._MyStation.Tick()
 
+        // Filter all the Failed Stations
+        this.Stations = this.Stations.filter((Stn) => {
+            return Stn.Oper.State !== OperatorState.Failed
+        })
 
         this.Stations = this.Stations.filter((Stn) => {
             return Stn.Oper.State !== OperatorState.Done
         })
+
+
+
         this._dx_count = this.Stations.length
 
         for (let Stn = this.Stations.length - 1; Stn >= 0; Stn--) {
@@ -226,8 +233,18 @@ export class Contest {
              for (let i=0; random.RndPoisson(this.Activity / 2)) this.Stations.AddCaller();
          */
         // tell callers that I finished sending
-        for (let i = this.Stations.length - 1; i >= 0; i--)
-            this.Stations[i].ProcessEvent(Station.Event.MeFinished)
+        for (let i = this.Stations.length - 1; i >= 0; i--) {
+            let stn = this.Stations[i]
+            stn.ProcessEvent(Station.Event.MeFinished)
+            if (stn.Oper.State === OperatorState.Done)
+                this.post({
+                    type: AudioMessage.check_log,
+                    data: {
+                        call: stn.MyCall,
+                        NR: stn.NR
+                    }
+                })
+        }
     }
 
 }

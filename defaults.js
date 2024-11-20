@@ -12,6 +12,7 @@ export const AudioMessage = {
   qso_to_check_log: 'check_log',
   update_nr: 'update_nr',       
   create_dx: 'create_dx',
+  check_log: 'check_log',
   advance: 'advance',
   start_contest: 'start_contest',
   stop_contest: 'stop_contest' 
