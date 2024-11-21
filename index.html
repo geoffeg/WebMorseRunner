@@ -39,7 +39,7 @@
           <legend>Station</legend>
           <div class="flex_form">
             <label for="my_call">Call</label>
-            <input autocomplete="off" id="my_call" size="6" name="my_call" value="DJ1TF" />
+            <input autocomplete="off" id="my_call" size="8" name="my_call" value="DJ1TF" />
             <div class="small_width"></div>
             <input type="checkbox" id="qsk" name="qsk" value="K" />
             <label for="qsk">QSK</label>
@@ -47,23 +47,49 @@
           </div>
           <div class="grid_form">
             <label for="wpm">CW Speed</label>
-            <input autocomplete="off" id="wpm" size="4" name="wpm" value="21" />
+            <input autocomplete="off" type="number" step="1" min="10" max="60" id="wpm" size="4" name="wpm" value="20" />
             <div>WPM</div>
             <label for="pitch">Pitch</label>
-            <input autocomplete="off" id="pitch" size="4" name="pitch" value="" />
+            <select autocomplete="off" id="pitch" name="pitch" selected="500">
+              <option value="300">300Hz</option>
+              <option value="350">350Hz</option>
+              <option value="400">400Hz</option>
+              <option value="450">450Hz</option>
+              <option value="500" selected>500Hz</option>
+              <option value="550">550Hz</option>
+              <option value="600">600Hz</option>
+              <option value="650">650Hz</option>
+              <option value="700">700Hz</option>
+              <option value="750">750Hz</option>
+              <option value="800">800Hz</option>
+              <option value="850">850Hz</option>
+              <option value="900">900Hz</option>              
+            </select>
             <div></div>
             <label for="bandwidth">RX Bandwidth</label>
-            <input autocomplete="off" id="bandwidth" size="4" name="bandwidth" value="" />
+            <select autocomplete="off" id="bandwidth" name="bandwidth">
+              <option value="100">100Hz</option>
+              <option value="150">150Hz</option>
+              <option value="200">200Hz</option>
+              <option value="250">250Hz</option>
+              <option value="300" selected>300Hz</option>
+              <option value="350">350Hz</option>
+              <option value="400">400Hz</option>
+              <option value="450">450Hz</option>
+              <option value="500">500Hz</option>
+              <option value="550">550Hz</option>
+              <option value="600">600Hz</option>              
+            </select>  
           </div>
           <div class="flex_form">
             <label for="volume">Mon. Level</label>
-            <input type="range" id="volume" name="volume" min="0" max="11" />
+            <input type="range" id="volume" name="volume" step="0.05" value="0.75" min="0" max=1 />
           </div>
         </fieldset>
         <div class="flex_form">
           <button id="run">&#9654; Run</button>
           <div>for</div>
-          <input autocomplete="off" id="time" size="4" name="time" value="" />
+          <input type="number" min="1" max="100" step="1" autocomplete="off" id="time" size="4" name="time" value="10" />
           <label for="time">min.</label>
         </div>
       </div>

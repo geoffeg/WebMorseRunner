@@ -1,6 +1,7 @@
 import { Calls } from "./call.js"
 import { DEFAULT, AudioMessage } from "./defaults.js"
 import { Log } from "./log.js"
+import { Config } from "./config.js"
 
 export class View {
     constructor() {
@@ -326,7 +327,24 @@ export class View {
 
     }
 
+    initConfig() {
+       this._config = new Config()    
+       this._config.update_dom()    
+       const input = document.querySelector("#volume")
+       input.addEventListener("input", (event) => {
+        let config = {
+            volume: event.target.value
+        }
+        if (this.running) 
+            this.sendMessage({
+                type: AudioMessage.config,
+                data: config
+            })
+      });
+    }
+
     onLoad() {
+        this.initConfig()
         this.initRunButton()
         this.sendButton()
         this.wipeFields()

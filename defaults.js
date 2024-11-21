@@ -15,7 +15,8 @@ export const AudioMessage = {
   check_log: 'check_log',
   advance: 'advance',
   start_contest: 'start_contest',
-  stop_contest: 'stop_contest' 
+  stop_contest: 'stop_contest',
+  config: 'config' 
 }
 
 export const StationMessage = {

@@ -58,6 +58,8 @@ export class Contest {
         this.Stations = new Array()
         this.RitPhase = 0
         this.running = false
+
+        this.Smg = 1
     }
 
     set processor(p) {
@@ -119,6 +121,12 @@ export class Contest {
             case AudioMessage.send_nil:
                 this._MyStation.SendMsg(StationMessage.Nil)
                 break
+            case AudioMessage.config: 
+            console.log(message.data.volume)
+            this.Smg = Math.pow(10, (message.data.volume - 0.75) * 4)
+            console.log(this.Smg)
+
+                break    
             default:
                 console.log('ERROR: Unknown: ', message)
         }
@@ -153,10 +161,9 @@ export class Contest {
 
         let blk = this._MyStation.GetBlock()
         if (blk && blk !== null) {
-
             for (let n = 0; n < blk.length; n++) {
-                this._src_complex_buffer.Im[n] = 0.59 * blk[n]
-                this._src_complex_buffer.Re[n] = 0.59 * blk[n]
+                this._src_complex_buffer.Im[n] = this.Smg * blk[n]
+                this._src_complex_buffer.Re[n] = this.Smg * blk[n]
             }
         }
         //  this._Filter2.Filter(ReIm)
