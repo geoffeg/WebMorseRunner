@@ -71,17 +71,7 @@ export class DxOperator {
         return result
     }
 
-    // Delay before reply, keying speed and exchange number are functions
-    // of the operator's skills      
-    GetSendDelay() {
-        let result = 0
-        if (this.State === OperatorState.NeedPrevEnd)
-            result = NEVER;
-        else if (DEFAULT.RUNMODE === RunMode.Hst) {
-            result = random.SecondsToBlocks(0.05 + 0.5 * Math.random() * 10 / this.Wpm)
-        } else result = random.SecondsToBlocks(0.1 + 0.5 * Math.random())
-        return result
-    }
+
 
     get Wpm() {
         if (DEFAULT.RUNMODE === RunMode.Hst) return DEFAULT.WPM
@@ -225,13 +215,26 @@ export class DxOperator {
         if (this.Patience < 1) this.State = OperatorState.Failed
     }
 
+    // Delay before reply, keying speed and exchange number are functions
+    // of the operator's skills      
+    GetSendDelay() {
+        let result = 0
+        if (this.State === OperatorState.NeedPrevEnd)
+            result = NEVER;
+        else if (DEFAULT.RUNMODE === RunMode.Hst) {
+            result = random.SecondsToBlocks(0.05 + 0.5 * Math.random() * 10 / this.Wpm)
+        } else result = random.SecondsToBlocks(0.1 + 0.5 * Math.random())
+      /*  if(result <= 0 || result > 200) debugger;        */
+        return result
+    }
 
     GetReplyTimeout() {
         let result = 0
         if (this.RunMode === RunMode.Hst)
-            result = random.SecondsToBlocks(60 / Wpm)
+            result = random.SecondsToBlocks(60 / this.Wpm)
         else result = random.SecondsToBlocks(6 - this.Skills)
         result = Math.round(random.RndGaussLim(result, result / 2))
+      /*  if(result <= 0 || result > 200) debugger;     */
         return result
     }
 

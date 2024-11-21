@@ -33,7 +33,7 @@ export class Station {
         this.NR = 1
         this.RST = 599
         this._Msg = new Array()
-        this.TimeOut = 0
+        this.TimeOut = Station.NEVER
       //  this.CallsFromKeyer = false
         GKeyer.rate = DEFAULT.RATE
         this.State = Station.State.Listening
@@ -173,8 +173,8 @@ export class Station {
             this.ProcessEvent(Station.Event.MsgSent)
         }
         // check timeout
-        else if (this.State !== Station.State.Sending) {
-            if (this.TimeOut > -1) this.TimeOut--
+        else if (this.State !== Station.State.Sending) {            
+            if (this.TimeOut > 0) this.TimeOut--
             if (this.TimeOut === 0) this.ProcessEvent(Station.Event.Timeout)
         }
     }
