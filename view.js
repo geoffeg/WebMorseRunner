@@ -288,8 +288,10 @@ export class View {
             }
         }
         this.ContestNode.connect(this.ctx.destination);
+        this._config.read_dom()
         this.sendMessage({
-            type: AudioMessage.start_contest
+            type: AudioMessage.start_contest,
+            data: this._config._config
         })
 
     }

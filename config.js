@@ -5,8 +5,9 @@ export class Config {
         this._volume = document.querySelector("#volume")
         this._wpm = document.querySelector("#wpm")
         this._pitch = document.querySelector("#pitch")
-        this._time = document.querySelector("#time")        
-        this._qsk = document.querySelector("#qsk")          
+        this._time = document.querySelector("#time")
+        this._qsk = document.querySelector("#qsk")
+        this._bandwidth = document.querySelector("#bandwidth")
         this._config = {
             my_call: 'DJ1TF',
             volume: 0.75,
@@ -29,14 +30,25 @@ export class Config {
     }
 
     update_dom() {
-        this._my_call.value = this._config.my_call        
+        this._my_call.value = this._config.my_call
         this._volume.value = this._config.volume
         this._wpm.value = this._config.wpm
         this._pitch.value = this._config.pitch
-        this._time.value = this._config.time        
-        this._qsk.checked = this._config.qsk          
+        this._time.value = this._config.time
+        this._qsk.checked = this._config.qsk
+        this._bandwidth.value = this._config.rx_bandwidth
+    }
+
+    read_dom() {
+        this._config.my_call = this._my_call.value.toUpperCase()
+        this._config.volume = this._volume.value
+        this._config.wpm = this._wpm.value
+        this._config.pitch = this._pitch.value
+        this._config.time = this._time.value
+        this._config.qsk = this._qsk.checked
+        this._config.rx_bandwidth = this._bandwidth.value
     }
 
 
-    
+
 }

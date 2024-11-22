@@ -60,6 +60,7 @@ export class Contest {
         this.running = false
 
         this.Smg = 1
+        this.qsk = false
     }
 
     set processor(p) {
@@ -72,6 +73,29 @@ export class Contest {
         this.Stations = new Array()
     }
 
+    updateConfig(conf) {
+      console.log(conf)
+      this._conf = conf
+
+      // update default
+      DEFAULT.CALL = conf.my_call
+      DEFAULT.WPM = conf.wpm
+      DEFAULT.PITCH = conf.pitch
+      DEFAULT.BANDWIDTH = conf.rx_bandwidth
+
+      // update MyStation
+      this._MyStation.Call = DEFAULT.CALL
+      this._MyStation.Wpm = DEFAULT.WPM
+      this._MyStation.Pitch = DEFAULT.PITCH
+      this._Modul.carrierFreq = DEFAULT.PITCH
+
+      this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)          
+      this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)      
+      
+      // update qsk setting in contest
+      this.qsk = conf.qsk
+    }
+
     onmessage = (message) => {
         switch (message.type) {
             /*
@@ -81,6 +105,7 @@ export class Contest {
             case AudioMessage.start_contest:
                 this.init()
                 this.running = true
+                this.updateConfig(message.data)
                 break
             case AudioMessage.stop_contest:
                 this.init()
@@ -160,10 +185,20 @@ export class Contest {
 
 
         let blk = this._MyStation.GetBlock()
+        let Rfg = 1
+
         if (blk && blk !== null) {
             for (let n = 0; n < blk.length; n++) {
-                this._src_complex_buffer.Im[n] = this.Smg * blk[n]
-                this._src_complex_buffer.Re[n] = this.Smg * blk[n]
+                if (this.qsk) {
+                if (Rfg > (1 - blk[n]/this._MyStation.Amplitude))
+                    Rfg = (1 - blk[n]/this._MyStation.Amplitude);
+                    else Rfg = Rfg * 0.997 + 0.003
+                    this._src_complex_buffer.Re[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Re[n]
+                    this._src_complex_buffer.Im[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Im[n];                    
+                } else {
+                    this._src_complex_buffer.Im[n] = this.Smg * blk[n]
+                    this._src_complex_buffer.Re[n] = this.Smg * blk[n]
+                }
             }
         }
         //  this._Filter2.Filter(ReIm)
