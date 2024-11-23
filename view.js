@@ -167,7 +167,8 @@ export class View {
         })
 
         document.getElementById('input').addEventListener("keydown", (e) => {
-            this.startContest()
+            if (!this.running) return
+            //this.startContest()
             if (this.call.value.toUpperCase() !== this.prev_call) {
                 this.prev_call = ''
                 this.CallSend = false
@@ -252,6 +253,7 @@ export class View {
         this.hideTitle()
         this.running = true
         this.wipeFields()
+        this.log.wipe()
         this.toggleRunButton()
         //if (!this.ctx) 
         this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
@@ -346,16 +348,6 @@ export class View {
        this._config = new Config( (conf) => { this.updateConf(conf) })    
        this._config.update_dom()    
        const input = document.querySelector("#volume")
-/*       input.addEventListener("input", (event) => {
-        let config = {
-            volume: event.target.value
-        }
-        if (this.running) 
-            this.sendMessage({
-                type: AudioMessage.config,
-                data: config
-            })
-      });*/
     }
 
     onLoad() {

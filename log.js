@@ -9,10 +9,7 @@ export class Log {
     constructor() {
         this.data = []
         this.NR = 1
-        this.Calls = new Set()
-        this.Prefix = new Set()
-        this.ConfCalls = new Set()
-        this.ConfPrefix = new Set()        
+        this.initScoreSets()      
 /*
         this.addQso({
             UTC: '00:00:00',
@@ -27,8 +24,24 @@ export class Log {
         this.ConfPrefix.add('XX1')   
         this.ConfPrefix.add('XX3')           
         this.ConfPrefix.add('X3')           
-        this.updateScore()
+        this.updateScore(
         */
+    }
+
+    initScoreSets() {
+        this.Calls = new Set()
+        this.Prefix = new Set()
+        this.ConfCalls = new Set()
+        this.ConfPrefix = new Set()            
+    }
+
+    wipe() {
+        this.data = []
+        let table = document.querySelector('#log table')
+        let row_no = table.rows.length
+        for (let i = 1; i < row_no; i++) table.deleteRow(1)
+        this.initScoreSets()
+        this.updateScore()        
     }
 
     addQso(qso) {
