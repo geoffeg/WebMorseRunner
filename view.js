@@ -232,6 +232,12 @@ export class View {
 
     updateTimer() {
         if (!this.running === true) return
+        let t = this.ctx.currentTime - this.start_time
+
+        if (t > this._config._config.time*60) {
+            this.clock.innerText = this.formatTimer(this._config._config.time*60) 
+            this.stopContest()
+        }
         this.clock.innerText = this.getClock()
     }
 
