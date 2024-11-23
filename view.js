@@ -247,7 +247,8 @@ export class View {
         this.running = true
         this.wipeFields()
         this.toggleRunButton()
-        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
+        //if (!this.ctx) 
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
         if (this.ctx.state === "suspended") {
             await this.ctx.resume()
         }
@@ -302,7 +303,7 @@ export class View {
         })
 
         this.ContestNode.disconnect()
-        this.ctx.suspend()
+        this.ctx.close()
         if (this.timer_id) window.clearInterval(this.timer_id)
     }
 

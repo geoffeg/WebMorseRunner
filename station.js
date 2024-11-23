@@ -34,7 +34,6 @@ export class Station {
         this.RST = 599
         this._Msg = new Array()
         this.TimeOut = Station.NEVER
-      //  this.CallsFromKeyer = false
         GKeyer.rate = DEFAULT.RATE
         this.State = Station.State.Listening
     }
