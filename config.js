@@ -1,6 +1,8 @@
 export class Config {
 
-    constructor() {
+    static store_key = '_WebMorseKey'
+
+    constructor(callback) {
         this._my_call = document.querySelector("#my_call")
         this._volume = document.querySelector("#volume")
         this._wpm = document.querySelector("#wpm")
@@ -8,21 +10,37 @@ export class Config {
         this._time = document.querySelector("#time")
         this._qsk = document.querySelector("#qsk")
         this._bandwidth = document.querySelector("#bandwidth")
+
+        this._callback = callback
+
+        this.all = document.querySelectorAll(".watch").forEach( 
+            d => d.addEventListener('input', e => {
+                this.update()
+            }))
+
         this._config = {
             my_call: 'DJ1TF',
             volume: 0.75,
-            wpm: 20,
+            wpm: 30,
             pitch: 500,
             rx_bandwidth: 300,
             time: 10,
             qsk: false,
         }
+        this.load()
     }
+
+    update() {
+      this.read_dom()
+      this.store()
+      this._callback(this._config)
+    }
+
     store() {
-        localStorage.setItem(config_store_key, JSON.stringify(this._config))
+        localStorage.setItem(Config.store_key, JSON.stringify(this._config))
     }
     load() {
-        let config_str = localStorage.getItem(config_store_key)
+        let config_str = localStorage.getItem(Config.store_key)
         if (config_str) {
             let conf = JSON.parse(config_str)
             if (conf) this._config = conf

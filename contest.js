@@ -74,26 +74,38 @@ export class Contest {
     }
 
     updateConfig(conf) {
-      console.log(conf)
-      this._conf = conf
+        this._conf = conf
 
-      // update default
-      DEFAULT.CALL = conf.my_call
-      DEFAULT.WPM = conf.wpm
-      DEFAULT.PITCH = conf.pitch
-      DEFAULT.BANDWIDTH = conf.rx_bandwidth
+        // MyCall
+        if (DEFAULT.CALL !== conf.my_call) {
+            DEFAULT.CALL = conf.my_call
+            this._MyStation.Call = DEFAULT.CALL
+        }
 
-      // update MyStation
-      this._MyStation.Call = DEFAULT.CALL
-      this._MyStation.Wpm = DEFAULT.WPM
-      this._MyStation.Pitch = DEFAULT.PITCH
-      this._Modul.carrierFreq = DEFAULT.PITCH
+        // WPM
+        if (DEFAULT.WPM !== conf.wpm) {
+            DEFAULT.WPM = conf.wpm
+            this._MyStation.Wpm = DEFAULT.WPM
+        }
 
-      this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)          
-      this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)      
-      
-      // update qsk setting in contest
-      this.qsk = conf.qsk
+
+        // Pitch / Bandwidth
+        if (DEFAULT.PITCH !== conf.pitch || DEFAULT.BANDWIDTH !== conf.rx_bandwidth) {
+            DEFAULT.PITCH = conf.pitch
+            DEFAULT.BANDWIDTH = conf.rx_bandwidth
+            this._MyStation.Pitch = DEFAULT.PITCH
+            this._Modul.carrierFreq = DEFAULT.PITCH
+    
+            // update filter bandwidth
+            this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
+            this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
+        }
+
+        // update qsk setting in contest
+        this.qsk = conf.qsk
+
+        // Update volume
+        this.Smg = Math.pow(10, (conf.volume - 0.75) * 4)
     }
 
     onmessage = (message) => {
@@ -115,7 +127,6 @@ export class Contest {
                 this._MyStation.NR = message.data
                 break
             case AudioMessage.create_dx:
-                console.log("create", message.data)
                 let dx = new DxStation(message.data)
                 this.Stations.push(dx)
                 this._MyStation._Msg = [StationMessage.CQ]
@@ -146,12 +157,11 @@ export class Contest {
             case AudioMessage.send_nil:
                 this._MyStation.SendMsg(StationMessage.Nil)
                 break
-            case AudioMessage.config: 
-            console.log(message.data.volume)
-            this.Smg = Math.pow(10, (message.data.volume - 0.75) * 4)
-            console.log(this.Smg)
+            case AudioMessage.config:
+                this.updateConfig(message.data)
 
-                break    
+
+                break
             default:
                 console.log('ERROR: Unknown: ', message)
         }
@@ -190,11 +200,11 @@ export class Contest {
         if (blk && blk !== null) {
             for (let n = 0; n < blk.length; n++) {
                 if (this.qsk) {
-                if (Rfg > (1 - blk[n]/this._MyStation.Amplitude))
-                    Rfg = (1 - blk[n]/this._MyStation.Amplitude);
+                    if (Rfg > (1 - blk[n] / this._MyStation.Amplitude))
+                        Rfg = (1 - blk[n] / this._MyStation.Amplitude);
                     else Rfg = Rfg * 0.997 + 0.003
                     this._src_complex_buffer.Re[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Re[n]
-                    this._src_complex_buffer.Im[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Im[n];                    
+                    this._src_complex_buffer.Im[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Im[n];
                 } else {
                     this._src_complex_buffer.Im[n] = this.Smg * blk[n]
                     this._src_complex_buffer.Re[n] = this.Smg * blk[n]

@@ -93,6 +93,7 @@ th {
 #container {
   position: relative;
   display: inline-block;
+  scrollbar-gutter: stable both-edges;
 
 }
 

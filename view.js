@@ -19,7 +19,7 @@ export class View {
         this.CallSend = false
         this.NrSend = false
 
-        this.log = new Log()
+        this.log = new Log()        
     }
     setFocus(id) {
         document.getElementById(id).focus();
@@ -263,9 +263,7 @@ export class View {
         this.timer_id = window.setInterval(() => {
             this.updateTimer()
         }, 500)
-        console.log("time", this.start_time)
         this.ContestNode.port.onmessage = (e) => {
-            console.log(e.data)
             let type = e.data.type
             let data = e.data.data
             switch (type) {
@@ -329,11 +327,19 @@ export class View {
 
     }
 
+    updateConf(conf) {
+       if (this.running)
+       this.sendMessage({
+        type: AudioMessage.config,
+        data: conf
+       })       
+    }
+
     initConfig() {
-       this._config = new Config()    
+       this._config = new Config( (conf) => { this.updateConf(conf) })    
        this._config.update_dom()    
        const input = document.querySelector("#volume")
-       input.addEventListener("input", (event) => {
+/*       input.addEventListener("input", (event) => {
         let config = {
             volume: event.target.value
         }
@@ -342,7 +348,7 @@ export class View {
                 type: AudioMessage.config,
                 data: config
             })
-      });
+      });*/
     }
 
     onLoad() {
