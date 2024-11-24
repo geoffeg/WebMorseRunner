@@ -176,6 +176,15 @@ export class View {
             switch (e.code) {
                 case 'Enter':
                     this.processEnter()
+                    e.preventDefault()
+                    break
+                case 'ArrowDown':
+                    this._config.updateRIT(-50)
+                    e.preventDefault()
+                    break
+                case 'ArrowUp':
+                    this._config.updateRIT(50)
+                    e.preventDefault()
                     break
                 default:
                     if (this.processFunctionKey(e.code)) e.preventDefault()

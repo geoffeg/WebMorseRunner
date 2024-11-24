@@ -106,6 +106,11 @@ export class Contest {
 
         // Update volume
         this.Smg = Math.pow(10, (conf.volume - 0.75) * 4)
+
+        // RIT
+        if (DEFAULT.RIT !== conf.rit) {
+            DEFAULT.RIT = conf.rit        
+        }        
     }
 
     onmessage = (message) => {

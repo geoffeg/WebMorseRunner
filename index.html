@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#000000" />
   <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
-  <title>Morse Runner</title>
+  <title>Web Morse Runner</title>
 </head>
 
 <body>
@@ -47,7 +47,8 @@
           </div>
           <div class="grid_form">
             <label for="wpm">CW Speed</label>
-            <input class="watch" autocomplete="off" type="number" step="1" min="10" max="60" id="wpm" size="4" name="wpm" value="20" />
+            <input class="watch" autocomplete="off" type="number" step="1" min="10" max="60" id="wpm" size="4"
+              name="wpm" value="20" />
             <div>WPM</div>
             <label for="pitch">Pitch</label>
             <select class="watch" autocomplete="off" id="pitch" name="pitch" selected="500">
@@ -63,7 +64,7 @@
               <option value="750">750Hz</option>
               <option value="800">800Hz</option>
               <option value="850">850Hz</option>
-              <option value="900">900Hz</option>              
+              <option value="900">900Hz</option>
             </select>
             <div></div>
             <label for="bandwidth">RX Bandwidth</label>
@@ -78,20 +79,34 @@
               <option value="450">450Hz</option>
               <option value="500">500Hz</option>
               <option value="550">550Hz</option>
-              <option value="600">600Hz</option>              
-            </select>  
+              <option value="600">600Hz</option>
+            </select>
           </div>
           <div class="flex_form">
             <label for="volume">Mon. Level</label>
-            <input class="watch" type="range" id="volume" name="volume" step="0.05" value="0.75" min="0" max=1 />
+            <input class="watch" type="range" id="volume" name="volume" step="0.05" value="0.75" min="0" max="1" />
+          </div>
+          <div class="flex_form">
+            <label for="rit">RIT</label>
+            
+            <input class="slider watch" list=ticks class="watch" type="range" id="rit" name="rit" step="50" value="0" min="-500" max="500" />
+           <!--  <datalist id=ticks>
+              <option value="-500" label="-500"></option>
+              <option value="0" label="0"></option>
+              <option value="500" label="500"></option>
+            </datalist>  -->
+          
           </div>
         </fieldset>
         <div class="flex_form">
           <button id="run">&#9654; Run</button>
           <div>for</div>
-          <input class="watch" type="number" min="1" max="100" step="1" autocomplete="off" id="time" size="4" name="time" value="10" />
+          <input class="watch" type="number" min="1" max="100" step="1" autocomplete="off" id="time" size="4"
+            name="time" value="10" />
           <label for="time">min.</label>
         </div>
+        </fieldset>
+
       </div>
 
     </div>

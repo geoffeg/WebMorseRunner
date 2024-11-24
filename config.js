@@ -10,10 +10,11 @@ export class Config {
         this._time = document.querySelector("#time")
         this._qsk = document.querySelector("#qsk")
         this._bandwidth = document.querySelector("#bandwidth")
+        this._rit = document.querySelector("#rit")
 
         this._callback = callback
 
-        this.all = document.querySelectorAll(".watch").forEach( 
+        this.all = document.querySelectorAll(".watch").forEach(
             d => d.addEventListener('input', e => {
                 this.update()
             }))
@@ -26,14 +27,21 @@ export class Config {
             rx_bandwidth: 300,
             time: 10,
             qsk: false,
+            rit: 0,
         }
         this.load()
     }
 
     update() {
-      this.read_dom()
-      this.store()
-      this._callback(this._config)
+        this.read_dom()
+        this.store()
+        this._callback(this._config)
+    }
+
+    updateRIT(x) {
+        let rit = Number(this._rit.value)
+        this._rit.value = String(rit + x)
+        this.update()
     }
 
     store() {
@@ -55,6 +63,7 @@ export class Config {
         this._time.value = this._config.time
         this._qsk.checked = this._config.qsk
         this._bandwidth.value = this._config.rx_bandwidth
+        this._rit.value = this._config.rit
     }
 
     read_dom() {
@@ -65,6 +74,7 @@ export class Config {
         this._config.time = this._time.value
         this._config.qsk = this._qsk.checked
         this._config.rx_bandwidth = this._bandwidth.value
+        this._config.rit = this._rit.value
     }
 
 
