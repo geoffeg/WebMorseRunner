@@ -228,3 +228,6 @@ fieldset {
   width: 100%;
 }
 
+#title a {
+  color: rgb(28, 161, 202);
+}
