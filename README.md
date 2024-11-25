@@ -1,9 +1,12 @@
 # Web Morse Runner
 
-A small contest simulator for the web.
+A small CW contest simulator for the web.
 
 ## About 
-This is a new written version of MorseRunner as Web-Application. 
+This is a new written version of MorseRunner as Web-Application.
+
+The app is hosted on GitHub Pages: https://fritzsche.github.io/WebMorseRunner/
+
 
 The Project is inspired by the Program [MorseRunner by VE2NEA - Alex Shovkoplyas](https://github.com/VE3NEA/MorseRunner). The Idea to start a complete new Web App Project originate from the authors previous effort to [port MorseRunner to Linux and Mac](https://github.com/fritzsche/MorseRunner).
 
@@ -11,12 +14,10 @@ The Project is inspired by the Program [MorseRunner by VE2NEA - Alex Shovkoplyas
 This project is complete new and independent of Alex project. The original MorseRunner target Windows and is developed in Pascal, while this version is complete rewritten from scratch in Javascript and targeting the usage in web browsers. 
 
 
-
-
 ## Functions
 
 * Runs in Browser using Javascript
-* Usage Web Audio API using AudioWorklet
+* Web Audio API using AudioWorklet
 * No Backend
 * Single Call Mode (yet)
 * (Complex) Noise
