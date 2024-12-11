@@ -65,7 +65,7 @@ The simulator supports ESM (Enter to Send Message), means hitting the Enter key 
 
 ## Version
 
-* 0.3-alpha (2024-12-11) Bugfix: Morse Timing fixed including correction of v0.2-alpha.
+* 0.3-alpha (2024-12-12) Bugfix: Morse Timing fixed including correction of v0.2-alpha.
 * 0.2b-alpha (2024-12-11) The changes in 0.2 cause a regression as there is a audible gap when 2 messages are send after each other. This results from over allocation. Rollback the changes from 0.2-alpha to avoid audible gaps.
 * 0.2-alpha (2024-12-11) Improvement/Bugfix: This JavaScript version used dynamic allocated Array where Pascal was using static sized Array. This is now changed to a pre-allocated Float32Array array to also improve performance to avoid unnecessary allocations in the audio buffer process. In some situations this could leave more spacing.
 * 0.1-alpha (2024-11-25) initial public release.
