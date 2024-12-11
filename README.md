@@ -65,6 +65,7 @@ The simulator supports ESM (Enter to Send Message), means hitting the Enter key 
 
 ## Version
 
+* 0.2-alpha (2024-12-11) Bugfix: Thanks to feedback from DJ5CW (Fabian Kurz), I reviewed CW-Envelop creation and fixed a potential bug that could lead to spaces being too short. This JavaScript version used Dynamic allocated Array where Pascal is using static sized Array. This now changed to a pre-allocated Float32Array array to also improve performance to avoid unnecessary allocations in the audio buffer process.
 * 0.1-alpha (2024-11-25) initial public release.
 
 ## References
