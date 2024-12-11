@@ -8,7 +8,7 @@ This is a new written version of MorseRunner as Web-Application.
 The app is hosted on GitHub Pages: https://fritzsche.github.io/WebMorseRunner/
 
 
-The Project is inspired by the Program [MorseRunner by VE2NEA - Alex Shovkoplyas](https://github.com/VE3NEA/MorseRunner). The Idea to start a complete new Web App Project originate from the authors previous effort to [port MorseRunner to Linux and Mac](https://github.com/fritzsche/MorseRunner).
+The Project is inspired by the Program [MorseRunner by VE3NEA - Alex Shovkoplyas](https://github.com/VE3NEA/MorseRunner). The Idea to start a complete new Web App Project originate from the authors previous effort to [port MorseRunner to Linux and Mac](https://github.com/fritzsche/MorseRunner).
 
 
 This project is complete new and independent of Alex project. The original MorseRunner target Windows and is developed in Pascal, while this version is complete rewritten from scratch in Javascript and targeting the usage in web browsers. 
@@ -70,13 +70,13 @@ The simulator supports ESM (Enter to Send Message), means hitting the Enter key 
 * 0.1-alpha (2024-11-25) initial public release.
 
 ## References
-* [Morse Runner](https://github.com/VE3NEA/MorseRunner) (Windows/Pascal) by VE2NEA - Alex Shovkoplyas
+* [Morse Runner](https://github.com/VE3NEA/MorseRunner) (Windows/Pascal) by VE3NEA - Alex Shovkoplyas
 * [Morse Runner Community Edition](https://groups.io/g/MorseRunnerCE)
 * [Morse Runner Port](https://github.com/fritzsche/MorseRunner) (Linux/Mac) adopted by DJ1TF  - Thomas Fritzsche
 
 
 ## Thanks
-Like to thank VE2NEA Alex Shovkoplyas for his inspiring work on MorseRunner.
+Like to thank VE3NEA Alex Shovkoplyas for his inspiring work on MorseRunner.
 
 
 
