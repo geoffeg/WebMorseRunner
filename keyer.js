@@ -113,6 +113,9 @@ class Keyer {
         let p = 0
         let result = new Array()
 
+        //calc buffer size
+        let SamplesInUnit = Math.round(0.1 * this.Rate * 12 / this.Wpm);        
+
         const AddRampOn = () => {
             for (let i = 0; i < this._RampLen; i++) result[p + i] = this._RampOn[i]
             p += this._RampLen
@@ -133,8 +136,8 @@ class Keyer {
             p += Dur * SamplesInUnit - this._RampLen
         }
 
-        for (let i = 0; i < this._MorseMsg; i++) {
-            switch (this._MorseMsg[i]) {
+        for (let i = 0; i < this.MorseMsg.length; i++) {
+            switch (this.MorseMsg[i]) {
                 case '.': UnitCnt += 2
                     break
                 case '-': UnitCnt += 4
@@ -147,11 +150,11 @@ class Keyer {
             }
         }
 
-        //calc buffer size
-        let SamplesInUnit = Math.round(0.1 * this.Rate * 12 / this.Wpm);
-        //       let TrueEnvelopeLen = UnitCnt * SamplesInUnit + this._RampLen;
-        //       let Len = this.BufSize * Math.ceil(TrueEnvelopeLen / this.BufSize);       
-        result = new Array()
+
+        let TrueEnvelopeLen = UnitCnt * SamplesInUnit + this._RampLen;
+        let Len = this.BufSize * Math.ceil(TrueEnvelopeLen / this.BufSize);       
+
+        result = new Float32Array(Len)
         for (let i = 0; i < this.MorseMsg.length; i++) {
             switch (this.MorseMsg[i]) {
                 case '.':
