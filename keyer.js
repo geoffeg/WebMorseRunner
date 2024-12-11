@@ -55,8 +55,8 @@ class Keyer {
         this.Rate = DEFAULT.RATE
         this.RiseTime = 0.005
         this.FRiseTime = 0.005
-        this.Wpm = 20
-        this.BufSize = 512
+        this.Wpm = DEFAULT.WPM
+        this.BufSize = DEFAULT.BUFSIZE
         this.MorseMsg = this.Encode('DJ1TF')
         this._MakeRamp()
     }
@@ -78,83 +78,82 @@ class Keyer {
         return a0 - a1 * Math.cos(2 * Math.PI * x) + a2 * Math.cos(4 * Math.PI * x) - a3 * Math.cos(6 * Math.PI * x)
     }
 
-    _BlackmanHarrisStepResponse(Len) {
+    _BlackmanHarrisStepResponse(Length) {
         let result = new Array()
         // generate kernel
-        for (let i = 0; i < Len; i++) result.push(this._BlackmanHarrisKernel(i / Len))
+        for (let i = 0; i < Length; i++) result.push(this._BlackmanHarrisKernel(i / Length))
         // integrate
-        for (let i = 1; i < Len; i++) result[i] = result[i - 1] + result[i]
+        for (let i = 1; i < Length; i++) result[i] = result[i - 1] + result[i]
         // normalize
-        let Scale = 1 / result[Len - 1]
-        for (let i = 0; i < Len; i++) result[i] = result[i] * Scale;
+        let Scale = 1 / result[Length - 1]
+        for (let i = 0; i < Length; i++) result[i] = result[i] * Scale;
         return result
     }
 
     _MakeRamp() {
-        this._RampLen = Math.round(2.7 * this.FRiseTime * this.Rate)
-        this._RampOn = this._BlackmanHarrisStepResponse(this._RampLen)
+        this._RampLength = Math.round(2.7 * this.FRiseTime * this.Rate)
+        this._RampOn = this._BlackmanHarrisStepResponse(this._RampLength)
         this._RampOff = new Array()
-        for (let i = 0; i <= this._RampLen - 1; i++)
-            this._RampOff[this._RampLen - i - 1] = this._RampOn[i]
+        for (let i = 0; i <= this._RampLength - 1; i++)
+            this._RampOff[this._RampLength - i - 1] = this._RampOn[i]
     }
 
     Encode(Txt) {
-        let result = ''
+        let result = ''        
         for (let i = 0; i < Txt.length; i++) {
-            if (Txt[i] === ' ' || Txt[i] === '_') result = result + ' '
-            else result = result + MorseMap.get(Txt[i].toLowerCase()) + ' '
+            if (Txt[i] === ' ' || Txt[i] === '_') result += ' '
+            else result += MorseMap.get(Txt[i].toLowerCase()) + ' '
         }
-        if (result !== '') result += '~'
+        if (result !== '') result = result.substring(0, result.length-1) + '~'
         return result
     }
 
     GetEnvelope() {
-        let UnitCnt = 0
+        let UnitCount = 0
         let position = 0
-        let result = new Array()
 
         //calc buffer size
         let SamplesInUnit = Math.round(0.1 * this.Rate * 12 / this.Wpm);        
 
         const AddRampOn = () => {
-            for (let i = 0; i < this._RampLen; i++) result[position + i] = this._RampOn[i]
-            position += this._RampLen
+            for (let i = 0; i < this._RampLength; i++) result[position + i] = this._RampOn[i]
+            position += this._RampLength
         }
 
         const AddRampOff = () => {
-            for (let i = 0; i < this._RampLen; i++) result[position + i] = this._RampOff[i]
-            position += this._RampLen
+            for (let i = 0; i < this._RampLength; i++) result[position + i] = this._RampOff[i]
+            position += this._RampLength
         }
 
-        const AddOff = (Dur) => {
-            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[position + i] = 0
-            position += Dur * SamplesInUnit - this._RampLen
+        const AddOff = (Duration) => {
+            for (let i = 0; i < Duration * SamplesInUnit - this._RampLength; i++) result[position + i] = 0
+            position += Duration * SamplesInUnit - this._RampLength
         }
 
-        const AddOn = (Dur) => {
-            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[position + i] = 1
-            position += Dur * SamplesInUnit - this._RampLen
+        const AddOn = (Duration) => {
+            for (let i = 0; i < Duration * SamplesInUnit - this._RampLength; i++) result[position + i] = 1
+            position += Duration * SamplesInUnit - this._RampLength
         }
 
         for (let i = 0; i < this.MorseMsg.length; i++) {
             switch (this.MorseMsg[i]) {
-                case '.': UnitCnt += 2
+                case '.': UnitCount += 2
                     break
-                case '-': UnitCnt += 4
+                case '-': UnitCount += 4
                     break
-                case ' ': UnitCnt += 2
+                case ' ': UnitCount += 2
                     break
-                case '~': UnitCnt++
+                case '~': UnitCount++
                     break
 
             }
         }
 
 
-        let TrueEnvelopeLen = UnitCnt * SamplesInUnit + this._RampLen;
+        let TrueEnvelopeLen = UnitCount * SamplesInUnit + this._RampLength;
         let Length = this.BufSize * Math.ceil(TrueEnvelopeLen / this.BufSize);       
 
-        result = new Array() //new Float32Array(Length)
+        let result =  new Float32Array(Length) //new Array()
         for (let i = 0; i < this.MorseMsg.length; i++) {
             switch (this.MorseMsg[i]) {
                 case '.':
@@ -169,7 +168,7 @@ class Keyer {
                     AddRampOff()
                     AddOff(1)
                     break
-                case ' ': AddOff(1)
+                case ' ': AddOff(2)
                     break
                 case '~': AddOff(1)
                     break
