@@ -110,30 +110,30 @@ class Keyer {
 
     GetEnvelope() {
         let UnitCnt = 0
-        let p = 0
+        let position = 0
         let result = new Array()
 
         //calc buffer size
         let SamplesInUnit = Math.round(0.1 * this.Rate * 12 / this.Wpm);        
 
         const AddRampOn = () => {
-            for (let i = 0; i < this._RampLen; i++) result[p + i] = this._RampOn[i]
-            p += this._RampLen
+            for (let i = 0; i < this._RampLen; i++) result[position + i] = this._RampOn[i]
+            position += this._RampLen
         }
 
         const AddRampOff = () => {
-            for (let i = 0; i < this._RampLen; i++) result[p + i] = this._RampOff[i]
-            p += this._RampLen
+            for (let i = 0; i < this._RampLen; i++) result[position + i] = this._RampOff[i]
+            position += this._RampLen
         }
 
         const AddOff = (Dur) => {
-            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p + i] = 0
-            p += Dur * SamplesInUnit - this._RampLen
+            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[position + i] = 0
+            position += Dur * SamplesInUnit - this._RampLen
         }
 
         const AddOn = (Dur) => {
-            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[p + i] = 1
-            p += Dur * SamplesInUnit - this._RampLen
+            for (let i = 0; i < Dur * SamplesInUnit - this._RampLen; i++) result[position + i] = 1
+            position += Dur * SamplesInUnit - this._RampLen
         }
 
         for (let i = 0; i < this.MorseMsg.length; i++) {
@@ -152,9 +152,9 @@ class Keyer {
 
 
         let TrueEnvelopeLen = UnitCnt * SamplesInUnit + this._RampLen;
-        let Len = this.BufSize * Math.ceil(TrueEnvelopeLen / this.BufSize);       
+        let Length = this.BufSize * Math.ceil(TrueEnvelopeLen / this.BufSize);       
 
-        result = new Float32Array(Len)
+        result = new Array() //new Float32Array(Length)
         for (let i = 0; i < this.MorseMsg.length; i++) {
             switch (this.MorseMsg[i]) {
                 case '.':
