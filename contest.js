@@ -1,12 +1,12 @@
-import { DEFAULT, StationMessage, RunMode, AudioMessage, OperatorState } from "./defaults.js"
+import { AudioMessage, DEFAULT, OperatorState, RunMode, StationMessage } from "./defaults.js"
+
 import { Modulator } from "./modulator.js"
 import { Volume } from "./volume.js"
 import { MovAvg } from "./movavg.js"
 import { Station } from "./station.js"
 import { DxStation } from "./dxstation.js"
-import * as random from './random.js'
+import * as random from "./random.js"
 import { MyStation } from "./mystation.js"
-
 
 export class Contest {
     constructor() {
@@ -20,7 +20,9 @@ export class Contest {
         this._Filter1 = new MovAvg()
         //    this._Filter2 = new MovAvg()
         // setup Filter
-        this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
+        this._Filter1.points = Math.round(
+            0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH,
+        )
         this._Filter1.passes = DEFAULT.PASSES
         this._Filter1.samplesInInput = DEFAULT.BUFSIZE
         this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
@@ -33,7 +35,7 @@ export class Contest {
         this._Agc = new Volume()
         this._Agc.NoiseInDb = 76
         this._Agc.NoiseOutDb = 76
-        this._Agc.AttackSamples = Math.round(DEFAULT.RATE * 0.014)   // AGC attack 5 ms
+        this._Agc.AttackSamples = Math.round(DEFAULT.RATE * 0.014) // AGC attack 5 ms
         this._Agc.HoldSamples = Math.round(DEFAULT.RATE * 0.014)
         this._Agc.AgcEnabled = true
         // setup Modulator
@@ -48,9 +50,8 @@ export class Contest {
 
         this._src_complex_buffer = {
             Re: new Float32Array(this._src_buffer_size),
-            Im: new Float32Array(this._src_buffer_size)
+            Im: new Float32Array(this._src_buffer_size),
         }
-
 
         this._MyStation = new MyStation()
 
@@ -68,7 +69,6 @@ export class Contest {
     }
 
     reset() {
-
         this._dx_count = 0
         this.Stations = new Array()
     }
@@ -88,16 +88,20 @@ export class Contest {
             this._MyStation.Wpm = DEFAULT.WPM
         }
 
-
         // Pitch / Bandwidth
-        if (DEFAULT.PITCH !== conf.pitch || DEFAULT.BANDWIDTH !== conf.rx_bandwidth) {
+        if (
+            DEFAULT.PITCH !== conf.pitch ||
+            DEFAULT.BANDWIDTH !== conf.rx_bandwidth
+        ) {
             DEFAULT.PITCH = conf.pitch
             DEFAULT.BANDWIDTH = conf.rx_bandwidth
             this._MyStation.Pitch = DEFAULT.PITCH
             this._Modul.carrierFreq = DEFAULT.PITCH
-    
+
             // update filter bandwidth
-            this._Filter1.points = Math.round(0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH)
+            this._Filter1.points = Math.round(
+                0.7 * DEFAULT.RATE / DEFAULT.BANDWIDTH,
+            )
             this._Filter1.gainDb = 10 * Math.log10(500 / DEFAULT.BANDWIDTH)
         }
 
@@ -109,12 +113,17 @@ export class Contest {
 
         // RIT
         if (DEFAULT.RIT !== conf.rit) {
-            DEFAULT.RIT = conf.rit        
+            DEFAULT.RIT = conf.rit
         }
-        
-        // Runmode 
+
+        // Runmode
         if (DEFAULT.RUNMODE !== conf.runmode) {
             DEFAULT.RUNMODE = conf.runmode
+        }
+
+        // Band Activity
+        if (DEFAULT.ACTIVITY !== conf.activity) {
+            DEFAULT.ACTIVITY = conf.activity
         }
     }
 
@@ -137,10 +146,13 @@ export class Contest {
                 this._MyStation.NR = message.data
                 break
             case AudioMessage.create_dx:
-                let dx = new DxStation(message.data)
-                this.Stations.push(dx)
-                this._MyStation._Msg = [StationMessage.CQ]
-                dx.ProcessEvent(Station.Event.MeFinished)
+                if (DEFAULT.RUNMODE === RunMode.Single) this._MyStation._Msg = [StationMessage.CQ]
+                message.data.forEach((call) => {
+                    const dx = new DxStation(call)
+                    this.Stations.push(dx)
+                    dx.ProcessEvent(Station.Event.MeFinished)                    
+                })
+
                 break
             case AudioMessage.send_his:
                 this._MyStation.HisCall = message.data
@@ -170,12 +182,11 @@ export class Contest {
             case AudioMessage.config:
                 this.updateConfig(message.data)
 
-
                 break
             default:
-                console.log('ERROR: Unknown: ', message)
+                console.log("ERROR: Unknown: ", message)
         }
-    }
+    };
 
     _complex_noise = (complex_buffer) => {
         const noise_amp = 6000
@@ -183,7 +194,7 @@ export class Contest {
             complex_buffer.Re[i] = 3 * noise_amp * (Math.random() - 0.5)
             complex_buffer.Im[i] = 3 * noise_amp * (Math.random() - 0.5)
         }
-    }
+    };
 
     _getSrcBlock() {
         this.BlockNumber++
@@ -192,17 +203,24 @@ export class Contest {
             if (this.Stations[Stn].State === Station.State.Sending) {
                 let Blk = this.Stations[Stn].GetBlock()
                 for (let i = 0; i < Blk.length; i++) {
-                    let Bfo = this.Stations[Stn].Bfo - this.RitPhase - i * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE;
-                    this._src_complex_buffer.Re[i] = this._src_complex_buffer.Re[i] + Blk[i] * Math.cos(Bfo)
-                    this._src_complex_buffer.Im[i] = this._src_complex_buffer.Im[i] - Blk[i] * Math.sin(Bfo)
+                    let Bfo = this.Stations[Stn].Bfo - this.RitPhase -
+                        i * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE
+                    this._src_complex_buffer.Re[i] =
+                        this._src_complex_buffer.Re[i] + Blk[i] * Math.cos(Bfo)
+                    this._src_complex_buffer.Im[i] =
+                        this._src_complex_buffer.Im[i] - Blk[i] * Math.sin(Bfo)
                 }
             }
         }
         // Rit
-        this.RitPhase = this.RitPhase + DEFAULT.BUFSIZE * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE
-        while (this.RitPhase > Math.PI * 2) this.RitPhase = this.RitPhase - Math.PI * 2
-        while (this.RitPhase < -Math.PI * 2) this.RitPhase = this.RitPhase + Math.PI * 2
-
+        this.RitPhase = this.RitPhase +
+            DEFAULT.BUFSIZE * Math.PI * 2 * DEFAULT.RIT / DEFAULT.RATE
+        while (this.RitPhase > Math.PI * 2) {
+            this.RitPhase = this.RitPhase - Math.PI * 2
+        }
+        while (this.RitPhase < -Math.PI * 2) {
+            this.RitPhase = this.RitPhase + Math.PI * 2
+        }
 
         let blk = this._MyStation.GetBlock()
         let Rfg = 1
@@ -210,11 +228,13 @@ export class Contest {
         if (blk && blk !== null) {
             for (let n = 0; n < blk.length; n++) {
                 if (this.qsk) {
-                    if (Rfg > (1 - blk[n] / this._MyStation.Amplitude))
-                        Rfg = (1 - blk[n] / this._MyStation.Amplitude);
-                    else Rfg = Rfg * 0.997 + 0.003
-                    this._src_complex_buffer.Re[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Re[n]
-                    this._src_complex_buffer.Im[n] = this.Smg * blk[n] + Rfg * this._src_complex_buffer.Im[n];
+                    if (Rfg > (1 - blk[n] / this._MyStation.Amplitude)) {
+                        Rfg = 1 - blk[n] / this._MyStation.Amplitude
+                    } else Rfg = Rfg * 0.997 + 0.003
+                    this._src_complex_buffer.Re[n] = this.Smg * blk[n] +
+                        Rfg * this._src_complex_buffer.Re[n]
+                    this._src_complex_buffer.Im[n] = this.Smg * blk[n] +
+                        Rfg * this._src_complex_buffer.Im[n]
                 } else {
                     this._src_complex_buffer.Im[n] = this.Smg * blk[n]
                     this._src_complex_buffer.Re[n] = this.Smg * blk[n]
@@ -225,8 +245,6 @@ export class Contest {
         this._Filter1.Filter(this._src_complex_buffer)
         let result = this._Modul.Modulate(this._src_complex_buffer)
         result = this._Agc.Process(result)
-
-
 
         //timer tick
         this._MyStation.Tick()
@@ -240,26 +258,22 @@ export class Contest {
             return Stn.Oper.State !== OperatorState.Done
         })
 
-
-
         this._dx_count = this.Stations.length
 
         for (let Stn = this.Stations.length - 1; Stn >= 0; Stn--) {
             this.Stations[Stn].Tick()
         }
 
-
-
         if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0) {
             this.post({
-                type: 'request_dx'
+                type: "request_dx",
+                data: 1,
             })
-        //    this._dx_count++
+            //    this._dx_count++
         }
 
         // copy in this._src_buffer
         for (let i = 0; i < result.length; i++) this._src_buffer[i] = result[i]
-
     }
 
     getBlock(block) {
@@ -281,34 +295,50 @@ export class Contest {
 
     OnMeStartedSending() {
         //tell callers that I started sending
-        for (let i = this.Stations.length - 1; i >= 0; i--)
+        for (let i = this.Stations.length - 1; i >= 0; i--) {
             this.Stations[i].ProcessEvent(Station.Event.MeStarted)
+        }
     }
 
     OnMeFinishedSending() {
         //the stations heard my CQ and want to call
-        /*   if (! (DEFAULT.RUNMODE === RunMode.Single || DEFAULT.RUNMODE === RunMode.Hst)) 
-     
-             if ( MyStation._Msg.include(StationMessage.CQ)) ||
-                ((this.QsoList.length === 0) && (this.MyStation._Msg.include(StationMessage.TU ) &&
-                 (this.MyStation._Msg.include(StationMessage.MyCall) ))) 
-             for (let i=0; random.RndPoisson(this.Activity / 2)) this.Stations.AddCaller();
-         */
+        if (
+            !(DEFAULT.RUNMODE === RunMode.Single ||
+                DEFAULT.RUNMODE === RunMode.Hst)
+        ) {
+            if (
+                this._MyStation._Msg.includes(StationMessage.CQ)
+                /*  ||
+                  ((this.QsoList.length === 0) &&
+                      (this._MyStation._Msg.includes(StationMessage.TU) &&
+                          (this._MyStation._Msg.includes(StationMessage.MyCall))))*/
+            ) {
+                let number_of_calls = random.RndPoisson(DEFAULT.ACTIVITY / 2)
+                if (number_of_calls > 0) {
+                    this.post({
+                        type: "request_dx",
+                        data: number_of_calls,
+                    })
+                }
+            }
+        }
+        // for (let i=0; random.RndPoisson(this.Activity / 2)) this.Stations.AddCaller();
+
         // tell callers that I finished sending
         for (let i = this.Stations.length - 1; i >= 0; i--) {
             let stn = this.Stations[i]
             stn.ProcessEvent(Station.Event.MeFinished)
-            if (stn.Oper.State === OperatorState.Done)
+            if (stn.Oper.State === OperatorState.Done) {
                 this.post({
                     type: AudioMessage.check_log,
                     data: {
                         call: stn.MyCall,
-                        NR: stn.NR
-                    }
+                        NR: stn.NR,
+                    },
                 })
+            }
         }
     }
-
 }
 
 export const Tst = new Contest()

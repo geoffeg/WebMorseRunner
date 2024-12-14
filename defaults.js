@@ -74,4 +74,5 @@ export class DEFAULT {
     static CALL = 'DJ1TF'
     static WPM = 20
     static RIT = 0
+    static ACTIVITY = 2
 }

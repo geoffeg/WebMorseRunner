@@ -82,7 +82,7 @@ export class Config {
         this._bandwidth.value = this._config.rx_bandwidth;
         this._rit.value = this._config.rit;
         this._runmode.value = String(this._config.runmode);
-        this._activity.value = this._config.activity;
+        this._activity.value = String(this._config.activity);
         this.updatePileupFields();
     }
 
@@ -96,6 +96,6 @@ export class Config {
         this._config.rx_bandwidth = this._bandwidth.value;
         this._config.rit = this._rit.value;
         this._config.runmode = parseInt(this._runmode.value);
-        this._config.activity = this._activity.value;
+        this._config.activity = parseInt(this._activity.value);
     }
 }
