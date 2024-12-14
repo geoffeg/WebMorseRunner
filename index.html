@@ -29,9 +29,9 @@
         </table>
       </div>
       <div id="title">
-        <div class="large"> Web Morse Runner 0.3&alpha;</div>
+        <div class="large"> Web Morse Runner 0.4&alpha;</div>
         <div> by DJ1TF - Thomas Fritzsche</div>
-        <div> <a href="https://github.com/fritzsche/WebMorseRunner">GitHub</a>          
+        <div> <a href="https://github.com/fritzsche/WebMorseRunner">GitHub</a>
         </div>
       </div>
     </div>
@@ -41,7 +41,7 @@
           <legend>Station</legend>
           <div class="flex_form">
             <label for="my_call">Call</label>
-            <input class="watch" autocomplete="off" id="my_call" size="8" name="my_call" value="DJ1TF" />
+            <input class="watch no_run" autocomplete="off" id="my_call" size="8" name="my_call" value="DJ1TF" />
             <div class="small_width"></div>
             <input class="watch" type="checkbox" id="qsk" name="qsk" value="K" />
             <label for="qsk">QSK</label>
@@ -90,23 +90,36 @@
           </div>
           <div class="flex_form">
             <label for="rit">RIT</label>
-            
-            <input class="slider watch" list=ticks class="watch" type="range" id="rit" name="rit" step="50" value="0" min="-500" max="500" />
-           <!--  <datalist id=ticks>
+
+            <input class="slider watch" list=ticks class="watch" type="range" id="rit" name="rit" step="50" value="0"
+              min="-500" max="500" />
+            <!--  <datalist id=ticks>
               <option value="-500" label="-500"></option>
               <option value="0" label="0"></option>
               <option value="500" label="500"></option>
             </datalist>  -->
-          
+
           </div>
         </fieldset>
-        <div class="flex_form">
-          <button id="run">&#9654; Run</button>
-          <div>for</div>
-          <input class="watch" type="number" min="1" max="100" step="1" autocomplete="off" id="time" size="4"
-            name="time" value="10" />
-          <label for="time">min.</label>
-        </div>
+        <fieldset class="grid">
+          <legend>Contest</legend>
+          <div class="flex_form">
+            <label for="mode">Mode</label>
+            <select class="watch no_run" autocomplete="off" id="mode" name="mode">
+              <option value="single">Single Call</option>
+              <option value="pileup">Pileup</option>
+            </select>
+            <label class="pileup_only" for="activity">Activity</label>
+            <input class="watch no_run pileup_only" autocomplete="off" type="number" step="1" min="1" max="9" id="activity" size="1"
+              name="activity" value="2" />
+          </div>
+          <div class="flex_form">
+            <button id="run">&#9654; Run</button>
+            <div>for</div>
+            <input class="watch no_run" type="number" min="1" max="100" step="1" autocomplete="off" id="time" size="4"
+              name="time" value="10" />
+            <label for="time">min.</label>
+          </div>
         </fieldset>
 
       </div>
@@ -142,6 +155,7 @@
       </div>
     </div>
     <div class="box">
+      <div class="pileup_only" id="pileup">Pileup: 0</div>
       <div id="clock">00:00:00</div>
       <table class="table_result">
         <tr>

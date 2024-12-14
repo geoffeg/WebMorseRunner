@@ -256,7 +256,11 @@ export class View {
         return this.formatTimer(t)
     }
 
-
+    toggleNoRunFields() {
+    document.querySelectorAll(".no_run").forEach(
+        (f) => f.disabled = !f.disabled
+     )
+    }
     async startContest() {
         if (this.running === true) return
         this.hideTitle()
@@ -264,6 +268,7 @@ export class View {
         this.wipeFields()
         this.log.wipe()
         this.toggleRunButton()
+
         //if (!this.ctx) 
         this.ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: DEFAULT.RATE })
         if (this.ctx.state === "suspended") {
@@ -325,6 +330,7 @@ export class View {
     }
 
     toggleRunButton() {
+        this.toggleNoRunFields()
         if (this.running) {
             this.run.classList.add('stop')
             this.run.innerHTML = '&#9724; Stop'

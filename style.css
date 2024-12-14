@@ -70,7 +70,7 @@ label {
 
 #log {
   font-family: 'Courier New', monospace;
-  height: 190px;
+ /* height: 190px;*/
   overflow-y: auto;
   display: inline-block;
 }
@@ -230,4 +230,18 @@ fieldset {
 
 #title a {
   color: rgb(28, 161, 202);
+}
+
+#pileup {
+  text-align: center;  
+  color:rgb(4, 161, 4);
+}
+
+/*
+.pileup_only {
+  
+}*/
+
+.pileup_hidden {
+  display: none;
 }
