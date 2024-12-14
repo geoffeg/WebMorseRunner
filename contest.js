@@ -110,7 +110,12 @@ export class Contest {
         // RIT
         if (DEFAULT.RIT !== conf.rit) {
             DEFAULT.RIT = conf.rit        
-        }        
+        }
+        
+        // Runmode 
+        if (DEFAULT.RUNMODE !== conf.runmode) {
+            DEFAULT.RUNMODE = conf.runmode
+        }
     }
 
     onmessage = (message) => {
@@ -245,11 +250,11 @@ export class Contest {
 
 
 
-        if (this._dx_count === 0) {
+        if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0) {
             this.post({
                 type: 'request_dx'
             })
-            this._dx_count++
+        //    this._dx_count++
         }
 
         // copy in this._src_buffer

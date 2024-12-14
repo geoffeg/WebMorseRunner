@@ -245,3 +245,7 @@ fieldset {
 .pileup_hidden {
   display: none;
 }
+
+.cont_input {
+  font-size: 14pt;
+}

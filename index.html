@@ -106,8 +106,8 @@
           <div class="flex_form">
             <label for="mode">Mode</label>
             <select class="watch no_run" autocomplete="off" id="mode" name="mode">
-              <option value="single">Single Call</option>
-              <option value="pileup">Pileup</option>
+              <option value="2">Single Call</option>
+              <option value="1">Pileup</option>
             </select>
             <label class="pileup_only" for="activity">Activity</label>
             <input class="watch no_run pileup_only" autocomplete="off" type="number" step="1" min="1" max="9" id="activity" size="1"
@@ -131,15 +131,15 @@
       <div class="block" id="input">
         <div>
           <label for="call">Call</label>
-          <input autocomplete="off" id="call" type="text" value="" name="call" style="text-transform: uppercase">
+          <input autocomplete="off" id="call" class="cont_input" type="text" value="" name="call" style="text-transform: uppercase">
         </div>
         <div>
           <label for="rst">RST</label>
-          <input autocomplete="off" id="rst" class="NR" maxlength="3" size="3" type="text" value="" name="rst">
+          <input autocomplete="off" id="rst" class="cont_input NR" maxlength="3" size="3" type="text" value="" name="rst">
         </div>
         <div>
           <label for="nr">Nr.</label>
-          <input autocomplete="off" id="nr" class="NR" maxlength="3" size="3" type="text" value="" name="nr">
+          <input autocomplete="off" id="nr" class="cont_input NR" maxlength="3" size="3" type="text" value="" name="nr">
         </div>
       </div>
 

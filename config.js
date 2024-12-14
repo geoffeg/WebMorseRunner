@@ -1,3 +1,5 @@
+import { DEFAULT, RunMode } from "./defaults.js";
+
 export class Config {
     static store_key = "_WebMorseKey";
 
@@ -10,7 +12,7 @@ export class Config {
         this._qsk = document.querySelector("#qsk")
         this._bandwidth = document.querySelector("#bandwidth")
         this._rit = document.querySelector("#rit")
-        this._mode = document.querySelector("#mode")
+        this._runmode = document.querySelector("#mode")
         this._activity = document.querySelector("#activity")
         this._callback = callback;
 
@@ -30,7 +32,7 @@ export class Config {
             time: 10,
             qsk: false,
             rit: 0,
-            mode: "single",
+            runmode: RunMode.Single,
             activity: 2,
         };
         this.load();
@@ -63,7 +65,7 @@ export class Config {
     updatePileupFields() {
         document.querySelectorAll(".pileup_only").forEach(
             (e) => {
-                if (this._config.mode === "pileup") {
+                if (this._config.runmode === RunMode.Pileup) {
                     e.classList.remove("pileup_hidden");
                 } else e.classList.add("pileup_hidden");
             },
@@ -79,7 +81,7 @@ export class Config {
         this._qsk.checked = this._config.qsk;
         this._bandwidth.value = this._config.rx_bandwidth;
         this._rit.value = this._config.rit;
-        this._mode.value = this._config.mode;
+        this._runmode.value = String(this._config.runmode);
         this._activity.value = this._config.activity;
         this.updatePileupFields();
     }
@@ -93,7 +95,7 @@ export class Config {
         this._config.qsk = this._qsk.checked;
         this._config.rx_bandwidth = this._bandwidth.value;
         this._config.rit = this._rit.value;
-        this._config.mode = this._mode.value;
+        this._config.runmode = parseInt(this._runmode.value);
         this._config.activity = this._activity.value;
     }
 }
