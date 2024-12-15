@@ -322,7 +322,6 @@ export class Contest {
                           (this._MyStation._Msg.includes(StationMessage.MyCall))))
             ) {
                 let number_of_calls = random.RndPoisson(DEFAULT.ACTIVITY / 2)
-                console.log("num",number_of_calls)
                 if (number_of_calls > 0) {
                     this.post({
                         type: AudioMessage.request_dx,

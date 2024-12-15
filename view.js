@@ -14,7 +14,7 @@ export class View {
         this.rst = document.getElementById("rst")
         this.nr = document.getElementById("nr")
         this.clock = document.getElementById("clock")
-        this.pileupStations = 0
+        this._pileupStations = 0
         this.prev_call = ""
         this.CallSend = false
         this.NrSend = false
@@ -26,13 +26,21 @@ export class View {
         document.getElementById(id).focus()
     }
 
-    updatePileUp() {
+    set pileupStations(number) {
+        this._pileupStations = number
+        this._updatePileUp()
+    }
+
+    get pileupStations() {
+        return this._pileupStations
+    }
+
+    _updatePileUp() {
         if (this._config._config.runmode === RunMode.Pileup) {            
             const element = document.getElementById("pileup")
-            const txt = `Pileup: ${ this.pileupStations }`
-            console.log("txt",txt)
+            const txt = `Pileup: ${ this._pileupStations }`
             element.innerText = txt
-            if (this.pileupStations>0) element.classList.add('pileup_green'); else element.classList.remove('pileup_green')
+            if (this._pileupStations>0) element.classList.add('pileup_green'); else element.classList.remove('pileup_green')
         }
 
     }
@@ -290,7 +298,7 @@ export class View {
         this.running = true
         this.wipeFields()
         this.pileupStations = 0       
-        this.updatePileUp()           
+         
         this.log.wipe()
         this.toggleRunButton()
 
@@ -325,7 +333,6 @@ export class View {
                         type: AudioMessage.create_dx,
                         data: calls,
                     })
-                    this.updatePileUp()
                     break
                 case AudioMessage.advance:
                     this.advance()
@@ -335,7 +342,6 @@ export class View {
                     break
                 case AudioMessage.update_pileup:
                     this.pileupStations = data
-                    console.log(data)
                     break
                 default:
                     console.log("ERROR: Unsupported message")
