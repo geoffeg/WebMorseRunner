@@ -234,8 +234,11 @@ fieldset {
 
 #pileup {
   text-align: center;  
-  color:rgb(4, 161, 4);
 }
+
+.pileup_green {
+    color:rgb(4, 161, 4);
+ }
 
 /*
 .pileup_only {

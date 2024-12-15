@@ -1,5 +1,5 @@
 import { Calls } from "./call.js"
-import { AudioMessage, DEFAULT } from "./defaults.js"
+import { AudioMessage, DEFAULT, RunMode } from "./defaults.js"
 import { Log } from "./log.js"
 import { Config } from "./config.js"
 
@@ -14,15 +14,27 @@ export class View {
         this.rst = document.getElementById("rst")
         this.nr = document.getElementById("nr")
         this.clock = document.getElementById("clock")
-
+        this.pileupStations = 0
         this.prev_call = ""
         this.CallSend = false
         this.NrSend = false
 
         this.log = new Log()
+      
     }
     setFocus(id) {
         document.getElementById(id).focus()
+    }
+
+    updatePileUp() {
+        if (this._config._config.runmode === RunMode.Pileup) {            
+            const element = document.getElementById("pileup")
+            const txt = `Pileup: ${ this.pileupStations }`
+            console.log("txt",txt)
+            element.innerText = txt
+            if (this.pileupStations>0) element.classList.add('pileup_green'); else element.classList.remove('pileup_green')
+        }
+
     }
 
     wipeFields() {
@@ -277,6 +289,8 @@ export class View {
         this.hideTitle()
         this.running = true
         this.wipeFields()
+        this.pileupStations = 0       
+        this.updatePileUp()           
         this.log.wipe()
         this.toggleRunButton()
 
@@ -304,17 +318,24 @@ export class View {
             let data = e.data.data
             switch (type) {
                 case AudioMessage.request_dx:
-                    this.random_call = this.calls.get_random()
+                    let calls = new Array()
+                    for(let i=0;i<data;i++) calls.push( this.calls.get_random() )
+                    this.pileupStations += data
                     this.ContestNode.port.postMessage({
                         type: AudioMessage.create_dx,
-                        data: [ this.random_call ],
+                        data: calls,
                     })
+                    this.updatePileUp()
                     break
                 case AudioMessage.advance:
                     this.advance()
                     break
                 case AudioMessage.check_log:
                     this.log.checkQSO(data)
+                    break
+                case AudioMessage.update_pileup:
+                    this.pileupStations = data
+                    console.log(data)
                     break
                 default:
                     console.log("ERROR: Unsupported message")

@@ -249,13 +249,22 @@ export class Contest {
         //timer tick
         this._MyStation.Tick()
 
+        const all_stations = this.Stations.length
         // Filter all the Failed Stations
         this.Stations = this.Stations.filter((Stn) => {
             return Stn.Oper.State !== OperatorState.Failed
         })
 
+        // Filter all the Done Stations
         this.Stations = this.Stations.filter((Stn) => {
             return Stn.Oper.State !== OperatorState.Done
+        })
+
+        const delta = all_stations - this.Stations.length
+        
+        if (delta > 0) this.post({
+            type: AudioMessage.update_pileup,
+            data: this.Stations.length,
         })
 
         this._dx_count = this.Stations.length
@@ -266,7 +275,7 @@ export class Contest {
 
         if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0) {
             this.post({
-                type: "request_dx",
+                type: AudioMessage.request_dx,
                 data: 1,
             })
             //    this._dx_count++
@@ -307,16 +316,16 @@ export class Contest {
                 DEFAULT.RUNMODE === RunMode.Hst)
         ) {
             if (
-                this._MyStation._Msg.includes(StationMessage.CQ)
-                /*  ||
-                  ((this.QsoList.length === 0) &&
+                this._MyStation._Msg.includes(StationMessage.CQ) ||
+                  ( /*(this.QsoList.length === 0) &&*/
                       (this._MyStation._Msg.includes(StationMessage.TU) &&
-                          (this._MyStation._Msg.includes(StationMessage.MyCall))))*/
+                          (this._MyStation._Msg.includes(StationMessage.MyCall))))
             ) {
                 let number_of_calls = random.RndPoisson(DEFAULT.ACTIVITY / 2)
+                console.log("num",number_of_calls)
                 if (number_of_calls > 0) {
                     this.post({
-                        type: "request_dx",
+                        type: AudioMessage.request_dx,
                         data: number_of_calls,
                     })
                 }
