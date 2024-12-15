@@ -70,7 +70,7 @@ label {
 
 #log {
   font-family: 'Courier New', monospace;
- /* height: 190px;*/
+  height: 235px;
   overflow-y: auto;
   display: inline-block;
 }

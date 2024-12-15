@@ -41,7 +41,8 @@ export class Log {
         let row_no = table.rows.length
         for (let i = 1; i < row_no; i++) table.deleteRow(1)
         this.initScoreSets()
-        this.updateScore()        
+        this.updateScore()     
+        this.NR = 1   
     }
 
     addQso(qso) {

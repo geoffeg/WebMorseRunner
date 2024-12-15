@@ -40,15 +40,15 @@ export class DxOperator {
                 let T = M[x][y - 1]
                 //'?' can match more than one char
                 //end may be missing
-                if ((x < C.length) && (C[x] !== '?')) T += W_Y
+                if ((x <= C.length) && (C[x-1] !== '?')) T += W_Y
 
                 let L = M[x - 1][y]
                 //'?' can match no chars  
-                if (C[x] !== '?') L += W_X
+                if (C[x-1] !== '?') L += W_X
 
                 let D = M[x - 1][y - 1]
                 //'?' matches any char
-                if (!(C[x] === C0[y] || (C[x] === '?'))) D += W_D
+                if (!(C[x-1] === C0[y-1] || (C[x-1] === '?'))) D += W_D
                 M[x][y] = Math.min(T, D, L)
             }
 
@@ -64,8 +64,18 @@ export class DxOperator {
                 result = this.CallCheckResult.No
         }
 
+        // callsign-specific corrections
+        // if too short change an "almost" to "no"
+        if (C.length === 2 && result === DxOperator.CallCheckResult.Almost) 
+            result = DxOperator.CallCheckResult.No
+
+        // partial and wildcard match result in 0 penalty but are not exact matches
+        if (result === DxOperator.CallCheckResult.Yes)
+          if (C.length !== C0.length || C.indexOf('?') > -1)
+            result = DxOperator.CallCheckResult.Almost        
+
         // partial match too short
-        let no_questionmark = C.replaceAll('?', '')
+        const no_questionmark = C.replaceAll('?', '')
         if (no_questionmark.length < 2) result = this.CallCheckResult.No
 
         return result
