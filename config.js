@@ -58,7 +58,7 @@ export class Config {
         let config_str = localStorage.getItem(Config.store_key)
         if (config_str) {
             let conf = JSON.parse(config_str)
-            if (conf) this._config = conf
+            if (conf) this._config = Object.assign({}, this._config, conf)
         }
     }
 
@@ -97,5 +97,6 @@ export class Config {
         this._config.rit = this._rit.value
         this._config.runmode = parseInt(this._runmode.value)
         this._config.activity = parseInt(this._activity.value)
+        if(!this._config.activity) this._config.activity = 2
     }
 }
