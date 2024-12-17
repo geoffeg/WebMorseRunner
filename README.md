@@ -117,7 +117,7 @@ Modern operating systems however are reusing function keys for all kind of purpo
 There are different ways to activate function keys on Windows. The authors machine supported Fn-Key. Pressing Fm-Key and the "lock-symbol" key (on Esc key). Locked the Function keys permanent into place. Others describe that Bios or UEFI settings work or a Lock key using control panel.
 
 
-### Chrome and F7
+#### Chrome and F7
 In the google chrome browser the **F7** key is used to activate "Caret Browsing".
 The author of Web Morse Runner is not using Caret Browser and simply switched it of and ticked the checkbox to not ask again. Now the **F7** key is used to send the question mark.
 
