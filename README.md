@@ -43,7 +43,7 @@ This project is new and independent of Alex project. The original Morse Runner t
 ## Features not (yet) implemented
 
 * Other contest modes (no WPX / HST)
-* Bank Condition (QRM/QRN etc.)
+* Band Condition (QRM/QRN etc.)
 * WAV File Export
 * Best-List
 * Score over time
