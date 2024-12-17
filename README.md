@@ -3,7 +3,7 @@
 A small CW contest simulator for the web.
 
 ## About 
-This is a new written version of MorseRunner as Web-Application.
+This is a new written version of Morse Runner as Web-Application.
 
 The app is hosted on GitHub Pages: https://fritzsche.github.io/WebMorseRunner/
 
@@ -11,7 +11,7 @@ The app is hosted on GitHub Pages: https://fritzsche.github.io/WebMorseRunner/
 The Project is inspired by the Program [MorseRunner by VE3NEA - Alex Shovkoplyas](https://github.com/VE3NEA/MorseRunner). The Idea to start a complete new Web App Project originate from the authors previous effort to [port MorseRunner to Linux and Mac](https://github.com/fritzsche/MorseRunner).
 
 
-This project is complete new and independent of Alex project. The original MorseRunner target Windows and is developed in Pascal, while this version is complete rewritten from scratch in Javascript and targeting the usage in web browsers. 
+This project is new and independent of Alex project. The original Morse Runner target Windows and is developed in Pascal, while this version is complete rewritten from scratch in Javascript and targeting the usage in web browsers. 
 
 
 ## Functions
@@ -59,9 +59,96 @@ Start my setting the parameters, like your call sign, preferred WPM etc. and sta
 
 In **Single Call** mode stations will call you and you need to log the QSO in the fields Call/NR. If you use the **Pileup** mode you need to call CQ. Depending on the parameter "Activity" more or less stations will call back to you.
 
-Use the respective buttons or function key to respond to the stations. You need to end the QSO by sending TU. 
+Use the respective buttons or function key to respond to the stations. Find more information on the keyboard used in the section  [Keyboard](#keyboard). You need to end the QSO by sending TU. 
 
-The simulator supports ESM (Enter to Send Message), means hitting the Enter key will allow you to send messages depending on the state of the QSO.
+The simulator supports ESM (Enter to Send Message), means hitting the Enter key will allow you to send messages depending on the state of the QSO. Details on ESM can be found: [here](#esm-enter-to-send-message).
+
+As in the real world stations that are sending will not listen what you are sending. Hence you need to wait until the DX station has finished sending before you reply.
+
+## Operating systems
+Web Morse Runner is tested successful to work on **Mac**/**Windows 11** and **Linux**. 
+Main Browser is **Chrome**, but **Edge** and **Firefox** and **Safari** are also reported to work.
+Please understand that the author can not test all combinations of Operating Systems and Browsers on each change.
+
+*Usage in iOS*: the author of this project could run Web Morse Runner various iOS Devices (iPhone/iPad) using Safari and Chrome. In order to use Web Morse Runner you can connect am external BT Keyboard.
+In order to hear the sound, double check that the silent mode is not active and the volume is set. Make sure in the Energie setting that you contest is not interrupted. Instead of function key usage it might be useful to press the F1-8 buttons in Web Morse Runner to key the session active.
+
+
+## Settings
+The settings you make in Web Morse Runner will be stored the your own browsers local storage.
+
+* **Call** Your own call sign.
+* **QSK** If selected the system will very fast switch between transmit and listening, so that you can hear the band activity between each dit/dah.
+* **CW Speed** This is your sending speed. All calling stations will respond slower.
+* **Pitch** The frequency of your side tone.
+* **RX Bandwidth** The filter bandwidth applied. Do not make this value to small or you might not hear calling stations outside the filter range.
+* **Mon. Level** The volume of your own side tone. Use your system audio level to control the overall volume.
+* **RIT** The RIT value. Move slider to move RIT up/down in frequency.
+
+
+## Contest Modes
+
+Web Morse Runner supports the following contest modes:
+* **Single Call** Always one station is calling to you. No pileup and you not need to call CQ.
+* **Pileup** In this station you need to call CQ first before stations will reply. The parameter *Activity* will determine how many stations will answer in average. The number of stations calling you will be displayed over the running clock.
+
+## Pileup
+To master pileup it is helpful to pick station by station. Typically you can start with station calling on frequency that you copy the best.
+To pick a singe station you can use the question mark. 
+For example, if you enter DJ1? into the Call field and his **Enter** to send, only stations starting with DJ1 would reply.
+
+Notice that station will already recognize partial matches of their call, e.g. if you misspelled only 1-2 characters, the DX station will try to send the correct call again.
+
+
+## Keyboard
+The main usage of Web Morse Runner is via the keyboard. 
+### Function Key
+The function keys F1-F8 are used to send various messages. The assigned messages are fixed assigned and visible on the main screen. 
+Modern operating systems however are reusing function keys for all kind of purpose, e.g. to control the volume or brightness of the display. The get them working as function keys you might need to execute some settings in your operating setting or keyboard.
+
+#### macOS Ventura or later
+1) Choose Apple menu -> System Settings.
+2) Click Keyboard in the sidebar.
+3) Click the Keyboard Shortcuts button on the right.
+4) Click Function Keys in the sidebar.
+5) Turn on "Use F1, F2, etc, keys as standard function keys".
+
+#### Windows 11
+There are different ways to activate function keys on Windows. The authors machine supported Fn-Key. Pressing Fm-Key and the "lock-symbol" key (on Esc key). Locked the Function keys permanent into place. Others describe that Bios or UEFI settings work or a Lock key using control panel.
+
+
+### Chrome and F7
+In the google chrome browser the **F7** key is used to activate "Caret Browsing".
+The author of Web Morse Runner is not using Caret Browser and simply switched it of and ticked the checkbox to not ask again. Now the **F7** key is used to send the question mark.
+
+
+### Supported Keyboard Shortcuts
+
+#### ESM Enter to Send Message
+The main usage of Web Morse Runner is via ESM.
+This means after stating the contest the cursor is places automatically in the Call fields.
+
+* To call CQ you only need to press the **Enter**-Key. 
+* Once station reply, you enter the call sign into the call fields where your cursor is already located.
+* Hit **Enter** again. Web Morse Runner will send the report 599 and your running number. The cursor will be automatic advanced to the NR field.
+* Now listen and enter the number in the NR field that your curser is automatic advanced already.
+* Hit **Enter** again and Web Morse Runner will finalize the QSO by sending **TU**,
+* After the QSO is final, the fields Call, RST and NR are wiped automatically and the cursor is put into the fields Call again. So you can continue with the next QSO. 
+
+#### Other keyboard  
+
+* **TAB**: move cursor between fields Call->RST->NR. If the cursor is in the NR fields another TAB should navigate back to Call.
+* **Function Keys**
+    * **F1**: Call CQ
+    * **F2**: Send RST and Number: use it if DX station ask NR? or AGN
+    * **F3**: Send TU: used to signal end of QSO to DX station. Might be needed if station did not hear an earlier TU, while you have already logged the contact.
+    * **F4**: send your own call: in practice very rare used in Web Morse Runner.
+    * **F5**: send DX call: Very useful if station did not understand call, e.g. you doubled with the station. Send his call again to make station send RST and NR.
+    * **F6**: B4 - You qso with station before. Very rare use in Web Morse Runner.
+    * **F7**: Question mark. You did not complete got the call, a questions mark with make the other station sending you the call again.
+    * **F8**: NIL - Indicated the other station that you did not get his call. Very useful in Web Morse Runner when you already send a wrong call sign. The DX stations assumes you have QSO with somebody else and not reply to you. By sending NIL you indicated that could not pick other call, so the DX station will try to send his call again.
+* **Arrow-Up/Down** Control the RIT. Station will call you not always on the same frequency. Depending on the filter bandwidth you might not even hear the DX station, or with a very weak signal. Use the Arrow key to move the RIT up/down.
+
 
 
 ## Version
