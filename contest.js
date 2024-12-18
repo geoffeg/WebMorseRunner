@@ -7,6 +7,7 @@ import { Station } from "./station.js"
 import { DxStation } from "./dxstation.js"
 import * as random from "./random.js"
 import { MyStation } from "./mystation.js"
+import { QrnStation } from "./qrnstation.js"
 
 export class Contest {
     constructor() {
@@ -150,7 +151,7 @@ export class Contest {
                 message.data.forEach((call) => {
                     const dx = new DxStation(call)
                     this.Stations.push(dx)
-                    dx.ProcessEvent(Station.Event.MeFinished)                    
+                    dx.ProcessEvent(Station.Event.MeFinished)
                 })
 
                 break
@@ -188,17 +189,29 @@ export class Contest {
         }
     };
 
+    static noise_amp = 6000
     _complex_noise = (complex_buffer) => {
-        const noise_amp = 6000
+
         for (let i = 0; i < this._src_buffer_size; i++) {
-            complex_buffer.Re[i] = 3 * noise_amp * (Math.random() - 0.5)
-            complex_buffer.Im[i] = 3 * noise_amp * (Math.random() - 0.5)
+            complex_buffer.Re[i] = 3 * Contest.noise_amp * (Math.random() - 0.5)
+            complex_buffer.Im[i] = 3 * Contest.noise_amp * (Math.random() - 0.5)
         }
     };
 
     _getSrcBlock() {
         this.BlockNumber++
         this._complex_noise(this._src_complex_buffer)
+
+        // QRN
+        if (DEFAULT.QRN) {
+            // background
+            for (let i = 0; i < this._src_complex_buffer.Re.length; i++)
+                if (Math.random() < 0.01) this._src_complex_buffer.Re[i] = 60 * Contest.noise_amp * (Math.random() - 0.5)
+            //burst
+            if (Math.random() < 0.01) this.Stations.push(new QrnStation())
+                
+        }
+
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
             if (this.Stations[Stn].State === Station.State.Sending) {
                 let Blk = this.Stations[Stn].GetBlock()
@@ -250,21 +263,21 @@ export class Contest {
         this._MyStation.Tick()
 
         const all_stations = this.Stations.length
-        // Filter all the Failed Stations
+        // Filter all Dane and Failed Stations
         this.Stations = this.Stations.filter((Stn) => {
-            return Stn.Oper.State !== OperatorState.Failed
+            return !Stn.isDone()
         })
 
-        // Filter all the Done Stations
+/*        // Filter all the Done Stations
         this.Stations = this.Stations.filter((Stn) => {
-            return Stn.Oper.State !== OperatorState.Done
+            return !(Stn instanceof DxStation)  || Stn.Oper.State !== OperatorState.Done
         })
-
+*/
         const delta = all_stations - this.Stations.length
-        
+
         if (delta > 0) this.post({
             type: AudioMessage.update_pileup,
-            data: this.Stations.length,
+            data: this.countDXStations(),
         })
 
         this._dx_count = this.Stations.length
@@ -309,6 +322,13 @@ export class Contest {
         }
     }
 
+    countDXStations() {
+        let result = 0
+        for(let i=0;i<this.Stations.length;i++)
+            if (this.Stations[i] instanceof DxStation) result++
+        return result
+    }
+
     OnMeFinishedSending() {
         //the stations heard my CQ and want to call
         if (
@@ -317,9 +337,9 @@ export class Contest {
         ) {
             if (
                 this._MyStation._Msg.includes(StationMessage.CQ) ||
-                  ( /*(this.QsoList.length === 0) &&*/
-                      (this._MyStation._Msg.includes(StationMessage.TU) &&
-                          (this._MyStation._Msg.includes(StationMessage.MyCall))))
+                ( /*(this.QsoList.length === 0) &&*/
+                    (this._MyStation._Msg.includes(StationMessage.TU) &&
+                        (this._MyStation._Msg.includes(StationMessage.MyCall))))
             ) {
                 let number_of_calls = random.RndPoisson(DEFAULT.ACTIVITY / 2)
                 if (number_of_calls > 0) {
@@ -336,7 +356,7 @@ export class Contest {
         for (let i = this.Stations.length - 1; i >= 0; i--) {
             let stn = this.Stations[i]
             stn.ProcessEvent(Station.Event.MeFinished)
-            if (stn.Oper.State === OperatorState.Done) {
+            if (stn instanceof DxStation && stn.Oper.State === OperatorState.Done) {
                 this.post({
                     type: AudioMessage.check_log,
                     data: {

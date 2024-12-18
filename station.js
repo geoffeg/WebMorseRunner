@@ -36,6 +36,8 @@ export class Station {
         this.TimeOut = Station.NEVER
         GKeyer.rate = DEFAULT.RATE
         this.State = Station.State.Listening
+        this._SendPos = 0
+        this.done = false
     }
 
     get Bfo() {
@@ -207,6 +209,10 @@ export class Station {
             }
         }
         return result
+    }
+
+    isDone() {
+        return this.done
     }
 
 

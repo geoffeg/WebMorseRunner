@@ -1,4 +1,4 @@
-import { DEFAULT, StationMessage, RunMode, OperatorState } from "./defaults.js";
+import { DEFAULT, StationMessage, RunMode, OperatorState } from "./defaults.js"
 import { Station } from "./station.js"
 import { DxOperator } from "./dxoperator.js"
 import * as random from './random.js'
@@ -11,7 +11,7 @@ export class DxStation extends Station {
     this.MyCall = call
     this.HisCall = DEFAULT.CALL
     this.Oper = new DxOperator(this.MyCall)
-    this.Oper.Skills = random.RndIntInclusive(1,3)
+    this.Oper.Skills = random.RndIntInclusive(1, 3)
     this.Oper._SetState(OperatorState.NeedPrevEnd)
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR
@@ -82,7 +82,7 @@ export class DxStation extends Station {
           if (this.Oper.State === OperatorState.Failed)
             return        //give up
           else this.TimeOut = this.Oper.GetSendDelay() //reply or switch to standby
-          this.State = Station.State.PreparingToSend;
+          this.State = Station.State.PreparingToSend
         }
         break
       case Station.Event.MeStarted:
@@ -93,14 +93,11 @@ export class DxStation extends Station {
           this.State = Station.State.Copying
         this.TimeOut = this.NEVER
         break
-
-
-
-
     }
   }
-
-
+  isDone() {
+    return this.Oper.State === OperatorState.Done || this.Oper.State === OperatorState.Failed
+  }
 
 
 }

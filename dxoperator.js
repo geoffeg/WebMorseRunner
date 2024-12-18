@@ -40,15 +40,15 @@ export class DxOperator {
                 let T = M[x][y - 1]
                 //'?' can match more than one char
                 //end may be missing
-                if ((x <= C.length) && (C[x-1] !== '?')) T += W_Y
+                if ((x <= C.length) && (C[x - 1] !== '?')) T += W_Y
 
                 let L = M[x - 1][y]
                 //'?' can match no chars  
-                if (C[x-1] !== '?') L += W_X
+                if (C[x - 1] !== '?') L += W_X
 
                 let D = M[x - 1][y - 1]
                 //'?' matches any char
-                if (!(C[x-1] === C0[y-1] || (C[x-1] === '?'))) D += W_D
+                if (!(C[x - 1] === C0[y - 1] || (C[x - 1] === '?'))) D += W_D
                 M[x][y] = Math.min(T, D, L)
             }
 
@@ -66,13 +66,13 @@ export class DxOperator {
 
         // callsign-specific corrections
         // if too short change an "almost" to "no"
-        if (C.length === 2 && result === DxOperator.CallCheckResult.Almost) 
+        if (C.length === 2 && result === DxOperator.CallCheckResult.Almost)
             result = DxOperator.CallCheckResult.No
 
         // partial and wildcard match result in 0 penalty but are not exact matches
         if (result === DxOperator.CallCheckResult.Yes)
-          if (C.length !== C0.length || C.indexOf('?') > -1)
-            result = DxOperator.CallCheckResult.Almost        
+            if (C.length !== C0.length || C.indexOf('?') > -1)
+                result = DxOperator.CallCheckResult.Almost
 
         // partial match too short
         const no_questionmark = C.replaceAll('?', '')
@@ -134,7 +134,7 @@ export class DxOperator {
                 case DxOperator.CallCheckResult.Yes:
                     if (this.State === OperatorState.NeedPrevEnd ||
                         this.State === OperatorState.NeedQso)
-                        this._SetState(OperatorState.NeedNr);
+                        this._SetState(OperatorState.NeedNr)
                     else if (this.State === OperatorState.NeedCallNr)
                         this._SetState(OperatorState.NeedNr)
                     else if (this.State === OperatorState.NeedCall)
@@ -145,14 +145,14 @@ export class DxOperator {
                         this.State === OperatorState.NeedQso)
                         this._SetState(OperatorState.NeedCallNr)
                     else if (this.State === OperatorState.NeedNr) this._SetState(OperatorState.NeedCallNr)
-                    else if (this.State === OperatorState.NeedEnd) this._SetState(OperatorState.NeedCall);
+                    else if (this.State === OperatorState.NeedEnd) this._SetState(OperatorState.NeedCall)
                     break
                 case DxOperator.CallCheckResult.No:
                     if (this.State === OperatorState.NeedQso) this.State = OperatorState.NeedPrevEnd
                     else if (this.State === OperatorState.NeedNr ||
                         this.State === OperatorState.NeedCall ||
-                        this.State === OperatorState.NeedCallNr) this.State = OperatorState.Failed;
-                    else if (this.State === OperatorState.NeedEnd) this.State = OperatorState.Done;
+                        this.State === OperatorState.NeedCallNr) this.State = OperatorState.Failed
+                    else if (this.State === OperatorState.NeedEnd) this.State = OperatorState.Done
                     break
             }
         }
@@ -165,7 +165,7 @@ export class DxOperator {
                 case OperatorState.NeedNr || OperatingState.NeedEnd:
                     this._State = OperatorState.Failed
                     break
-                case OperatorState.NeedCall || OperatorState.NeedCallNr: break; //same state: correct the call
+                case OperatorState.NeedCall || OperatorState.NeedCallNr: break //same state: correct the call
 
             }
         }
@@ -230,11 +230,11 @@ export class DxOperator {
     GetSendDelay() {
         let result = 0
         if (this.State === OperatorState.NeedPrevEnd)
-            result = NEVER;
+            result = NEVER
         else if (DEFAULT.RUNMODE === RunMode.Hst) {
             result = random.SecondsToBlocks(0.05 + 0.5 * Math.random() * 10 / this.Wpm)
         } else result = random.SecondsToBlocks(0.1 + 0.5 * Math.random())
-      /*  if(result <= 0 || result > 200) debugger;        */
+        /*  if(result <= 0 || result > 200) debugger;        */
         return result
     }
 
@@ -244,14 +244,14 @@ export class DxOperator {
             result = random.SecondsToBlocks(60 / this.Wpm)
         else result = random.SecondsToBlocks(6 - this.Skills)
         result = Math.round(random.RndGaussLim(result, result / 2))
-      /*  if(result <= 0 || result > 200) debugger;     */
+        /*  if(result <= 0 || result > 200) debugger;     */
         return result
     }
 
     GetReply() {
         switch (this.State) {
             case OperatorState.NeedPrevEnd || OperatorState.Done || OperatorState.Failed:
-                return StationMessage.None;
+                return StationMessage.None
             case OperatorState.NeedQso:
                 return StationMessage.MyCall
             case OperatorState.NeedNr:

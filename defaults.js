@@ -76,4 +76,5 @@ export class DEFAULT {
     static WPM = 20
     static RIT = 0
     static ACTIVITY = 2
+    static QRN = true
 }
