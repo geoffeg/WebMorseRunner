@@ -77,4 +77,5 @@ export class DEFAULT {
     static RIT = 0
     static ACTIVITY = 2
     static QRN = true
+    static QSB = true
 }

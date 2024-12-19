@@ -28,6 +28,10 @@ class MovAvg {
         this._Reset()
     }
 
+    get points() {
+        return this.FPoints
+    }
+
     set samplesInInput(s) {
         this.FSamplesInInput = s
         this._Reset()
