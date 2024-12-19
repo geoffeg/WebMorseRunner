@@ -47,6 +47,8 @@ class MovAvg {
         this._CalcScale()
     }
 
+
+
     Filter(AData) {
       this._DoFilter(AData.Re, this.BufRe)
       this._DoFilter(AData.Im, this.BufIm)

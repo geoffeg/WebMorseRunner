@@ -32,6 +32,10 @@ export const RndIntInclusive = (min, max) => {
   return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled) // The maximum is inclusive and the minimum is inclusive
 }
 
+export const RndUniform = () => {
+    return 2 * Math.random() - 1
+}
+
 export const RndPoisson = (AMean) => {
   let g = Math.exp(-AMean)
   let result

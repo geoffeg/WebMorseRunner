@@ -1,7 +1,8 @@
 import { DEFAULT } from "./defaults.js"
 import * as random from "./random.js"
 import { MovAvg } from "./movavg.js"
-class Qsb {
+
+export class Qsb {
     constructor() {
         this.Filter = new MovAvg()
         this.Filter.passes = 3
@@ -11,7 +12,7 @@ class Qsb {
     }
 
     NewGain() {
-        let c = this.Filter.Filter(random.RndUniform(), RndUniform())
+        let c = this.Filter.FilterSingle(random.RndUniform(), random.RndUniform())
         let result = Sqrt((Sqr(c.Re) + Sqr(c.Im)) * 3 * this.Filter.points)
         result *= this.QsbLevel + (1 - this.QsbLevel)
     }
@@ -21,7 +22,7 @@ class Qsb {
         this.Filter.points = Math.ceil(
             0.37 * DEFAULT.RATE / Math.floor((DEFAULT.BUFSIZE / 4) * bw),
         )
-        for (let i = 0; i <= this.Filter.Points * 3; i++) this.FGain = this.NewGain()
+        for (let i = 0; i <= this.Filter.points * 3; i++) this.FGain = this.NewGain()
     }
 
     ApplyTo(Arr) {

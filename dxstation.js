@@ -3,6 +3,7 @@ import { Station } from "./station.js"
 import { DxOperator } from "./dxoperator.js"
 import * as random from './random.js'
 import { Tst } from "./contest.js"
+import  { Qsb } from "./qsb.js"
 
 
 export class DxStation extends Station {
@@ -15,12 +16,12 @@ export class DxStation extends Station {
     this.Oper._SetState(OperatorState.NeedPrevEnd)
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR
-    /*
-      Qsb := TQsb.Create;
-    
-      Qsb.Bandwidth := 0.1 + Random / 2;
-      if Ini.Flutter and (Random < 0.3) then Qsb.Bandwidth := 3 + Random * 30;   
-      */
+
+    if (DEFAULT.QSB) {
+      this.Qsb = new Qsb()
+      this.Qsb.Bandwidth = 0.1 + Math.random() / 2
+    }
+    //if (Ini.Flutter and (Random < 0.3) then Qsb.Bandwidth := 3 + Random * 30;   
     this.Amplitude = 9000 + 18000 * (1 + random.RndUShaped())
     this.Pitch = Math.round(random.RndGaussLim(0, 300))
     this.TimeOut = Station.NEVER
