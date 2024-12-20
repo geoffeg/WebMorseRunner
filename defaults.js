@@ -1,5 +1,6 @@
 export const AudioMessage = {
   request_dx:  'request_dx',
+  request_qrm: 'request_qrm',
   send_msg: 'send_msg',
   send_his: 'send_his',
   send_nr: 'send_nr',
@@ -12,6 +13,7 @@ export const AudioMessage = {
   qso_to_check_log: 'check_log',
   update_nr: 'update_nr',       
   create_dx: 'create_dx',
+  create_qrm: 'create_qrm',
   check_log: 'check_log',
   advance: 'advance',
   start_contest: 'start_contest',
@@ -78,5 +80,6 @@ export class DEFAULT {
     static ACTIVITY = 2
     static QRN = false
     static QSB = false
-    static FLUTTER = true
+    static FLUTTER = false
+    static QRM = true
 }

@@ -334,6 +334,13 @@ export class View {
                         data: calls,
                     })
                     break
+                case AudioMessage.request_qrm:
+                    const call =  this.calls.get_random()    
+                    this.ContestNode.port.postMessage({
+                        type: AudioMessage.create_qrm,
+                        data: call,
+                    })  
+                    break;                  
                 case AudioMessage.advance:
                     this.advance()
                     break

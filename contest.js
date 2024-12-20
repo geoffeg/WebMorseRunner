@@ -8,6 +8,7 @@ import { DxStation } from "./dxstation.js"
 import * as random from "./random.js"
 import { MyStation } from "./mystation.js"
 import { QrnStation } from "./qrnstation.js"
+import { QrmStation } from "./qrmstation.js"
 
 export class Contest {
     constructor() {
@@ -155,6 +156,10 @@ export class Contest {
                 })
 
                 break
+            case AudioMessage.create_qrm:
+                const qrm = new QrmStation(message.data)
+                this.Stations.push(qrm)
+                break;    
             case AudioMessage.send_his:
                 this._MyStation.HisCall = message.data
                 this._MyStation.SendMsg(StationMessage.HisCall)
@@ -211,6 +216,12 @@ export class Contest {
             if (Math.random() < 0.01) this.Stations.push(new QrnStation())
                 
         }
+
+        if(DEFAULT.QRM && Math.random() < 1.002) this.Stations.push(
+            this.post({
+                type: AudioMessage.request_qrm,
+            })
+        )
 
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
             if (this.Stations[Stn].State === Station.State.Sending) {

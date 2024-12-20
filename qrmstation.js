@@ -1,8 +1,8 @@
-import { DEFAULT, StationMessage } from './defaults'
+import { DEFAULT, StationMessage } from './defaults.js'
 import { Station } from "./station.js"
 import * as random from './random.js'
 
-class QrmStation extends Station {
+export class QrmStation extends Station {
     constructor(call) {
         super()
         this.Patience = 1 + random.RandomInt(0, 5)
@@ -39,6 +39,4 @@ class QrmStation extends Station {
                 this.SendMsg(StationMessage.LongCQ)
         }
     }
-
-
 }
