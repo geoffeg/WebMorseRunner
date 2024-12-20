@@ -1,20 +1,21 @@
 import { DEFAULT } from "./defaults.js"
 import * as random from "./random.js"
-import { MovAvg } from "./movavg.js"
+import { QuickAvg } from "./quickavg.js"
 
 export class Qsb {
     constructor() {
-        this.Filter = new MovAvg()
+        this.Filter = new QuickAvg()
         this.Filter.passes = 3
-        this.Qsb = 1
+        this.QsbLevel = 1
         this.Bandwidth = 0.1
         this.FGain = 1
     }
 
     NewGain() {
-        let c = this.Filter.FilterSingle(random.RndUniform(), random.RndUniform())
-        let result = Sqrt((Sqr(c.Re) + Sqr(c.Im)) * 3 * this.Filter.points)
-        result *= this.QsbLevel + (1 - this.QsbLevel)
+        let c = this.Filter.Filter(random.RndUniform(), random.RndUniform())
+        let result = Math.sqrt((c.Re*c.Re + c.Im*c.Im) * 3 * this.Filter.points)
+        result = result * this.QsbLevel + (1 - this.QsbLevel)
+        return result
     }
 
     set Bandwidth(bw) {
@@ -26,13 +27,14 @@ export class Qsb {
     }
 
     ApplyTo(Arr) {
-        let BlkCnt = Math.floor(Arr.length / (Math.floor(DEFAULT.BUFSIZE / 4)))
+        const size = Math.floor(DEFAULT.BUFSIZE / 4);
+        let BlkCnt = Math.floor(Arr.length / size )
 
         for (let b = 0; b < BlkCnt; b++) {
-            let dG = (this.NewGain() - this.FGain) / Math.floor(DEFAULT.BUFSIZE / 4)
-            for (let i = 0; i < Math.floor(DEFAULT.BUFSIZE / 4); i++) {
-                Arr[b * Math.floor(DEFAULT.BUFSIZE / 4) + i] =
-                    Arr[b * Math.floor(DEFAULT.BUFSIZE / 4) + i] * this.FGain
+            const new_gain = this.NewGain()
+            let dG = (new_gain - this.FGain) / size
+            for (let i = 0; i < size; i++) {
+                Arr[b * size + i] *= this.FGain
                 this.FGain += dG
             }
         }

@@ -100,5 +100,11 @@ export class DxStation extends Station {
     return this.Oper.State === OperatorState.Done || this.Oper.State === OperatorState.Failed
   }
 
+  GetBlock() {
+    let result = super.GetBlock()
+    if (DEFAULT.QSB) this.Qsb.ApplyTo(result)
+    return result
+  }
+
 
 }
