@@ -3,7 +3,7 @@ import { Station } from "./station.js"
 import { DxOperator } from "./dxoperator.js"
 import * as random from './random.js'
 import { Tst } from "./contest.js"
-import  { Qsb } from "./qsb.js"
+import { Qsb } from "./qsb.js"
 
 
 export class DxStation extends Station {
@@ -17,11 +17,15 @@ export class DxStation extends Station {
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR
 
-    if (DEFAULT.QSB) {
+    if (DEFAULT.QSB || DEFAULT.FLUTTER) {
       this.Qsb = new Qsb()
-      this.Qsb.Bandwidth = 0.1 + Math.random() / 2
+      if (DEFAULT.QSB) this.Qsb.Bandwidth = 0.1 + Math.random() / 2
+      if (DEFAULT.FLUTTER && Math.random() < 0.3) {
+        this.Qsb.Bandwidth = 3 + Math.random() * 30
+      }  
     }
-    //if (Ini.Flutter and (Random < 0.3) then Qsb.Bandwidth := 3 + Random * 30;   
+
+
     this.Amplitude = 9000 + 18000 * (1 + random.RndUShaped())
     this.Pitch = Math.round(random.RndGaussLim(0, 300))
     this.TimeOut = Station.NEVER
@@ -102,7 +106,7 @@ export class DxStation extends Station {
 
   GetBlock() {
     let result = super.GetBlock()
-    if (DEFAULT.QSB) this.Qsb.ApplyTo(result)
+    if (DEFAULT.QSB || DEFAULT.FLUTTER) this.Qsb.ApplyTo(result)
     return result
   }
 

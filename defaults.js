@@ -77,5 +77,6 @@ export class DEFAULT {
     static RIT = 0
     static ACTIVITY = 2
     static QRN = false
-    static QSB = true
+    static QSB = false
+    static FLUTTER = true
 }
