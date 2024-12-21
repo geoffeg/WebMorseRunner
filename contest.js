@@ -217,12 +217,9 @@ export class Contest {
                 
         }
 
-        if(DEFAULT.QRM && Math.random() < 1.002) this.Stations.push(
-            this.post({
-                type: AudioMessage.request_qrm,
-            })
-        )
-
+        if(DEFAULT.QRM && this.Stations.length === 0)// Math.random() < 0.002) 
+            this.post({ type: AudioMessage.request_qrm, })
+        
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
             if (this.Stations[Stn].State === Station.State.Sending) {
                 let Blk = this.Stations[Stn].GetBlock()
