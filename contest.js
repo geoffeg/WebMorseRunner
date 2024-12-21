@@ -159,7 +159,7 @@ export class Contest {
             case AudioMessage.create_qrm:
                 const qrm = new QrmStation(message.data)
                 this.Stations.push(qrm)
-                break;    
+                break
             case AudioMessage.send_his:
                 this._MyStation.HisCall = message.data
                 this._MyStation.SendMsg(StationMessage.HisCall)
@@ -214,12 +214,12 @@ export class Contest {
                 if (Math.random() < 0.01) this._src_complex_buffer.Re[i] = 60 * Contest.noise_amp * (Math.random() - 0.5)
             //burst
             if (Math.random() < 0.01) this.Stations.push(new QrnStation())
-                
+
         }
 
-        if(DEFAULT.QRM && this.Stations.length === 0)// Math.random() < 0.002) 
+        if (DEFAULT.QRM &&  Math.random() < 0.002) 
             this.post({ type: AudioMessage.request_qrm, })
-        
+
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
             if (this.Stations[Stn].State === Station.State.Sending) {
                 let Blk = this.Stations[Stn].GetBlock()
@@ -276,11 +276,11 @@ export class Contest {
             return !Stn.isDone()
         })
 
-/*        // Filter all the Done Stations
-        this.Stations = this.Stations.filter((Stn) => {
-            return !(Stn instanceof DxStation)  || Stn.Oper.State !== OperatorState.Done
-        })
-*/
+        /*        // Filter all the Done Stations
+                this.Stations = this.Stations.filter((Stn) => {
+                    return !(Stn instanceof DxStation)  || Stn.Oper.State !== OperatorState.Done
+                })
+        */
         const delta = all_stations - this.Stations.length
 
         if (delta > 0) this.post({
@@ -332,7 +332,7 @@ export class Contest {
 
     countDXStations() {
         let result = 0
-        for(let i=0;i<this.Stations.length;i++)
+        for (let i = 0; i < this.Stations.length; i++)
             if (this.Stations[i] instanceof DxStation) result++
         return result
     }

@@ -14,6 +14,6 @@ export class QrnStation extends Station {
     }
 
     ProcessEvent(AEvent) {
-      if (AEvent === Station.Event.MsgSent) this.done = true
+        if (AEvent === Station.Event.MsgSent) this.done = true
     }
 }

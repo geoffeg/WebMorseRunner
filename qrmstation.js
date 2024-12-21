@@ -10,7 +10,7 @@ export class QrmStation extends Station {
         this.HisCall = DEFAULT.CALL
         this.Amplitude = 5000 + 25000 * Math.random()
         this.Pitch = random.RandomInt(0, random.RndGaussLim(0, 300))
-        this.Wpm = 30 + random.RandomInt(0,20)
+        this.Wpm = 30 + random.RandomInt(0, 20)
         this.TimeOut = 1
 
         switch (random.RandomInt(0, 7)) {
@@ -34,7 +34,7 @@ export class QrmStation extends Station {
             case Station.Event.MsgSent:
                 this.Patience--
                 if (this.Patience === 0)
-                    this.done = true 
+                    this.done = true
                 else
                     this.TimeOut = Math.round(random.RndGaussLim(random.SecondsToBlocks(4), 2))
                 break
@@ -44,8 +44,4 @@ export class QrmStation extends Station {
         }
     }
 
-    GetBlock() {
-        const blk = super.GetBlock()
-        return blk
-    }
 }

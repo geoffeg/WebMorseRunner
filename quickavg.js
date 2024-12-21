@@ -13,10 +13,10 @@ export class QuickAvg {
     Filter(ARe, AIm) {
         let re = this._DoFilter(ARe, this.ReBufs)
         let im = this._DoFilter(AIm, this.ImBufs)
-        
+
         this.PrevIdx = this.Idx
-        this.Idx = (this.Idx + 1) % this.FPoints;
-        
+        this.Idx = (this.Idx + 1) % this.FPoints
+
         return { Re: re, Im: im }
     }
 
@@ -43,7 +43,7 @@ export class QuickAvg {
     }
     get points() {
         return this.FPoints
-    }    
+    }
 
     _DoFilter(V, Buffers) {
         let result = V
@@ -52,7 +52,7 @@ export class QuickAvg {
             result = Buffers[p][this.PrevIdx] - Buffers[p - 1][this.Idx] + V
             Buffers[p - 1][this.Idx] = V
         }
-        Buffers[this.FPasses][ this.Idx] = result
+        Buffers[this.FPasses][this.Idx] = result
         result *= this.FScale
         return result
     }

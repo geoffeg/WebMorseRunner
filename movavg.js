@@ -13,7 +13,7 @@ class MovAvg {
 
         this.BufRe = Array.from(Array(number_of_buffers), _ => new Float32Array(buffer_size))
         this.BufIm = Array.from(Array(number_of_buffers), _ => new Float32Array(buffer_size))
-        this._CalcScale();
+        this._CalcScale()
     }
     _CalcScale() {
         this.FNorm = Math.pow(10, 0.05 * this.FGainDb) * Math.pow(this.FPoints, -this.FPasses)
@@ -50,17 +50,17 @@ class MovAvg {
 
 
     Filter(AData) {
-      this._DoFilter(AData.Re, this.BufRe)
-      this._DoFilter(AData.Im, this.BufIm)
+        this._DoFilter(AData.Re, this.BufRe)
+        this._DoFilter(AData.Im, this.BufIm)
     }
 
     _DoFilter(AData, ABuf) {
         // put new data at the end of the 0-th buffer
-        this._PushArray(AData, ABuf[0]);
+        this._PushArray(AData, ABuf[0])
         // multi-pass
         for (let i = 1; i <= this.FPasses; i++) this._Pass(ABuf[i - 1], ABuf[i])
         // the sums are in the last buffer now, normalize and decimate result
-        this._GetResult(ABuf[this.FPasses],AData)
+        this._GetResult(ABuf[this.FPasses], AData)
 
     }
     _PushArray(Src, Dst) {
@@ -73,7 +73,7 @@ class MovAvg {
 
     _Pass(Src, Dst) {
         // make some free space in the buffer
-        this._ShiftArray(Dst, this.FSamplesInInput);
+        this._ShiftArray(Dst, this.FSamplesInInput)
         // calculate moving average recursively
         for (let i = this.FPoints; i < Src.length; i++) {
             Dst[i] = Dst[i - 1] - Src[i - this.FPoints] + Src[i]
@@ -86,7 +86,7 @@ class MovAvg {
         for (let i = 0; i <= Len; i++) Dst[i] = Dst[Count + i]
     }
 
-    _GetResult(Source,Target) {        
+    _GetResult(Source, Target) {
         for (let i = 0; i < this.FSamplesInInput; i++)
             Target[i] = Source[this.FPoints + i * this.FDecimateFactor] * this.FNorm
     }

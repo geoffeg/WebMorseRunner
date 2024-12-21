@@ -20,7 +20,7 @@ export class View {
         this.NrSend = false
 
         this.log = new Log()
-      
+
     }
     setFocus(id) {
         document.getElementById(id).focus()
@@ -36,11 +36,11 @@ export class View {
     }
 
     _updatePileUp() {
-        if (this._config._config.runmode === RunMode.Pileup) {            
+        if (this._config._config.runmode === RunMode.Pileup) {
             const element = document.getElementById("pileup")
-            const txt = `Pileup: ${ this._pileupStations }`
+            const txt = `Pileup: ${this._pileupStations}`
             element.innerText = txt
-            if (this._pileupStations>0) element.classList.add('pileup_green'); else element.classList.remove('pileup_green')
+            if (this._pileupStations > 0) element.classList.add('pileup_green'); else element.classList.remove('pileup_green')
         }
 
     }
@@ -297,8 +297,8 @@ export class View {
         this.hideTitle()
         this.running = true
         this.wipeFields()
-        this.pileupStations = 0       
-         
+        this.pileupStations = 0
+
         this.log.wipe()
         this.toggleRunButton()
 
@@ -327,7 +327,7 @@ export class View {
             switch (type) {
                 case AudioMessage.request_dx:
                     let calls = new Array()
-                    for(let i=0;i<data;i++) calls.push( this.calls.get_random() )
+                    for (let i = 0; i < data; i++) calls.push(this.calls.get_random())
                     this.pileupStations += data
                     this.ContestNode.port.postMessage({
                         type: AudioMessage.create_dx,
@@ -335,12 +335,12 @@ export class View {
                     })
                     break
                 case AudioMessage.request_qrm:
-                    const call =  this.calls.get_random()    
+                    const call = this.calls.get_random()
                     this.ContestNode.port.postMessage({
                         type: AudioMessage.create_qrm,
                         data: call,
-                    })  
-                    break;                  
+                    })
+                    break
                 case AudioMessage.advance:
                     this.advance()
                     break

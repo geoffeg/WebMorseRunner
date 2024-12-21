@@ -22,7 +22,7 @@ export class DxStation extends Station {
       if (DEFAULT.QSB) this.Qsb.Bandwidth = 0.1 + Math.random() / 2
       if (DEFAULT.FLUTTER && Math.random() < 0.3) {
         this.Qsb.Bandwidth = 3 + Math.random() * 30
-      }  
+      }
     }
 
 

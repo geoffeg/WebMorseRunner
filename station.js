@@ -123,8 +123,8 @@ export class Station {
     }
 
     SendText(AMsg) {
-        AMsg = AMsg.replaceAll('<#>',Station.NrAsText(this.RST, this.NR))    
-        AMsg = AMsg.replaceAll('<my>',this.MyCall)    
+        AMsg = AMsg.replaceAll('<#>', Station.NrAsText(this.RST, this.NR))
+        AMsg = AMsg.replaceAll('<my>', this.MyCall)
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
@@ -137,13 +137,13 @@ export class Station {
             this._FBfo = 0
         }
 
-        GKeyer.Wpm = this.Wpm;
-        GKeyer.MorseMsg = AMorse;
+        GKeyer.Wpm = this.Wpm
+        GKeyer.MorseMsg = AMorse
         this._Envelope = GKeyer.GetEnvelope()
-        for (let i = 0; i < this._Envelope.length; i++) this._Envelope[i] *= this.Amplitude;
+        for (let i = 0; i < this._Envelope.length; i++) this._Envelope[i] *= this.Amplitude
 
-        this.State = Station.State.Sending;
-        this.TimeOut = Station.NEVER;
+        this.State = Station.State.Sending
+        this.TimeOut = Station.NEVER
     }
 
     GetBlock() {
@@ -155,13 +155,13 @@ export class Station {
             result.push(this._Envelope[this._SendPos + i])
         }
         // advance TX buffer
-        this._SendPos += DEFAULT.BUFSIZE;
-        if (this._SendPos >= this._Envelope.length ) this._Envelope = null
+        this._SendPos += DEFAULT.BUFSIZE
+        if (this._SendPos >= this._Envelope.length) this._Envelope = null
         return result
     }
 
     set Pitch(Value) {
-        this._FPitch = Value;
+        this._FPitch = Value
         this._dPhi = Math.PI * 2 * this._FPitch / DEFAULT.RATE
     }
 
@@ -174,7 +174,7 @@ export class Station {
             this.ProcessEvent(Station.Event.MsgSent)
         }
         // check timeout
-        else if (this.State !== Station.State.Sending) {            
+        else if (this.State !== Station.State.Sending) {
             if (this.TimeOut > 0) this.TimeOut--
             if (this.TimeOut === 0) this.ProcessEvent(Station.Event.Timeout)
         }
@@ -191,7 +191,7 @@ export class Station {
                 let code = result.charCodeAt(Idx)
                 if (Math.random() < 0.5) code--; else code++
 
-                result = result.substring(0, Idx) + String.fromCharCode(code) + result.substring(Idx + 1);
+                result = result.substring(0, Idx) + String.fromCharCode(code) + result.substring(Idx + 1)
                 result += `EEEEE ${nr_str}`
             }
         }
