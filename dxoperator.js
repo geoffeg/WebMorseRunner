@@ -66,7 +66,7 @@ export class DxOperator {
 
         // callsign-specific corrections
         // if too short change an "almost" to "no"
-        if (C.length === 2 && result === DxOperator.CallCheckResult.Almost)
+        if (!DEFAULT.LIDS && C.length === 2 && result === DxOperator.CallCheckResult.Almost)
             result = DxOperator.CallCheckResult.No
 
         // partial and wildcard match result in 0 penalty but are not exact matches
@@ -77,6 +77,17 @@ export class DxOperator {
         // partial match too short
         const no_questionmark = C.replaceAll('?', '')
         if (no_questionmark.length < 2) result = this.CallCheckResult.No
+
+        // accept a wrong call, or reject the correct one        
+        if (DEFAULT.LIDS && C.length > 3)
+            switch (result) {
+                case DxOperator.CallCheckResult.Yes:
+                    if (Math.random() < 0.01) result = DxOperator.CallCheckResult.Almost
+                    break
+                case DxOperator.CallCheckResult.Almost:
+                    if (Math.random() < 0.04) result = DxOperator.CallCheckResult.Yes
+                    break
+            }
 
         return result
     }
@@ -204,7 +215,7 @@ export class DxOperator {
             }
         }
 
-        if (AMsg.includes(StationMessage.Garbage))
+        if (!DEFAULT.LIDS && AMsg.includes(StationMessage.Garbage))
             this._State = OperatorState.NeedPrevEnd
 
 

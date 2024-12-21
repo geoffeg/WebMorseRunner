@@ -81,5 +81,6 @@ export class DEFAULT {
     static QRN = false
     static QSB = false
     static FLUTTER = false
-    static QRM = true
+    static QRM = false
+    static LIDS = false
 }

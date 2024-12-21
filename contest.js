@@ -370,6 +370,7 @@ export class Contest {
                     data: {
                         call: stn.MyCall,
                         NR: stn.NR,
+                        RST: stn.RST,                        
                     },
                 })
             }

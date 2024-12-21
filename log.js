@@ -3,6 +3,8 @@ export class Log {
     static Check = {
         NIL: "Nil",
         NR: 'NR',
+        RST: 'Rst',
+        DUP: 'DUP',
         OK: ''
     }
 
@@ -67,11 +69,16 @@ export class Log {
 
 
     checkQSO(qso) {
-        let call = qso.call
-        let NR = String(qso.NR).padStart(3,'0')
-        let last_qso = this.data[this.data.length - 1]
-        let confirm = Log.Check.NIL
-        if (last_qso.Call === call) confirm = last_qso.RecvNr === NR ? Log.Check.OK : Log.Check.NR
+        const call = qso.call
+        const NR = String(qso.NR).padStart(3,'0')
+        const last_qso = this.data[this.data.length - 1]
+        const rst = ( qso.RST ? qso.RST : 599 ).toString()
+        let confirm = Log.Check.OK
+        if (last_qso.RecvRST !== rst) confirm = Log.Check.RST
+        if (last_qso.RecvNr !== NR) confirm = Log.Check.NR
+        if (last_qso.Call !== call) confirm = Log.Check.NIL
+        
+        //confirm = last_qso.RecvNr === NR ? Log.Check.OK : Log.Check.NR
         last_qso.Check = confirm
 
         if (confirm !== Log.Check.NIL) {
