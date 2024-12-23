@@ -71,9 +71,9 @@ export class View {
                 if (rst_value === '') RST.value = '599'
                 this.setFocus("nr")
                 break;
-            case 'NR':
+            case 'nr':
                 console.log("NR")     
-                this.setFocus("nr")
+                this.setFocus("call")
                 break
         }
     }
