@@ -79,7 +79,8 @@ export class DxStation extends Station {
             case Station.State.Copying:
               this.Oper.MsgReceived(Tst._MyStation._Msg)
               break
-            case Station.State.Listening || Station.State.PreparingToSend:
+            case Station.State.Listening:
+            case Station.State.PreparingToSend:
               // these messages can be copied even if partially received
               if (Tst._MyStation._Msg.includes(StationMessage.CQ) ||
                 Tst._MyStation._Msg.includes(StationMessage.TU) ||

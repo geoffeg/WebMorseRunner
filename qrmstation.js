@@ -17,10 +17,13 @@ export class QrmStation extends Station {
             case 0:
                 this.SendMsg(StationMessage.Qrl)
                 break
-            case 1 || 2:
+            case 1:
+            case 2:
                 this.SendMsg(StationMessage.Qrl2)
                 break
-            case 3 || 4 || 5:
+            case 3:
+            case 4:
+            case 5:
                 this.SendMsg(StationMessage.LongCQ)
                 break
             case 6:

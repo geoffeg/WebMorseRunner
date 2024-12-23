@@ -53,11 +53,13 @@ export class DxOperator {
             }
 
         //classify by penalty
-        switch (M[C.length][C0.length]) {
+        const lev = M[C.length][C0.length]
+        switch (lev) {
             case 0:
                 result = this.CallCheckResult.Yes
                 break
-            case 1 || 2:
+            case 1: 
+            case 2:
                 result = this.CallCheckResult.Almost
                 break
             default:
@@ -114,8 +116,9 @@ export class DxOperator {
                 case OperatorState.NeedQso:
                     this._DecPatience()
                     break
-                case OperatorState.NeedNr || OperatorState.NeedCall ||
-                    OperatorState.NeedCallNr:
+                case OperatorState.NeedNr:
+                case OperatorState.NeedCall:
+                case OperatorState.NeedCallNr:
                     this.State = OperatorState.Failed
                     break
                 case OperatorState.NeedEnd:
@@ -133,8 +136,10 @@ export class DxOperator {
                     this._DecPatience()
                     break
                     0
-                case OperatorState.NeedNr || OperatorState.NeedCall ||
-                    OperatorState.NeedCallNr || OperatorState.NeedEnd:
+                case OperatorState.NeedNr:
+                case OperatorState.NeedCall:
+                case OperatorState.NeedCallNr:
+                case OperatorState.NeedEnd:
                     this.State = OperatorState.Failed
                     break
             }
@@ -170,13 +175,17 @@ export class DxOperator {
 
         if (AMsg.includes(StationMessage.B4)) {
             switch (this.State) {
-                case OperatorState.NeedPrevEnd || OperatorState.NeedQso:
+                case OperatorState.NeedPrevEnd:
+                case OperatorState.NeedQso:
                     this._SetState(OperatorState.NeedQso)
                     break
-                case OperatorState.NeedNr || OperatingState.NeedEnd:
+                case OperatorState.NeedNr:
+                case OperatorState.NeedEnd:
                     this._State = OperatorState.Failed
                     break
-                case OperatorState.NeedCall || OperatorState.NeedCallNr: break //same state: correct the call
+                case OperatorState.NeedCall:
+                case OperatorState.NeedCallNr: 
+                  break //same state: correct the call
 
             }
         }
@@ -261,7 +270,9 @@ export class DxOperator {
 
     GetReply() {
         switch (this.State) {
-            case OperatorState.NeedPrevEnd || OperatorState.Done || OperatorState.Failed:
+            case OperatorState.NeedPrevEnd:
+            case OperatorState.Done:
+            case OperatorState.Failed:
                 return StationMessage.None
             case OperatorState.NeedQso:
                 return StationMessage.MyCall

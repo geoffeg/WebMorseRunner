@@ -67,12 +67,12 @@ export class View {
         const rst_value = RST.value
         if (!active) return
         switch (active.id) {
-            case 'call' || 'RST':
+            case 'call':
+            case 'RST':
                 if (rst_value === '') RST.value = '599'
                 this.setFocus("nr")
                 break;
-            case 'nr':
-                console.log("NR")     
+            case 'nr':   
                 this.setFocus("call")
                 break
         }
