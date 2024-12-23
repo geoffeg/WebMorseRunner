@@ -60,6 +60,24 @@ export class View {
         if (this.ContestNode) this.ContestNode.port.postMessage(data)
     }
 
+    processSpace() {
+        this.MustAdvance = false
+        const active = document.activeElement
+        const RST = document.getElementById('rst')
+        const rst_value = RST.value
+        if (!active) return
+        switch (active.id) {
+            case 'call' || 'RST':
+                if (rst_value === '') RST.value = '599'
+                this.setFocus("nr")
+                break;
+            case 'NR':
+                console.log("NR")     
+                this.setFocus("nr")
+                break
+        }
+    }
+
     processEnter() {
         let new_call = this.call.value.toUpperCase()
         this.MustAdvance = false
@@ -191,6 +209,10 @@ export class View {
                 this.CallSend = false
             }
             switch (e.code) {
+                case "Space":
+                    this.processSpace()
+                    e.preventDefault()
+                    break
                 case "Enter":
                     this.processEnter()
                     e.preventDefault()

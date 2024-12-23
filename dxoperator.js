@@ -57,7 +57,7 @@ export class DxOperator {
             case 0:
                 result = this.CallCheckResult.Yes
                 break
-            case 1, 2:
+            case 1 || 2:
                 result = this.CallCheckResult.Almost
                 break
             default:
