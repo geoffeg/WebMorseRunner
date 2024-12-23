@@ -14,6 +14,14 @@ export class Config {
         this._rit = document.querySelector("#rit")
         this._runmode = document.querySelector("#mode")
         this._activity = document.querySelector("#activity")
+
+        // condx
+        this._qrn = document.querySelector("#qrn")          
+        this._qrm = document.querySelector("#qrm")        
+        this._qsb = document.querySelector("#qsb")
+        this._flutter = document.querySelector("#flutter")
+        this._lids = document.querySelector("#lids")
+
         this._callback = callback
 
         this.all = document.querySelectorAll(".watch").forEach(
@@ -34,6 +42,12 @@ export class Config {
             rit: 0,
             runmode: RunMode.Single,
             activity: 2,
+            // condx
+            qrn: false,
+            qrm: false,
+            qsb: false,
+            flutter: false,
+            lids: false,
         }
         this.load()
     }
@@ -83,6 +97,13 @@ export class Config {
         this._rit.value = this._config.rit
         this._runmode.value = String(this._config.runmode)
         this._activity.value = String(this._config.activity)
+        // condx
+        this._qrn.checked = this._config.qrn
+        this._qrm.checked = this._config.qrm     
+        this._qsb.checked = this._config.qsb   
+        this._flutter.checked = this._config.flutter           
+        this._lids.checked = this._config.lids 
+
         this.updatePileupFields()
     }
 
@@ -97,6 +118,14 @@ export class Config {
         this._config.rit = this._rit.value
         this._config.runmode = parseInt(this._runmode.value)
         this._config.activity = parseInt(this._activity.value)
+
+
+        this._config.qrn = this._qrn.checked
+        this._config.qrm = this._qrm.checked    
+        this._config.qsb = this._qsb.checked
+        this._config.flutter = this._flutter.checked
+        this._config.lids = this._lids.checked                            
+
         if(!this._config.activity) this._config.activity = 2
     }
 }

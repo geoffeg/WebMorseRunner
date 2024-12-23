@@ -127,6 +127,13 @@ export class Contest {
         if (DEFAULT.ACTIVITY !== conf.activity) {
             DEFAULT.ACTIVITY = conf.activity
         }
+
+        if (DEFAULT.QSB !== conf.qsb) DEFAULT.QSB = conf.qsb
+        if (DEFAULT.QRN !== conf.qrn) DEFAULT.QRN = conf.qrn
+        if (DEFAULT.QRM !== conf.qrm) DEFAULT.QRM = conf.qrm     
+        if (DEFAULT.LIDS !== conf.lids) DEFAULT.LIDS = conf.lids
+        if (DEFAULT.FLUTTER !== conf.flutter) DEFAULT.FLUTTER = conf.flutter                            
+
     }
 
     onmessage = (message) => {
