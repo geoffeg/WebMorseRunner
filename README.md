@@ -39,11 +39,11 @@ This project is new and independent of Alex project. The original Morse Runner t
 * Calculate and display Score
 * Display log
 * Confirm QSO's
+* Band Condition (QRM/QRN/QSB/Flutter/LID's)
 
 ## Features not (yet) implemented
 
 * Other contest modes (no WPX / HST)
-* Band Condition (QRM/QRN etc.)
 * WAV File Export
 * Best-List
 * Score over time
@@ -85,6 +85,13 @@ The settings you make in Web Morse Runner will be stored the your own browsers l
 * **Mon. Level** The volume of your own side tone. Use your system audio level to control the overall volume.
 * **RIT** The RIT value. Move slider to move RIT up/down in frequency.
 
+## Band Conditions
+
+* **QRM** Interference form other running stations occurs from time to time.
+* **QRN** Electrostatic interference.
+* **QSB** signal strength varies with time.
+* **Flutter** Some stations have "auroral" sound.
+* **LIDS** Some stations call you when you are working another station, make mistakes when they send code, copy your messages incorrectly, and send RST other than 599.
 
 ## Contest Modes
 
@@ -138,6 +145,7 @@ This means after stating the contest the cursor is places automatically in the C
 #### Other keyboard  
 
 * **TAB**: move cursor between fields Call->RST->NR. If the cursor is in the NR fields another TAB should navigate back to Call.
+* **Space**: By pressing space the field in focus will be advanced (from call to NR / RST to to NR and NR to call). If RST is empty it will be filled with 599. 
 * **Function Keys**
     * **F1**: Call CQ
     * **F2**: Send RST and Number: use it if DX station ask NR? or AGN
@@ -153,7 +161,9 @@ This means after stating the contest the cursor is places automatically in the C
 
 ## Version
 
-* **0.4-alpha** (2024-12-15) Added pileup mode. Limit tab sequence to fields Call/RST/NR. Increase size of fields Call/RST/NR. Fix various bugs.
+* **0.05-beta** (2024-12-27) - **New Year 2024 Edition** Added support for Band Conditions QRN, QRM, QSB, Flutter and LID's. New Keyboard shortcut: The **shift** key is now supported.
+Several important bugfixes.
+* **0.4-alpha** (2024-12-15) -- **Christmas 2024 Edition** Added pileup mode. Limit tab sequence to fields Call/RST/NR. Increase size of fields Call/RST/NR. Fix various bugs.
 * **0.3-alpha** (2024-12-12) Bugfix: Morse Timing fixed including correction of v0.2-alpha.
 * **0.2b-alpha** (2024-12-11) The changes in 0.2 cause a regression as there is a audible gap when 2 messages are send after each other. This results from over allocation. Rollback the changes from 0.2-alpha to avoid audible gaps.
 * **0.2-alpha** (2024-12-11) Improvement/Bugfix: This JavaScript version used dynamic allocated Array where Pascal was using static sized Array. This is now changed to a pre-allocated Float32Array array to also improve performance to avoid unnecessary allocations in the audio buffer process. In some situations this could leave more spacing.
