@@ -106,29 +106,37 @@
           <div class="condx_grid grid">
             <div class="flex_form">
               <input class="watch" type="checkbox" id="qrn" name="qrn" value=" " />
-              <label for="qrn">QRN</label>              
+              <label for="qrn">QRN</label>
             </div>
             <div class="flex_form">
               <input class="watch" type="checkbox" id="qrm" name="qrm" value=" " />
-              <label for="qrm">QRM</label>              
+              <label for="qrm">QRM</label>
             </div>
-   
+
             <div class="flex_form">
               <input class="watch" type="checkbox" id="qsb" name="qsm" value=" " />
-              <label for="qsb">QSB</label>              
-            </div>   
+              <label for="qsb">QSB</label>
+            </div>
             <div class="flex_form">
               <input class="watch" type="checkbox" id="flutter" name="flutter" value=" " />
-              <label for="flutter">Flutter</label>              
-            </div>              
+              <label for="flutter">Flutter</label>
+            </div>
             <div class="flex_form">
               <input class="watch" type="checkbox" id="lids" name="lids" value=" " />
-              <label for="lids">LID's</label>              
-            </div>               
+              <label for="lids">LID's</label>
+            </div>
           </div>
         </fieldset>
         <fieldset class="grid">
           <legend>Contest</legend>
+          <div class="flex_form">
+            # Calls: <span id="no_of_calls"></span> / 
+            <input type="file" single id="fileElem" style="display:none" />
+            <a href="#" id="fileSelect">Upload</a> / 
+            <a href="#" id="reset">Reset</a>
+            <div id="fileList">
+            </div>
+          </div>
           <div class="flex_form">
             <label for="mode">Mode</label>
             <select class="watch no_run" autocomplete="off" id="mode" name="mode">

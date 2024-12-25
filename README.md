@@ -93,6 +93,15 @@ The settings you make in Web Morse Runner will be stored the your own browsers l
 * **Flutter** Some stations have "auroral" sound.
 * **LIDS** Some stations call you when you are working another station, make mistakes when they send code, copy your messages incorrectly, and send RST other than 599.
 
+## Upload Calls (Experimental)
+Since release 0.05 Web Morse Runner will cache the call sign information that is stored in calls.txt in the browser local storage. The calls.txt file reloaded when you clear the local storage, or if you press the **reload** link.
+You can also provide your own call signs via file upload by pressing the  **upload** link.
+The file you load load must be a standard text file containing one line per call.
+Please notice that the upload format might change in future. 
+
+The file format for the call signs file is very simple. Some examples can be found in the github repository (Folder Example_Calls).
+
+
 ## Contest Modes
 
 Web Morse Runner supports the following contest modes:
@@ -161,9 +170,17 @@ This means after stating the contest the cursor is places automatically in the C
 
 ## Version
 
-* **0.05-beta** (2024-12-27) - **New Year 2024 Edition** Added support for Band Conditions QRN, QRM, QSB, Flutter and LID's. New Keyboard shortcut: The **shift** key is now supported.
-Several important bugfixes.
-* **0.4-alpha** (2024-12-15) -- **Christmas 2024 Edition** Added pileup mode. Limit tab sequence to fields Call/RST/NR. Increase size of fields Call/RST/NR. Fix various bugs.
+* **0.05-beta** (2024-12-27) - **お正月 / New Year 2024 Edition** 
+   * Added support for Band Conditions QRN, QRM, QSB, Flutter and LID's. 
+   * New Keyboard shortcut: The **shift** key is now supported.
+   * Calls are now cached in browsers local storage and not reload.
+   * Experimental new: Upload your own call file. (Example Calls List contributed by K5GQ)
+   * Several important bugfixes.
+* **0.4-alpha** (2024-12-15) -- **Christmas 2024 Edition** 
+   * Added pileup mode. 
+   * Limit tab sequence to fields Call/RST/NR. 
+   * Increase size of fields Call/RST/NR
+   * Fix various bugs.
 * **0.3-alpha** (2024-12-12) Bugfix: Morse Timing fixed including correction of v0.2-alpha.
 * **0.2b-alpha** (2024-12-11) The changes in 0.2 cause a regression as there is a audible gap when 2 messages are send after each other. This results from over allocation. Rollback the changes from 0.2-alpha to avoid audible gaps.
 * **0.2-alpha** (2024-12-11) Improvement/Bugfix: This JavaScript version used dynamic allocated Array where Pascal was using static sized Array. This is now changed to a pre-allocated Float32Array array to also improve performance to avoid unnecessary allocations in the audio buffer process. In some situations this could leave more spacing.
