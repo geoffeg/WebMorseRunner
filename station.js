@@ -14,6 +14,29 @@ export class Station {
         Sending: 4
     }
 
+    static Messages = {
+        CQ: 'CQ <my> TEST',
+        NR: '<#>',
+        TU: 'TU',
+        MyCall: '<my>',
+        HisCall: '<his>',
+        B4: 'QSO B4',
+        Qm: '?',
+        Nil: 'NIL',
+        R_NR: 'R <#>',
+        R_NR2: 'R <#> <#>',
+        DeMyCall1: 'DE <my>',
+        DeMyCall2: 'DE <my> <my>',
+        DeMyCallNr1: 'DE <my> <#>',
+        DeMyCallNr2: 'DE <my> <my> <#>',
+        NrQm: 'NR?',
+        LongCQ: 'CQ CQ TEST <my> <my> TEST',
+        Qrl: 'QRL?',
+        Qrl2: 'QRL?   QRL?',
+        Qsy: '<his>  QSY QSY',
+        Agn: 'AGN',
+    }
+
     // Events
     static Event = {
         Timeout: 1,
@@ -38,6 +61,8 @@ export class Station {
         this.State = Station.State.Listening
         this._SendPos = 0
         this.done = false
+        this.custom_messages = { }
+        this.Messages = {...Station.Messages, ...this.custom_messages }
     }
 
     get Bfo() {
@@ -55,71 +80,8 @@ export class Station {
         }
         this._Msg.push(AMsg)
 
-        switch (AMsg) {
-            case StationMessage.CQ:
-                this.SendText('CQ <my> TEST')
-                break
-            case StationMessage.NR:
-                this.SendText('<#>')
-                break
-            case StationMessage.TU:
-                this.SendText('TU')
-                break
-            case StationMessage.MyCall:
-                this.SendText('<my>')
-                break
-            case StationMessage.HisCall:
-                this.SendText('<his>')
-                break
-            case StationMessage.B4:
-                this.SendText('QSO B4')
-                break
-            case StationMessage.Qm:
-                this.SendText('?')
-                break
-            case StationMessage.Nil:
-                this.SendText('NIL')
-                break
-            case StationMessage.R_NR:
-                this.SendText('R <#>')
-                break
-            case StationMessage.R_NR2:
-                this.SendText('R <#> <#>')
-                break
-            case StationMessage.DeMyCall1:
-                this.SendText('DE <my>')
-                break
-            case StationMessage.DeMyCall2:
-                this.SendText('DE <my> <my>')
-                break
-            case StationMessage.DeMyCallNr1:
-                this.SendText('DE <my> <#>')
-                break
-            case StationMessage.DeMyCallNr2:
-                this.SendText('DE <my> <my> <#>')
-                break
-            case StationMessage.MyCallNr2:
-                this.SendText('<my> <my> <#>')
-                break
-            case StationMessage.NrQm:
-                this.SendText('NR?')
-                break
-            case StationMessage.LongCQ:
-                this.SendText('CQ CQ TEST <my> <my> TEST')
-                break
-            case StationMessage.Qrl:
-                this.SendText('QRL?')
-                break
-            case StationMessage.Qrl2:
-                this.SendText('QRL?   QRL?')
-                break
-            case StationMessage.Qsy:
-                this.SendText('<his>  QSY QSY')
-                break
-            case StationMessage.Agn:
-                this.SendText('AGN')
-                break
-        }
+        const text = this.Messages[AMsg]
+        if (text) this.SendText(text)
     }
 
     SendText(AMsg) {
