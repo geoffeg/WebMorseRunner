@@ -45,9 +45,16 @@ export class Calls {
     }
 
     filter_calls(calls) {
-        return calls.split('\n').map(e => e.trim()).filter(
+        return calls.split('\n').filter( l => {
+            // ignore lines starting with hash as comments
+            return l.substring(0, 1) !== '#'
+        }).map(e => { 
+            e.trim()
+            return e.split(',') 
+        }
+        ).filter(
             (c) => {
-                return c.length > 2 && c.length < 15
+                return c.length >= 1 && c[0].length > 2 && c[0].length < 15 
             })
     }
 

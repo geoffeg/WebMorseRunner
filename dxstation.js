@@ -9,7 +9,8 @@ import { Qsb } from "./qsb.js"
 export class DxStation extends Station {
   constructor(call) {
     super()
-    this.MyCall = call
+    this.All_DxData = call
+    this.MyCall = call[0]
     this.HisCall = DEFAULT.CALL
     this.Oper = new DxOperator(this.MyCall)
     this.Oper.Skills = random.RndIntInclusive(1, 3)
