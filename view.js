@@ -1,7 +1,35 @@
 import { Calls } from "./call.js"
-import { AudioMessage, DEFAULT, RunMode } from "./defaults.js"
+import { AudioMessage, DEFAULT, RunMode, StationMessage } from "./defaults.js"
 import { Log } from "./log.js"
 import { Config } from "./config.js"
+
+
+
+const stdKey = {
+    F1: { label: "CQ", send: StationMessage.CQ },
+    F2: { label: "&lt;#&gt;", send: StationMessage.NR },
+    F3: { label: "TU", send: StationMessage.TU },
+    F4: { label: "&lt;my&gt;", send: StationMessage.MyCall },
+    F5: { label: "&lt;his&gt;", send: StationMessage.HisCall },
+    F6: { label: "B4", send: StationMessage.B4 },
+    F7: { label: "&quest;", send: StationMessage.Qm },
+    F8: { label: "NIL", send:StationMessage.Nil },
+}
+
+
+
+const contest_def = [
+    {
+        name: "Single Call",
+        runMode: RunMode.Single,
+        key: stdKey,
+    }, 
+    {
+        name: "Pileup",
+        runMode: RunMode.Pileup,
+        key: stdKey,
+    }
+]
 
 export class View {
     constructor() {
@@ -85,7 +113,8 @@ export class View {
         // send CQ if call is empty
         if (this.call.value === "") {
             this.sendMessage({
-                type: AudioMessage.send_cq,
+                type: AudioMessage.send_msg,
+                data: StationMessage.CQ
             })
             return
         }
@@ -104,19 +133,22 @@ export class View {
         if (!N) {
             this.NrSend = true
             this.sendMessage({
-                type: AudioMessage.send_nr,
+                type: AudioMessage.send_msg,
+                data: StationMessage.NR
             })
         }
         // send ?
         if (N && !R) {
             this.sendMessage({
-                type: AudioMessage.send_qm,
+                type: AudioMessage.send_msg,
+                data: StationMessage.Qm,
             })
         }
 
         if (R && (C || N)) {
             this.sendMessage({
-                type: AudioMessage.send_tu,
+                type: AudioMessage.send_msg,
+                data: StationMessage.TU
             })
             this.log.addQso(
                 {
@@ -140,22 +172,26 @@ export class View {
         switch (key) {
             case "F1":
                 this.sendMessage({
-                    type: AudioMessage.send_cq,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.CQ
                 })
                 break
             case "F2":
                 this.sendMessage({
-                    type: AudioMessage.send_nr,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.NR
                 })
                 break
             case "F3":
                 this.sendMessage({
-                    type: AudioMessage.send_tu,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.TU
                 })
                 break
             case "F4":
                 this.sendMessage({
-                    type: AudioMessage.send_my,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.MyCall
                 })
                 break
             case "F5":
@@ -166,18 +202,20 @@ export class View {
                 break
             case "F6":
                 this.sendMessage({
-                    type: AudioMessage.send_b4,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.B4,
                 })
                 break
             case "F7":
                 this.sendMessage({
-                    type: AudioMessage.send_qm,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.Qm,
                 })
-                //this.stopContest()
                 break
             case "F8":
                 this.sendMessage({
-                    type: AudioMessage.send_nil,
+                    type: AudioMessage.send_msg,
+                    data: StationMessage.Nil,
                 })
                 break
             default:

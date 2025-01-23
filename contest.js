@@ -167,34 +167,17 @@ export class Contest {
                 const qrm = new QrmStation(message.data)
                 this.Stations.push(qrm)
                 break
+            
+            case AudioMessage.send_msg:                    
+                this._MyStation.SendMsg(message.data)
+                break    
+
             case AudioMessage.send_his:
                 this._MyStation.HisCall = message.data
                 this._MyStation.SendMsg(StationMessage.HisCall)
                 break
-            case AudioMessage.send_cq:
-                this._MyStation.SendMsg(StationMessage.CQ)
-                break
-            case AudioMessage.send_nr:
-                this._MyStation.SendMsg(StationMessage.NR)
-                break
-            case AudioMessage.send_tu:
-                this._MyStation.SendMsg(StationMessage.TU)
-                break
-            case AudioMessage.send_qm:
-                this._MyStation.SendMsg(StationMessage.Qm)
-                break
-            case AudioMessage.send_my:
-                this._MyStation.SendMsg(StationMessage.MyCall)
-                break
-            case AudioMessage.send_b4:
-                this._MyStation.SendMsg(StationMessage.B4)
-                break
-            case AudioMessage.send_nil:
-                this._MyStation.SendMsg(StationMessage.Nil)
-                break
             case AudioMessage.config:
                 this.updateConfig(message.data)
-
                 break
             default:
                 console.log("ERROR: Unknown: ", message)
