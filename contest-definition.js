@@ -36,7 +36,7 @@ const contest_def = [
         name: "DARC CWA",
         runmode: RunMode.Pileup,
         key: cwaKey,
-        echange1: 'DOK'
+        exchange1: 'DOK'
         
     }    
 ]
@@ -56,7 +56,6 @@ export class ContestDefinition {
             selectOption.appendChild(label)
             contestSelect.appendChild(selectOption)
         })
-        console.log(contestSelect)
     }
 
     static getRunMode(id) {
@@ -70,22 +69,33 @@ export class ContestDefinition {
 
     updateConfig(conf) {
         this._config = conf
+        this._contest = ContestDefinition.getContest(this._config.contest_id)
         this.updatePileupFields()
         this.updateFunctionKeys()
+
+        let exchange1_label_dom = document.getElementById("exchange1")
+        if (this._contest.exchange1) {
+            const exchange1_label = this._contest.exchange1
+            exchange1_label_dom.innerText = exchange1_label
+            const div_myexchange1 = document.querySelector("#myexchange1")
+            div_myexchange1.classList.remove("hidden")
+            const label_myexchange1 = document.querySelector("#myexchange1 label")
+            label_myexchange1.innerText = exchange1_label
+        }    
+        else { 
+            exchange1_label_dom.innerText = 'Nr.'
+            const div_myexchange1 = document.querySelector("#myexchange1")
+            div_myexchange1.classList.add("hidden")            
+        }
+
+
     }
 
     updateFunctionKeys() {
-        // need to reattach events on function key press
-        document.querySelectorAll("#send_button > *").forEach(e => e.remove())
-        const buttons_div = document.querySelector("#send_button")
         const contest = ContestDefinition.getContest(this._config.contest_id)
-        console.log(contest)
         for (const [key, value] of Object.entries(contest.key)) {
-                const button = document.createElement("button")
-                button.id = key
-                const label = document.createTextNode(value.label)
-                button.appendChild(label)
-                buttons_div.appendChild(button)
+                  const button = document.getElementById(key)
+                  button.innerText = value.label
              }
             
     }

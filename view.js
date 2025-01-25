@@ -40,7 +40,7 @@ export class View {
     }
 
     _updatePileUp() {
-        if (this._config._config.contest_id === RunMode.Pileup) {
+        if (this._config._config.runmode === RunMode.Pileup) {
             const element = document.getElementById("pileup")
             const txt = `Pileup: ${this._pileupStations}`
             element.innerText = txt

@@ -253,6 +253,10 @@ a {
   
 }*/
 
+.hidden {
+  display: none;
+}
+
 .pileup_hidden {
   display: none;
 }
