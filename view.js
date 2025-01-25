@@ -3,33 +3,9 @@ import { AudioMessage, DEFAULT, RunMode, StationMessage } from "./defaults.js"
 import { Log } from "./log.js"
 import { Config } from "./config.js"
 
+import { ContestDefinition } from "./contest-definition.js"
 
 
-const stdKey = {
-    F1: { label: "CQ", send: StationMessage.CQ },
-    F2: { label: "&lt;#&gt;", send: StationMessage.NR },
-    F3: { label: "TU", send: StationMessage.TU },
-    F4: { label: "&lt;my&gt;", send: StationMessage.MyCall },
-    F5: { label: "&lt;his&gt;", send: StationMessage.HisCall },
-    F6: { label: "B4", send: StationMessage.B4 },
-    F7: { label: "&quest;", send: StationMessage.Qm },
-    F8: { label: "NIL", send:StationMessage.Nil },
-}
-
-
-
-const contest_def = [
-    {
-        name: "Single Call",
-        runMode: RunMode.Single,
-        key: stdKey,
-    }, 
-    {
-        name: "Pileup",
-        runMode: RunMode.Pileup,
-        key: stdKey,
-    }
-]
 
 export class View {
     constructor() {
@@ -64,7 +40,7 @@ export class View {
     }
 
     _updatePileUp() {
-        if (this._config._config.runmode === RunMode.Pileup) {
+        if (this._config._config.contest_id === RunMode.Pileup) {
             const element = document.getElementById("pileup")
             const txt = `Pileup: ${this._pileupStations}`
             element.innerText = txt
@@ -466,12 +442,16 @@ export class View {
     initConfig() {
         this._config = new Config((conf) => {
             this.updateConf(conf)
+            this._ContestDefinition.updateConfig(conf)
         })
         this._config.update_dom()
         const input = document.querySelector("#volume")
     }
 
+
+
     onLoad() {
+        this._ContestDefinition = new ContestDefinition()
         this.initConfig()
         this.initRunButton()
         this.sendButton()

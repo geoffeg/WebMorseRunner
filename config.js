@@ -1,4 +1,6 @@
 import { DEFAULT, RunMode } from "./defaults.js"
+import { ContestDefinition } from "./contest-definition.js"
+
 
 export class Config {
     static store_key = "_WebMorseKey";
@@ -12,7 +14,7 @@ export class Config {
         this._qsk = document.querySelector("#qsk")
         this._bandwidth = document.querySelector("#bandwidth")
         this._rit = document.querySelector("#rit")
-        this._runmode = document.querySelector("#mode")
+        this._contest_id = document.querySelector("#mode")
         this._activity = document.querySelector("#activity")
 
         // condx
@@ -40,6 +42,7 @@ export class Config {
             time: 10,
             qsk: false,
             rit: 0,
+            contest_id: 'single',
             runmode: RunMode.Single,
             activity: 2,
             // condx
@@ -54,7 +57,6 @@ export class Config {
 
     update() {
         this.read_dom()
-        this.updatePileupFields()
         this.store()
         this._callback(this._config)
     }
@@ -72,19 +74,13 @@ export class Config {
         let config_str = localStorage.getItem(Config.store_key)
         if (config_str) {
             let conf = JSON.parse(config_str)
-            if (conf) this._config = Object.assign({}, this._config, conf)
+            if (conf) { 
+               this._config = Object.assign({}, this._config, conf)
+               this._callback(this._config)    
+            }
         }
     }
 
-    updatePileupFields() {
-        document.querySelectorAll(".pileup_only").forEach(
-            (e) => {
-                if (this._config.runmode === RunMode.Pileup) {
-                    e.classList.remove("pileup_hidden")
-                } else e.classList.add("pileup_hidden")
-            },
-        )
-    }
 
     update_dom() {
         this._my_call.value = this._config.my_call
@@ -95,7 +91,7 @@ export class Config {
         this._qsk.checked = this._config.qsk
         this._bandwidth.value = this._config.rx_bandwidth
         this._rit.value = this._config.rit
-        this._runmode.value = String(this._config.runmode)
+        this._contest_id.value = String(this._config.contest_id)
         this._activity.value = String(this._config.activity)
         // condx
         this._qrn.checked = this._config.qrn
@@ -103,8 +99,6 @@ export class Config {
         this._qsb.checked = this._config.qsb   
         this._flutter.checked = this._config.flutter           
         this._lids.checked = this._config.lids 
-
-        this.updatePileupFields()
     }
 
     read_dom() {
@@ -116,7 +110,8 @@ export class Config {
         this._config.qsk = this._qsk.checked
         this._config.rx_bandwidth = this._bandwidth.value
         this._config.rit = this._rit.value
-        this._config.runmode = parseInt(this._runmode.value)
+        this._config.contest_id = this._contest_id.value
+        this._config.runmode = ContestDefinition.getRunMode(this._config.contest_id)
         this._config.activity = parseInt(this._activity.value)
 
 

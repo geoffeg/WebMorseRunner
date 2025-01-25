@@ -3,6 +3,7 @@ export const AudioMessage = {
   request_qrm: 'request_qrm',
   send_msg: 'send_msg',
   send_his: 'send_his',
+  send_exchange: 'send_exchange',
   qso_to_check_log: 'check_log',
   update_nr: 'update_nr',       
   create_dx: 'create_dx',
@@ -17,6 +18,7 @@ export const AudioMessage = {
 
 export const StationMessage = {
   None: 'None',
+  Exchange1: 'Exchange1',  
   CQ: 'CQ',
   NR: 'NR',
   TU: 'TU',
