@@ -17,6 +17,10 @@ const cwaKey = Object.assign({}, stdKey, {
     F2: { label: "<DOK>", send: StationMessage.Exchange1 },
 })
 
+const awtKey = Object.assign({}, stdKey, {
+    F2: { label: "<Name>", send: StationMessage.Exchange1 },
+})
+
 
 const contest_def = [
     {
@@ -36,9 +40,15 @@ const contest_def = [
         name: "DARC CWA",
         runmode: RunMode.Pileup,
         key: cwaKey,
-        exchange1: 'DOK'
-        
-    }    
+        exchange1: 'DOK'        
+    },
+    {
+        id: 'awt',
+        name: "A1Club AWT",
+        runmode: RunMode.Pileup,
+        key: awtKey,
+        exchange1: 'Name'        
+    }        
 ]
 
 export class ContestDefinition {
