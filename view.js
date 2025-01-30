@@ -15,8 +15,6 @@ export class View {
         this.calls.fetch_calls()
         this.MustAdvance = true
         this.call = document.getElementById("call")
-        this.rst = document.getElementById("rst")
-        this.nr = document.getElementById("nr")
         this.clock = document.getElementById("clock")
         this._pileupStations = 0
         this.prev_call = ""
@@ -98,7 +96,8 @@ export class View {
         }
         let C = this.CallSend
         let N = this.NrSend
-        let R = this.nr.value !== ""
+        const nr_dom = document.getElementById("nr")
+        let R = nr_dom.value !== ""
 
         if (!C || (!N && !R)) {
             this.CallSend = true
@@ -264,12 +263,14 @@ export class View {
     }
 
     get Nr() {
-        let nr = this.nr.value
+        const nr_dom = document.getElementById("nr")
+        let nr = nr_dom.value
         if (nr === "") return 0
         return parseInt(nr)
     }
     get Rst() {
-        let rst = this.rst.value
+        const rst_dom = document.getElementById("rst")        
+        const rst = rst_dom.value
         if (rst === "") return 599
         return parseInt(rst)
     }
@@ -278,10 +279,17 @@ export class View {
 
     advance() {
         if (!this.MustAdvance) return
-        if (this.rst.value === "") this.rst.value = 599
+        const rst = document.getElementById("rst")        
+        if (rst && rst.value === "") rst.value = 599
 
         if (this.call.value.indexOf("?") === -1) {
-            this.setFocus("nr")
+            if (rst) {
+                const next_field = this._ContestDefinition.getNextField("rst")
+                this.setFocus(next_field)
+            } else {
+                const next_field = this._ContestDefinition.getNextField("call")
+                this.setFocus(next_field)
+            }   
         }
         this.MustAdvance = false
     }
@@ -445,6 +453,5 @@ export class View {
         this.initRunButton()
         this.sendButton()
         this.wipeFields()
-   //     this.numberFields()
     }
 }
