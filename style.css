@@ -144,7 +144,7 @@ th {
 
 #input {
   display: flex;
-  gap: 10px;
+  gap: 7px;
 }
 
 #low_row {
@@ -261,6 +261,7 @@ a {
   display: none;
 }
 
-.cont_input {
+
+#input  input {
   font-size: 14pt;
 }

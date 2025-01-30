@@ -51,9 +51,7 @@ export class View {
 
     wipeFields() {
         document.getElementById("call").value = ""
-        document.getElementById("rst").value = ""
-        document.getElementById("nr").value = ""
-
+        this._ContestDefinition.wipeExchangeFields()
         this.setFocus("call")
 
         this.CallSend = false
@@ -68,16 +66,20 @@ export class View {
         this.MustAdvance = false
         const active = document.activeElement
         const RST = document.getElementById('rst')
-        const rst_value = RST.value
+        let rst_value = ''
+        if (RST) rst_value = RST.value
         if (!active) return
         switch (active.id) {
             case 'call':
             case 'RST':
-                if (rst_value === '') RST.value = '599'
-                this.setFocus("nr")
+                if (rst_value === '' && RST) RST.value = '599'
+                let next_id = this._ContestDefinition.getNextField(active.id)
+                if (next_id === 'rst') next_id = this._ContestDefinition.getNextField(next_id)
+                this.setFocus(next_id)
                 break;
-            case 'nr':   
-                this.setFocus("call")
+            default:
+                const default_next_id = this._ContestDefinition.getNextField(active.id)                   
+                this.setFocus(default_next_id)
                 break
         }
     }
@@ -240,12 +242,13 @@ export class View {
                     e.preventDefault()
                     break
                 case "Tab":
-                    if (!e.shiftKey && e.target.id === "nr") {
+                    const last_id = this._ContestDefinition.getLastExchangeField().id
+                    if (!e.shiftKey && e.target.id === last_id) {
                         document.getElementById("call").focus()
                         e.preventDefault()
                     }
                     if (e.shiftKey && e.target.id === "call") {
-                        document.getElementById("nr").focus()
+                        document.getElementById(last_id).focus()
                         e.preventDefault()
                     }
 
@@ -271,21 +274,7 @@ export class View {
         return parseInt(rst)
     }
 
-    numberFields() {
-        var nr_input = document.querySelectorAll(".NR")
-        Array.from(nr_input).forEach((input) => {
-            input.addEventListener("beforeinput", (e) => {
-                const nextVal =
-                    e.target.value.substring(0, e.target.selectionStart) +
-                    (e.data ?? "") +
-                    e.target.value.substring(e.target.selectionEnd)
-                if (!/^\d{0,3}$/.test(nextVal)) {
-                    e.preventDefault()
-                }
-                return
-            })
-        })
-    }
+
 
     advance() {
         if (!this.MustAdvance) return
@@ -456,6 +445,6 @@ export class View {
         this.initRunButton()
         this.sendButton()
         this.wipeFields()
-        this.numberFields()
+   //     this.numberFields()
     }
 }

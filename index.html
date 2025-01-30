@@ -29,7 +29,7 @@
         </table>
       </div>
       <div id="title">
-        <div class="large"> Web Morse Runner 0.5&beta;</div>
+        <div class="large"> Web Morse Runner 0.6&beta;</div>
         <div> by DJ1TF - Thomas Fritzsche</div>
         <div> <a href="https://github.com/fritzsche/WebMorseRunner">GitHub</a>
         </div>
@@ -163,21 +163,22 @@
     </div>
   </div>
   <div class="flex">
-    <div id="low_row">
-      <div class="block" id="input">
+    <div id="low_row" class="">
+      <div class="flex_form block" id="input">
         <div>
           <label for="call">Call</label>
-          <input autocomplete="off" id="call" class="cont_input" type="text" value="" name="call"
+          <input autocomplete="off" id="call" class="cont_input" type="text" value="" name="call" maxlength="18" size="18" 
             style="text-transform: uppercase">
-        </div>
-        <div>
-          <label for="rst">RST</label>
-          <input autocomplete="off" id="rst" class="cont_input NR" maxlength="3" size="3" type="text" value=""
-            name="rst">
-        </div>
-        <div>
-          <label for="nr" id="exchange1">Nr.</label>
-          <input autocomplete="off" id="nr" class="cont_input NR" maxlength="3" size="3" type="text" value="" name="nr">
+        </div> 
+        <div class="flex_form" id="exchange">       
+          <div>
+            <label for="rst">RST</label>
+            <input autocomplete="off" id="rst" class="NR" maxlength="3" size="3" type="text" value="" name="rst">
+          </div>
+          <div>
+            <label for="nr" id="exchange1">Nr.</label>
+            <input autocomplete="off" id="nr" class="NR" maxlength="3" size="3" type="text" value="" name="nr">
+          </div>
         </div>
       </div>
 
