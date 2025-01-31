@@ -94,20 +94,30 @@ export class View {
             })
             return
         }
-        let C = this.CallSend
-        let N = this.NrSend
-        const nr_dom = document.getElementById("nr")
-        let R = nr_dom.value !== ""
+        // access member variable
+        // these are reset when qso finished
+        let callSend = this.CallSend
+        let numberSend = this.NrSend
 
-        if (!C || (!N && !R)) {
+        // the dom element containing the nr
+        const nr_dom = document.getElementById("nr")
+        // we have content in the NR field logged 
+        let dxNrLogged = nr_dom.value !== ""
+
+        // Call has not yet send, so we send the call
+        if (!callSend || (!numberSend && !dxNrLogged)) {
+            // remember we have send the call
             this.CallSend = true
+            // we remember the call to check if we changes it.
+            // we can resend all changed 
             this.prev_call = new_call
+            // send <his>
             this.sendMessage({
                 type: AudioMessage.send_his,
                 data: new_call,
             })
         }
-        if (!N) {
+        if (!numberSend) {
             this.NrSend = true
             this.sendMessage({
                 type: AudioMessage.send_msg,
@@ -115,14 +125,16 @@ export class View {
             })
         }
         // send ?
-        if (N && !R) {
+        if (numberSend && !dxNrLogged) {
             this.sendMessage({
                 type: AudioMessage.send_msg,
                 data: StationMessage.Qm,
             })
         }
-
-        if (R && (C || N)) {
+        // qso finished:
+        // we have NR and call
+        // now send TU and log QSO and reset the fields.
+        if (dxNrLogged && (callSend || numberSend)) {
             this.sendMessage({
                 type: AudioMessage.send_msg,
                 data: StationMessage.TU

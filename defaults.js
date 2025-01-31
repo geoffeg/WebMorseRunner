@@ -41,6 +41,7 @@ export const StationMessage = {
   Qrl2: 'Qrl2',
   Qsy: 'Qsy',
   Agn: 'Agn',
+  MyExchange: 'MyExchange',
 }
 
 export const OperatorState = {

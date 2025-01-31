@@ -84,6 +84,16 @@ export class Contest {
             this._MyStation.Call = DEFAULT.CALL
         }
 
+        // MyExchange
+        if (conf.contest_id) {
+            const contest_data = conf.contest[conf.contest_id] 
+            if (contest_data) {
+                const exchange1 = contest_data.exchange1
+                if(exchange1) this._MyStation.MyExchange = exchange1
+
+            }
+        }
+
         // WPM
         if (DEFAULT.WPM !== conf.wpm) {
             DEFAULT.WPM = conf.wpm

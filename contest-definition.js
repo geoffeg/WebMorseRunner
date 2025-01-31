@@ -76,7 +76,10 @@ const contest_def = [
         runmode: RunMode.Pileup,
         exchange: [Exchange.RST, Exchange.NAME],
         key: awtKey,
-        my_exchange: 'My Name'
+        my_exchange: 'My Name',
+        contest_messages: {
+            CQ: 'CQ AWT <my>',
+        }    
     }
 ]
 

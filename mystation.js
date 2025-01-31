@@ -17,6 +17,7 @@ export class MyStation extends Station {
         this.Pitch = DEFAULT.PITCH
         this.Wpm = DEFAULT.WPM
         this.Amplitude = 300000
+        this.MyExchange = ""
     }
 
     AbortSend() {
