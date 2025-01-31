@@ -12,7 +12,7 @@ const Exchange = {
         text: "RST",
         length: 3,
         numeric: true,
-    }, 
+    },
     NAME: {
         id: 'name',
         text: 'Name',
@@ -52,32 +52,32 @@ const contest_def = [
         id: 'single',
         name: "Single Call",
         runmode: RunMode.Single,
-        exchange: [Exchange.RST,Exchange.NR],        
+        exchange: [Exchange.RST, Exchange.NR],
         key: stdKey,
     },
     {
         id: 'pileup',
         name: "Pileup",
         runmode: RunMode.Pileup,
-        exchange: [Exchange.RST,Exchange.NR],
+        exchange: [Exchange.RST, Exchange.NR],
         key: stdKey,
     },
     {
         id: 'cwa',
         name: "DARC CWA",
         runmode: RunMode.Pileup,
-        exchange: [Exchange.RST,Exchange.DOK],
+        exchange: [Exchange.RST, Exchange.DOK],
         key: cwaKey,
-        my_exchange: 'My DOK'        
+        my_exchange: 'My DOK'
     },
     {
         id: 'awt',
         name: "A1Club AWT",
         runmode: RunMode.Pileup,
-        exchange: [Exchange.RST,Exchange.NAME],
+        exchange: [Exchange.RST, Exchange.NAME],
         key: awtKey,
-        my_exchange: 'My Name'        
-    }        
+        my_exchange: 'My Name'
+    }
 ]
 
 export class ContestDefinition {
@@ -98,12 +98,12 @@ export class ContestDefinition {
     }
 
     static getRunMode(id) {
-        const contest = contest_def.find( e => e.id === id  )
+        const contest = contest_def.find(e => e.id === id)
         return contest.runmode
     }
 
     static getContest(id) {
-        return contest_def.find( e => e.id === id  )
+        return contest_def.find(e => e.id === id)
     }
 
     updateConfig(conf) {
@@ -118,10 +118,14 @@ export class ContestDefinition {
             const div_myexchange1 = document.querySelector("#myexchange1")
             div_myexchange1.classList.remove("hidden")
             const label_myexchange1 = document.querySelector("#myexchange1 label")
-            label_myexchange1.innerText = exchange1_label          
+            label_myexchange1.innerText = exchange1_label
+            const input_myexchange1 = document.querySelector("#myexchange1 input")
+            if (!this._config.contest[this._contest.id].exchange1)
+                input_myexchange1.value = ''
+            else input_myexchange1.value = this._config.contest[this._contest.id].exchange1
         } else {
             const div_myexchange1 = document.querySelector("#myexchange1")
-            div_myexchange1.classList.add("hidden")                
+            div_myexchange1.classList.add("hidden")
         }
 
     }
@@ -130,30 +134,30 @@ export class ContestDefinition {
         const exchange = document.querySelector("#exchange")
         exchange.innerHTML = ''
         this._contest.exchange.forEach(ex => {
-          const div = document.createElement("div");  
-          const label = document.createElement("label")
-          label.for = ex.id
-          label.innerText=ex.text
-          div.appendChild(label)
-          const input = document.createElement("input")
-          input.id = ex.id
-          if (ex.numeric) input.classList.add("NR")
-          if (ex.uppercase) input.style = "text-transform: uppercase"  
-          input.maxLength = ex.length
-          input.size = ex.length
-          input.type = "text"
-          input.value = ""
-          input.name = ex.id
-          input.autocomplete="off"
-          div.appendChild(input)
-          exchange.appendChild(div)
+            const div = document.createElement("div")
+            const label = document.createElement("label")
+            label.for = ex.id
+            label.innerText = ex.text
+            div.appendChild(label)
+            const input = document.createElement("input")
+            input.id = ex.id
+            if (ex.numeric) input.classList.add("NR")
+            if (ex.uppercase) input.style = "text-transform: uppercase"
+            input.maxLength = ex.length
+            input.size = ex.length
+            input.type = "text"
+            input.value = ""
+            input.name = ex.id
+            input.autocomplete = "off"
+            div.appendChild(input)
+            exchange.appendChild(div)
         })
         this.numberFields()
         this.wipeExchangeFields()
     }
 
     wipeExchangeFields() {
-        this._contest.exchange.forEach(ex => { 
+        if (this._contest) this._contest.exchange.forEach(ex => {
             document.getElementById(ex.id).value = ""
         })
     }
@@ -171,27 +175,27 @@ export class ContestDefinition {
                 return
             })
         })
-    }    
+    }
 
     getLastExchangeField() {
         const exchange = this._contest.exchange
-        return exchange[exchange.length-1]
+        return exchange[exchange.length - 1]
     }
 
     updateFunctionKeys() {
         const contest = ContestDefinition.getContest(this._config.contest_id)
         for (const [key, value] of Object.entries(contest.key)) {
-                  const button = document.getElementById(key)
-                  button.innerText = value.label
-             }            
+            const button = document.getElementById(key)
+            button.innerText = value.label
+        }
     }
 
     getNextField(field) {
         const exchange = this._contest.exchange
-        if (field ==='call') return exchange[0].id
-        const field_idx = exchange.findIndex(ex => { return ex.id === field})
-        if (field_idx === exchange.length - 1 ) return 'call'
-        return exchange[field_idx+1].id
+        if (field === 'call') return exchange[0].id
+        const field_idx = exchange.findIndex(ex => { return ex.id === field })
+        if (field_idx === exchange.length - 1) return 'call'
+        return exchange[field_idx + 1].id
     }
 
     updatePileupFields() {

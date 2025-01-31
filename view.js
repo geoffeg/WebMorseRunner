@@ -442,7 +442,7 @@ export class View {
             this._ContestDefinition.updateConfig(conf)
         })
         this._config.update_dom()
-        const input = document.querySelector("#volume")
+        //const input = document.querySelector("#volume")
     }
 
 

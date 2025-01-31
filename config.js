@@ -16,6 +16,7 @@ export class Config {
         this._rit = document.querySelector("#rit")
         this._contest_id = document.querySelector("#mode")
         this._activity = document.querySelector("#activity")
+        this._exchange1 = document.querySelector("#my_exchange1")
 
         // condx
         this._qrn = document.querySelector("#qrn")          
@@ -51,6 +52,7 @@ export class Config {
             qsb: false,
             flutter: false,
             lids: false,
+            contest: {},
         }
         this.load()
     }
@@ -91,7 +93,8 @@ export class Config {
         this._qsk.checked = this._config.qsk
         this._bandwidth.value = this._config.rx_bandwidth
         this._rit.value = this._config.rit
-        this._contest_id.value = String(this._config.contest_id)
+        const contest_id = String(this._config.contest_id)
+        this._contest_id.value = contest_id
         this._activity.value = String(this._config.activity)
         // condx
         this._qrn.checked = this._config.qrn
@@ -99,6 +102,10 @@ export class Config {
         this._qsb.checked = this._config.qsb   
         this._flutter.checked = this._config.flutter           
         this._lids.checked = this._config.lids 
+        if(contest_id) {
+            if(this._config.contest && this._config.contest[contest_id] && this._config.contest[contest_id].exchange1)
+                this._exchange1.value = this._config.contest[contest_id].exchange1
+        }
     }
 
     read_dom() {
@@ -110,10 +117,15 @@ export class Config {
         this._config.qsk = this._qsk.checked
         this._config.rx_bandwidth = this._bandwidth.value
         this._config.rit = this._rit.value
-        this._config.contest_id = this._contest_id.value
+        const old_contest_id = this._config.contest_id
+        const contest_id = this._contest_id.value
+        this._config.contest_id = contest_id
         this._config.runmode = ContestDefinition.getRunMode(this._config.contest_id)
         this._config.activity = parseInt(this._activity.value)
 
+        const exchange1 = this._exchange1.value
+        if (! this._config.contest[contest_id]) this._config.contest[contest_id] = {}
+        if (old_contest_id === contest_id) this._config.contest[contest_id]["exchange1"] = exchange1
 
         this._config.qrn = this._qrn.checked
         this._config.qrm = this._qrm.checked    
