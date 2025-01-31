@@ -259,7 +259,7 @@ export class View {
     }
 
     get Call() {
-        return this.call.value.toUpperCase()
+        return this.call.value.toUpperCase().trim()
     }
 
     get Nr() {
