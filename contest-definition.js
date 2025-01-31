@@ -129,7 +129,8 @@ export class ContestDefinition {
         }
 
     }
-
+    // Create the field for the exchange.
+    // In a standard contest this is RST and NR
     updateExchangeFields() {
         const exchange = document.querySelector("#exchange")
         exchange.innerHTML = ''
@@ -157,10 +158,15 @@ export class ContestDefinition {
     }
 
     wipeExchangeFields() {
+        // if this gets called in the initialization the contest data is not yet available.
+        // so we not yet need to wipe the fields.
         if (this._contest) this._contest.exchange.forEach(ex => {
             document.getElementById(ex.id).value = ""
         })
     }
+
+    // this is a callback that ensures only numeric fields can be used.
+    // It's attached to respective exchange fields like RST and NR.
     numberFields() {
         var nr_input = document.querySelectorAll(".NR")
         Array.from(nr_input).forEach((input) => {
@@ -177,19 +183,26 @@ export class ContestDefinition {
         })
     }
 
+    // returns the last exchange field. This is used
+    // to have the tap-navigation (after the last exchange field)
+    // to return back to the call field.
     getLastExchangeField() {
         const exchange = this._contest.exchange
         return exchange[exchange.length - 1]
     }
 
+    // update the text for the function keys
     updateFunctionKeys() {
         const contest = ContestDefinition.getContest(this._config.contest_id)
         for (const [key, value] of Object.entries(contest.key)) {
             const button = document.getElementById(key)
-            button.innerText = value.label
+            button.innerText = `${ key } ${value.label}`
         }
     }
 
+    // get the next field of the sequence: call --> exchange1 --> exchange2 -->...
+    // if the last exchange field is provided as input the method will return the call
+    // fields
     getNextField(field) {
         const exchange = this._contest.exchange
         if (field === 'call') return exchange[0].id
