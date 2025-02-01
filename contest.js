@@ -94,6 +94,11 @@ export class Contest {
             }
         }
 
+        // Contest specific messages
+        const active_contest = conf.active_contest
+        
+        if (active_contest) Station.Messages =  {...Station.Messages,...active_contest.contest_messages}           
+
         // WPM
         if (DEFAULT.WPM !== conf.wpm) {
             DEFAULT.WPM = conf.wpm

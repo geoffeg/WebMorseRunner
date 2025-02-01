@@ -80,7 +80,7 @@ export class Station {
         }
         this._Msg.push(AMsg)
 
-        const text = this.Messages[AMsg]
+        const text = Station.Messages[AMsg]
         if (text) this.SendText(text)
     }
 
