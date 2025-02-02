@@ -86,18 +86,18 @@ export class Contest {
 
         // MyExchange
         if (conf.contest_id) {
-            const contest_data = conf.contest[conf.contest_id] 
+            const contest_data = conf.contest[conf.contest_id]
             if (contest_data) {
                 const exchange1 = contest_data.exchange1
-                if(exchange1) this._MyStation.MyExchange = exchange1
+                if (exchange1) this._MyStation.MyExchange = exchange1
 
             }
         }
 
         // Contest specific messages
         const active_contest = conf.active_contest
-        
-        if (active_contest) Station.Messages =  {...Station.Messages,...active_contest.contest_messages}           
+
+        if (active_contest) Station.Messages = { ...Station.Messages, ...active_contest.contest_messages }
 
         // WPM
         if (DEFAULT.WPM !== conf.wpm) {
@@ -145,9 +145,9 @@ export class Contest {
 
         if (DEFAULT.QSB !== conf.qsb) DEFAULT.QSB = conf.qsb
         if (DEFAULT.QRN !== conf.qrn) DEFAULT.QRN = conf.qrn
-        if (DEFAULT.QRM !== conf.qrm) DEFAULT.QRM = conf.qrm     
+        if (DEFAULT.QRM !== conf.qrm) DEFAULT.QRM = conf.qrm
         if (DEFAULT.LIDS !== conf.lids) DEFAULT.LIDS = conf.lids
-        if (DEFAULT.FLUTTER !== conf.flutter) DEFAULT.FLUTTER = conf.flutter                            
+        if (DEFAULT.FLUTTER !== conf.flutter) DEFAULT.FLUTTER = conf.flutter
 
     }
 
@@ -182,14 +182,18 @@ export class Contest {
                 const qrm = new QrmStation(message.data)
                 this.Stations.push(qrm)
                 break
-            
-            case AudioMessage.send_msg:                    
+
+            case AudioMessage.send_msg:
                 this._MyStation.SendMsg(message.data)
-                break    
+                break
 
             case AudioMessage.send_his:
                 this._MyStation.HisCall = message.data
                 this._MyStation.SendMsg(StationMessage.HisCall)
+                break
+            case AudioMessage.send_exchange:
+                this._MyStation.exchange1 = message.data
+                this._MyStation.SendMsg(StationMessage.Exchange1)
                 break
             case AudioMessage.config:
                 this.updateConfig(message.data)
@@ -222,7 +226,7 @@ export class Contest {
 
         }
 
-        if (DEFAULT.QRM &&  Math.random() < 0.002) 
+        if (DEFAULT.QRM && Math.random() < 0.002)
             this.post({ type: AudioMessage.request_qrm, })
 
         for (let Stn = 0; Stn < this.Stations.length; Stn++) {
@@ -375,7 +379,7 @@ export class Contest {
                     data: {
                         call: stn.MyCall,
                         NR: stn.NR,
-                        RST: stn.RST,                        
+                        RST: stn.RST,
                     },
                 })
             }

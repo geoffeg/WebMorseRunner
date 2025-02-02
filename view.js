@@ -5,8 +5,6 @@ import { Config } from "./config.js"
 
 import { ContestDefinition } from "./contest-definition.js"
 
-
-
 export class View {
     constructor() {
         this.running = false
@@ -74,9 +72,9 @@ export class View {
                 let next_id = this._ContestDefinition.getNextField(active.id)
                 if (next_id === 'rst') next_id = this._ContestDefinition.getNextField(next_id)
                 this.setFocus(next_id)
-                break;
+                break
             default:
-                const default_next_id = this._ContestDefinition.getNextField(active.id)                   
+                const default_next_id = this._ContestDefinition.getNextField(active.id)
                 this.setFocus(default_next_id)
                 break
         }
@@ -157,58 +155,41 @@ export class View {
         }
     }
 
-    processFunctionKey(key) {
-        switch (key) {
-            case "F1":
-                this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.CQ
-                })
-                break
-            case "F2":
-                this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.NR
-                })
-                break
-            case "F3":
-                this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.TU
-                })
-                break
-            case "F4":
-                this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.MyCall
-                })
-                break
-            case "F5":
+
+
+    // My outgoing messages
+    sendMyMessage(message) {
+        switch (message) {
+            // we need to send the text of his call
+            case StationMessage.send_his:
                 this.sendMessage({
                     type: AudioMessage.send_his,
                     data: this.Call,
                 })
                 break
-            case "F6":
+            case StationMessage.Exchange1:
+                const exchange = this._ContestDefinition.composeExchange()
                 this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.B4,
-                })
-                break
-            case "F7":
-                this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.Qm,
-                })
-                break
-            case "F8":
-                this.sendMessage({
-                    type: AudioMessage.send_msg,
-                    data: StationMessage.Nil,
+                    type: AudioMessage.send_exchange,
+                    data: exchange
                 })
                 break
             default:
-                return false
+                this.sendMessage({
+                    type: AudioMessage.send_msg,
+                    data: message
+                })
+                break
+        }
+    }
+
+    processFunctionKey(key) {
+        const Constest_FKey = this._ContestDefinition._contest.key
+        if (Constest_FKey) {
+            if (!Constest_FKey[key]) return false
+            this.sendMyMessage(Constest_FKey[key].send)
+        } else {
+            //debugger;
         }
         return true
     }
@@ -281,7 +262,7 @@ export class View {
         return parseInt(nr)
     }
     get Rst() {
-        const rst_dom = document.getElementById("rst")        
+        const rst_dom = document.getElementById("rst")
         const rst = rst_dom.value
         if (rst === "") return 599
         return parseInt(rst)
@@ -291,7 +272,7 @@ export class View {
 
     advance() {
         if (!this.MustAdvance) return
-        const rst = document.getElementById("rst")        
+        const rst = document.getElementById("rst")
         if (rst && rst.value === "") rst.value = 599
 
         if (this.call.value.indexOf("?") === -1) {
@@ -301,7 +282,7 @@ export class View {
             } else {
                 const next_field = this._ContestDefinition.getNextField("call")
                 this.setFocus(next_field)
-            }   
+            }
         }
         this.MustAdvance = false
     }

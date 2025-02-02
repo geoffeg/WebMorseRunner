@@ -1,11 +1,12 @@
 export const AudioMessage = {
-  request_dx:  'request_dx',
+  request_dx: 'request_dx',
   request_qrm: 'request_qrm',
   send_msg: 'send_msg',
   send_his: 'send_his',
+  send_text: 'send_text',
   send_exchange: 'send_exchange',
   qso_to_check_log: 'check_log',
-  update_nr: 'update_nr',       
+  update_nr: 'update_nr',
   create_dx: 'create_dx',
   create_qrm: 'create_qrm',
   check_log: 'check_log',
@@ -13,12 +14,12 @@ export const AudioMessage = {
   start_contest: 'start_contest',
   stop_contest: 'stop_contest',
   config: 'config',
-  update_pileup: 'update_pileup'    
+  update_pileup: 'update_pileup',
 }
 
 export const StationMessage = {
   None: 'None',
-  Exchange1: 'Exchange1',  
+  Exchange1: 'Exchange1',
   CQ: 'CQ',
   NR: 'NR',
   TU: 'TU',
@@ -56,27 +57,27 @@ export const OperatorState = {
 }
 
 export const RunMode = {
-    Stop: 0, 
-    Pileup: 1, 
-    Single: 2, 
-    Wpx: 3, 
-    Hst: 4   
-  }
+  Stop: 0,
+  Pileup: 1,
+  Single: 2,
+  Wpx: 3,
+  Hst: 4
+}
 
 export class DEFAULT {
-    static RATE = 11025
-    static BUFSIZE = 512
-    static PASSES = 3
-    static BANDWIDTH = 300
-    static PITCH = 500
-    static RUNMODE = RunMode.Single
-    static CALL = 'DJ1TF'
-    static WPM = 20
-    static RIT = 0
-    static ACTIVITY = 2
-    static QRN = false
-    static QSB = false
-    static FLUTTER = false
-    static QRM = false
-    static LIDS = false
+  static RATE = 11025
+  static BUFSIZE = 512
+  static PASSES = 3
+  static BANDWIDTH = 300
+  static PITCH = 500
+  static RUNMODE = RunMode.Single
+  static CALL = 'DJ1TF'
+  static WPM = 20
+  static RIT = 0
+  static ACTIVITY = 2
+  static QRN = false
+  static QSB = false
+  static FLUTTER = false
+  static QRM = false
+  static LIDS = false
 }

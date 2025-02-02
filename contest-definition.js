@@ -1,25 +1,32 @@
 import { AudioMessage, DEFAULT, RunMode, StationMessage } from "./defaults.js"
 
+
+const exchangeId = {
+    nr: 'nr',
+    rst: 'rst',
+    exchange1: 'exchange1'
+}
+
 const Exchange = {
     NR: {
-        id: 'nr',
+        id: exchangeId.nr,
         text: "Nr.",
         length: 3,
         numeric: true,
     },
     RST: {
-        id: 'rst',
+        id: exchangeId.rst,
         text: "RST",
         length: 3,
         numeric: true,
     },
     NAME: {
-        id: 'name',
+        id: exchangeId.exchange1,
         text: 'Name',
         length: 6,
     },
     DOK: {
-        id: 'dok',
+        id: exchangeId.exchange1,
         text: 'DOK',
         length: 3,
         uppercase: true
@@ -79,7 +86,7 @@ const contest_def = [
         my_exchange: 'My Name',
         contest_messages: {
             CQ: 'CQ AWT <my>',
-        }    
+        }
     }
 ]
 
@@ -199,7 +206,7 @@ export class ContestDefinition {
         const contest = ContestDefinition.getContest(this._config.contest_id)
         for (const [key, value] of Object.entries(contest.key)) {
             const button = document.getElementById(key)
-            button.innerText = `${ key } ${value.label}`
+            button.innerText = `${key} ${value.label}`
         }
     }
 
@@ -212,6 +219,29 @@ export class ContestDefinition {
         const field_idx = exchange.findIndex(ex => { return ex.id === field })
         if (field_idx === exchange.length - 1) return 'call'
         return exchange[field_idx + 1].id
+    }
+
+    composeExchange() {
+        let result = ""
+        this._contest.exchange.forEach(ex => {
+            switch (ex.id) {
+                case exchangeId.rst:
+                    const rst_dom = document.getElementById("rst")
+                    let rst = rst_dom.value
+                    if (rst === '') rst = '599'
+                    if (rst === '599') rst = '5NN'
+                    result += rst
+                    break
+                case exchangeId.exchange1:
+                    const my_exchange_dom = document.getElementById("my_exchange1")
+                    let exchange = my_exchange_dom.value
+                    result += exchange
+                    break
+            }
+
+        })
+
+        return result
     }
 
     updatePileupFields() {

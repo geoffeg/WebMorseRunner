@@ -20,6 +20,7 @@ export class Station {
         TU: 'TU',
         MyCall: '<my>',
         HisCall: '<his>',
+        Exchange1: '<exchange>',
         B4: 'QSO B4',
         Qm: '?',
         Nil: 'NIL',
@@ -61,8 +62,9 @@ export class Station {
         this.State = Station.State.Listening
         this._SendPos = 0
         this.done = false
-        this.custom_messages = { }
-        this.Messages = {...Station.Messages, ...this.custom_messages }
+        this.custom_messages = {}
+        this.Messages = { ...Station.Messages, ...this.custom_messages }
+        this.exchange1 = ''
     }
 
     get Bfo() {
@@ -79,7 +81,6 @@ export class Station {
             return
         }
         this._Msg.push(AMsg)
-
         const text = Station.Messages[AMsg]
         if (text) this.SendText(text)
     }
@@ -87,6 +88,7 @@ export class Station {
     SendText(AMsg) {
         AMsg = AMsg.replaceAll('<#>', Station.NrAsText(this.RST, this.NR))
         AMsg = AMsg.replaceAll('<my>', this.MyCall)
+        AMsg = AMsg.replaceAll('<exchange>', this.exchange1)
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
@@ -142,10 +144,23 @@ export class Station {
         }
     }
 
-    static NrAsText(rst, nr) {
+
+    static RstAsText(rst) {
+        // convert rst to string
         let rst_str = rst.toString().padStart(3, '0')
+        let result = `${rst_str}`
+        result = result.replaceAll('599', '5NN')
+        return result
+    }
+
+    static NrAsText(rst, nr) {
+        // convert rst to string
+        let rst_str = rst.toString().padStart(3, '0')
+        // convert NR to string
         let nr_str = nr.toString().padStart(3, '0')
+        // return combination like: "599001" without space
         let result = `${rst_str}${nr_str}`
+        // lids might cause errors.
         if (this._NrWithError) {
             let Idx = result.length - 1
             if (!/[2-7]/.test(result[Idx])) Idx--
@@ -157,6 +172,7 @@ export class Station {
                 result += `EEEEE ${nr_str}`
             }
         }
+        // flip 599 in 5NN
         result = result.replaceAll('599', '5NN')
         if (DEFAULT.RUNMODE !== RunMode.Hst) {
             result = result.replaceAll('000', 'TTT')
