@@ -1,3 +1,10 @@
+export const exchangeId = {
+  nr: 'nr',
+  rst: 'rst',
+  exchange1: 'exchange1'
+}
+
+
 export const AudioMessage = {
   request_dx: 'request_dx',
   request_qrm: 'request_qrm',

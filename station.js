@@ -46,6 +46,9 @@ export class Station {
         MeFinished: 4
     }
 
+    static contestExchangeMessage = '<rst><nr>'
+    
+
     constructor() {
         this._FBfo = 0
         this._dPhi = 0
@@ -65,6 +68,8 @@ export class Station {
         this.custom_messages = {}
         this.Messages = { ...Station.Messages, ...this.custom_messages }
         this.exchange1 = ''
+        this.exchange_msg = ''
+        this.All_DxData = []
     }
 
     get Bfo() {
@@ -85,8 +90,8 @@ export class Station {
         if (text) this.SendText(text)
     }
 
-    SendText(AMsg) {
-        AMsg = AMsg.replaceAll('<#>', Station.NrAsText(this.RST, this.NR))
+    SendText(AMsg) {        
+        AMsg = AMsg.replaceAll('<#>', this.composeExchange())
         AMsg = AMsg.replaceAll('<my>', this.MyCall)
         AMsg = AMsg.replaceAll('<exchange>', this.exchange1)
         if (this.MsgText) {
@@ -145,6 +150,16 @@ export class Station {
     }
 
 
+    composeExchange() {
+        if (Station.contestExchangeMessage === '<rst><nr>') return Station.NrAsText(this.RST, this.NR)
+        let result = Station.contestExchangeMessage
+        result.replaceAll('<rst>', RstAsText(this.RST))
+        result.replaceAll('<1>', this.All_DxData[1]) 
+        result.replaceAll('<2>', this.All_DxData[2]) 
+        return result
+    }
+
+
     static RstAsText(rst) {
         // convert rst to string
         let rst_str = rst.toString().padStart(3, '0')
@@ -152,6 +167,8 @@ export class Station {
         result = result.replaceAll('599', '5NN')
         return result
     }
+
+
 
     static NrAsText(rst, nr) {
         // convert rst to string

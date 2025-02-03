@@ -74,18 +74,24 @@ const contest_def = [
         name: "DARC CWA",
         runmode: RunMode.Pileup,
         exchange: [Exchange.RST, Exchange.DOK],
+        exchange_msg: '<rst><1>',            
         key: cwaKey,
-        my_exchange: 'My DOK'
+        my_exchange: 'My DOK',        
+        contest_messages: {         
+            NrQm: 'DOK?',
+        }
     },
     {
         id: 'awt',
         name: "A1Club AWT",
         runmode: RunMode.Pileup,
         exchange: [Exchange.RST, Exchange.NAME],
+        exchange_msg: '<rst><1>',
         key: awtKey,
         my_exchange: 'My Name',
         contest_messages: {
             CQ: 'CQ AWT <my>',
+            NrQm: 'NAME?',
         }
     }
 ]
