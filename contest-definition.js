@@ -69,6 +69,7 @@ const contest_def = [
         exchange: [Exchange.RST, Exchange.NR],
         key: stdKey,
     },
+    /*
     {
         id: 'cwa',
         name: "DARC CWA",
@@ -93,7 +94,7 @@ const contest_def = [
             CQ: 'CQ AWT <my>',
             NrQm: 'NAME?',
         }
-    }
+    }*/
 ]
 
 export class ContestDefinition {

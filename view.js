@@ -183,6 +183,7 @@ export class View {
         }
     }
 
+    // process function key
     processFunctionKey(key) {
         const Constest_FKey = this._ContestDefinition._contest.key
         if (Constest_FKey) {
@@ -246,7 +247,11 @@ export class View {
 
                     break
                 default:
-                    if (this.processFunctionKey(e.code)) e.preventDefault()
+                    let key = e.code
+                    console.log(e.ctrlKey)
+                    if ( ( e.ctrlKey || e.metaKey || e.location == KeyboardEvent.DOM_KEY_LOCATION_NUMPAD) && e.key.length === 1 && e.key >= '1' && e.key <= '8' ) key = `F${ e.key}`
+                    if (this.processFunctionKey(key)) e.preventDefault()
+                    break;
             }
         })
     }
