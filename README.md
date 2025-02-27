@@ -122,6 +122,7 @@ The main usage of Web Morse Runner is via the keyboard.
 The function keys F1-F8 are used to send various messages. The assigned messages are fixed assigned and visible on the main screen. 
 Modern operating systems however are reusing function keys for all kind of purpose, e.g. to control the volume or brightness of the display. The get them working as function keys you might need to execute some settings in your operating setting or keyboard.
 
+
 #### macOS Ventura or later
 1) Choose Apple menu -> System Settings.
 2) Click Keyboard in the sidebar.
@@ -137,6 +138,9 @@ There are different ways to activate function keys on Windows. The authors machi
 In the google chrome browser the **F7** key is used to activate "Caret Browsing".
 The author of Web Morse Runner is not using Caret Browser and simply switched it of and ticked the checkbox to not ask again. Now the **F7** key is used to send the question mark.
 
+
+#### Use Number keys
+On some platforms for example mobile it's difficult to use Function Keys. Instead of pressing function key you can press CTRL-1 / Meta-1 or Numpad 1 for F1 and CTRL-2 / Meta-2 or Numpad 2 for F2 etc.
 
 ### Supported Keyboard Shortcuts
 
@@ -169,7 +173,12 @@ This means after stating the contest the cursor is places automatically in the C
 
 
 ## Version
-
+* **0.06-beta** (2025-2-27) - **Carnival Edition**
+   * Internal restructuring of the code to allow different contests in future versions
+   * Tom (DF7TV) provided an list of Japanese calles based on JJ1WTL's data base. (File JA-All_JJ1QTL)
+   * A List of German Calls based of DL6ER's DB is provided (File DL-All_DOK.txt)
+   * Mobile usage: if you keep CTRL or Meta pressed you can use the number keys as replacement for the Function Keys. 
+   (some mobile platforms do not support function keys). If you have a keyboard with numeric keypad, you can use these key as well.
 * **0.05-beta** (2024-12-27) - **お正月 / New Year 2024 Edition** 
    * Added support for Band Conditions QRN, QRM, QSB, Flutter and LID's. 
    * New Keyboard shortcut: The **shift** key is now supported.
