@@ -248,7 +248,6 @@ export class View {
                     break
                 default:
                     let key = e.code
-                    console.log(e.ctrlKey)
                     if ( ( e.ctrlKey || e.metaKey || e.location == KeyboardEvent.DOM_KEY_LOCATION_NUMPAD) && e.key.length === 1 && e.key >= '1' && e.key <= '8' ) key = `F${ e.key}`
                     if (this.processFunctionKey(key)) e.preventDefault()
                     break;
@@ -334,6 +333,7 @@ export class View {
         this.toggleRunButton()
 
         //if (!this.ctx)
+        document.getElementById("debug").innerText = ""
         this.ctx = new (window.AudioContext || window.webkitAudioContext)({
             sampleRate: DEFAULT.RATE,
         })
