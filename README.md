@@ -175,7 +175,7 @@ This means after stating the contest the cursor is places automatically in the C
 ## Version
 * **0.6-beta** (2025-2-27) - **Carnival Edition**
    * Internal restructuring of the code to allow different contests in future versions
-   * Tom (DF7TV) provided an list of Japanese calles based on JJ1WTL's data base. (File JA-All_JJ1QTL)
+   * Tom (DF7TV) provided an list of Japanese calls based on JJ1WTL's data base. (File JA-All_JJ1QTL)
    * A List of German Calls based of DL6ER's DB is provided (File DL-All_DOK.txt)
    * Mobile usage: if you keep CTRL or Meta pressed you can use the number keys as replacement for the Function Keys. 
    (some mobile platforms do not support function keys). If you have a keyboard with numeric keypad, you can use these key as well.
