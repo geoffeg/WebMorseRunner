@@ -99,6 +99,11 @@ const contest_def = [
 export class ContestDefinition {
 
     constructor() {
+        // singleton 
+        if (ContestDefinition._instance) {
+            return ContestDefinition._instance
+        }
+        ContestDefinition._instance = this                     
         ContestDefinition.initView()
     }
     // load the contest definition 
@@ -214,6 +219,23 @@ export class ContestDefinition {
             const button = document.getElementById(key)
             button.innerText = `${key} ${value.label}`
         }
+    }
+
+
+
+    // get the first exchange field (not RST) and check if it does not 
+    // have a value
+    isExchangeEdited() {
+       // get current contest
+       const contest = ContestDefinition.getContest(this._config.contest_id)
+       // get the main exchange field (not RST)
+       const exchange = contest.exchange.find( e => {
+          return e.id !== exchangeId.rst 
+       })
+       const nr_dom = document.getElementById(exchange.id)
+        
+       return nr_dom.value !== ""
+       
     }
 
     // get the next field of the sequence: call --> exchange1 --> exchange2 -->...

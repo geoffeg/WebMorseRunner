@@ -97,10 +97,9 @@ export class View {
         let callSend = this.CallSend
         let numberSend = this.NrSend
 
-        // the dom element containing the nr
-        const nr_dom = document.getElementById("nr")
-        // we have content in the NR field logged 
-        let dxNrLogged = nr_dom.value !== ""
+        
+        // content in the NR/exchange field
+        const dxNrLogged = this._ContestDefinition.isExchangeEdited()
 
         // Call has not yet send, so we send the call
         if (!callSend || (!numberSend && !dxNrLogged)) {
