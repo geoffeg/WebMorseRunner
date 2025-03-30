@@ -79,6 +79,8 @@ const contest_def = [
         my_exchange: 'My DOK',        
         contest_messages: {         
             NrQm: 'DOK?',
+    //        R_NR: 'R <exchange>',
+    //        R_NR2: 'R <exchange> <exchange>',
         }
     },
     {
@@ -91,6 +93,9 @@ const contest_def = [
         my_exchange: 'My Name',
         contest_messages: {
             CQ: 'CQ AWT <my>',
+   //         Nr: 'R <#>',
+   //         R_NR: 'R <exchange>',
+   //         R_NR2: 'R <exchange> <exchange>',  
             NrQm: 'NAME?',
         }
     }

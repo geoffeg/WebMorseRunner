@@ -18,6 +18,8 @@ export class DxStation extends Station {
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR
 
+    this.exchange1 = call[1]
+
     if (DEFAULT.QSB || DEFAULT.FLUTTER) {
       this.Qsb = new Qsb()
       if (DEFAULT.QSB) this.Qsb.Bandwidth = 0.1 + Math.random() / 2

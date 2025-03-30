@@ -1,5 +1,6 @@
 import { Keyer } from "./keyer.js"
 import { DEFAULT, RunMode, StationMessage } from "./defaults.js"
+import { Contest } from "./contest.js"
 
 let GKeyer = new Keyer()
 
@@ -70,6 +71,7 @@ export class Station {
         this.exchange1 = ''
         this.exchange_msg = ''
         this.All_DxData = []
+
     }
 
     get Bfo() {
@@ -94,6 +96,9 @@ export class Station {
         AMsg = AMsg.replaceAll('<#>', this.composeExchange())
         AMsg = AMsg.replaceAll('<my>', this.MyCall)
         AMsg = AMsg.replaceAll('<exchange>', this.exchange1)
+        AMsg = AMsg.replaceAll('<1>', this.exchange1)   
+        console.log(this)
+        console.log(AMsg)     
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
@@ -151,11 +156,17 @@ export class Station {
 
 
     composeExchange() {
-        if (Station.contestExchangeMessage === '<rst><nr>') return Station.NrAsText(this.RST, this.NR)
-        let result = Station.contestExchangeMessage
-        result.replaceAll('<rst>', RstAsText(this.RST))
-        result.replaceAll('<1>', this.All_DxData[1]) 
-        result.replaceAll('<2>', this.All_DxData[2]) 
+        const contest = new Contest()
+        const exchange = contest._conf.active_contest.exchange_msg
+
+        if (exchange === '<rst><nr>') return Station.NrAsText(this.RST, this.NR)
+        let result = exchange
+        const rst_txt = Station.RstAsText(this.RST)
+        result = result.replaceAll('<rst>', rst_txt)
+        const ex1 = this.All_DxData[1]
+        const ex2 = this.All_DxData[2]
+        if(ex1) result = result.replaceAll('<1>', ex1) 
+        if(ex2) result = result.replaceAll('<2>', ex2) 
         return result
     }
 

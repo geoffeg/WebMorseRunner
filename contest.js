@@ -12,6 +12,11 @@ import { QrmStation } from "./qrmstation.js"
 
 export class Contest {
     constructor() {
+        // singleton 
+        if (Contest._instance) {
+            return Contest._instance
+        }
+        Contest._instance = this           
         this.init()
     }
 
