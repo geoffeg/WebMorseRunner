@@ -145,6 +145,7 @@ export class DxOperator {
             }
             return
         }
+        // we got a call and check if this is dx stations call
         if (AMsg.includes(StationMessage.HisCall)) {
             switch (DxOperator.IsMyCall(this.Call, Tst._MyStation.HisCall)) {
                 case DxOperator.CallCheckResult.Yes:

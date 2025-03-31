@@ -18,7 +18,8 @@ export class DxStation extends Station {
     this.Wpm = this.Oper.Wpm
     this.NR = this.Oper.NR
 
-    this.exchange1 = call[1]
+    if (call[1]) this.exchange1 = call[1]
+    if (call[2]) this.exchange2 = call[2]
 
     if (DEFAULT.QSB || DEFAULT.FLUTTER) {
       this.Qsb = new Qsb()

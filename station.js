@@ -72,6 +72,9 @@ export class Station {
         this.exchange_msg = ''
         this.All_DxData = []
 
+        this.exchange1 = ''
+        this.exchange2 = ''
+
     }
 
     get Bfo() {
@@ -163,10 +166,8 @@ export class Station {
         let result = exchange
         const rst_txt = Station.RstAsText(this.RST)
         result = result.replaceAll('<rst>', rst_txt)
-        const ex1 = this.All_DxData[1]
-        const ex2 = this.All_DxData[2]
-        if(ex1) result = result.replaceAll('<1>', ex1) 
-        if(ex2) result = result.replaceAll('<2>', ex2) 
+        if(this.exchange1) result = result.replaceAll('<1>', this.exchange1) 
+        if(this.exchange2) result = result.replaceAll('<2>', this.exchange2) 
         return result
     }
 
