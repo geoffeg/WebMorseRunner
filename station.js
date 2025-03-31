@@ -57,7 +57,7 @@ export class Station {
         this.Amplitude = 300000
         this._NrWithError = false
         this.MyCall = 'DJ1TF'
-        this.HisCall = 'DL1XX'
+        this.HisCall = 'JJ1QPB'
         this.NR = 1
         this.RST = 599
         this._Msg = new Array()
