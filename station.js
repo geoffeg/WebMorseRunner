@@ -162,7 +162,7 @@ export class Station {
         const contest = new Contest()
         const exchange = contest._conf.active_contest.exchange_msg
 
-        if (exchange === '<rst><nr>') return Station.NrAsText(this.RST, this.NR)
+        if (!exchange || exchange === '<rst><nr>') return Station.NrAsText(this.RST, this.NR)
         let result = exchange
         const rst_txt = Station.RstAsText(this.RST)
         result = result.replaceAll('<rst>', rst_txt)
