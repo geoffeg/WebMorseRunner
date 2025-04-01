@@ -41,7 +41,6 @@ export class MyStation extends Station {
         this.MyCall = c
     }
 
-
     ProcessEvent(AEvent) {
         if (AEvent === Station.Event.MsgSent) Tst.OnMeFinishedSending()
     }

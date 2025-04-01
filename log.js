@@ -9,6 +9,12 @@ export class Log {
     }
 
     constructor() {
+        // singleton 
+        if (Log._instance) {
+            return Log._instance
+        }
+        Log._instance = this    
+        
         this.data = []
         this.NR = 1
         this.initScoreSets()      
@@ -69,16 +75,17 @@ export class Log {
 
 
     checkQSO(qso) {
+        console.log("CHECK",qso)
         const call = qso.call
         const NR = String(qso.NR).padStart(3,'0')
         const last_qso = this.data[this.data.length - 1]
         const rst = ( qso.RST ? qso.RST : 599 ).toString()
         let confirm = Log.Check.OK
+
         if (last_qso.RecvRST !== rst) confirm = Log.Check.RST
         if (last_qso.RecvNr !== NR) confirm = Log.Check.NR
         if (last_qso.Call !== call) confirm = Log.Check.NIL
         
-        //confirm = last_qso.RecvNr === NR ? Log.Check.OK : Log.Check.NR
         last_qso.Check = confirm
 
         if (confirm !== Log.Check.NIL) {
@@ -162,7 +169,7 @@ export class Log {
         let row = el.insertRow(-1);
         row.insertCell().textContent = `${qso.UTC}`
         row.insertCell().textContent = `${qso.Call}`
-        row.insertCell().textContent = `${qso.RecvRST} ${qso.RecvNr}`
+        row.insertCell().textContent = qso.RecvExchange.join(" ")//`${qso.RecvRST} ${qso.RecvNr}`
         row.insertCell().textContent = `${qso.SendRST} ${qso.SendNr}`
         row.insertCell().textContent = `${qso.Pref}`
         row.insertCell().textContent = `${qso.Check}`

@@ -75,6 +75,8 @@ export class Station {
         this.exchange1 = ''
         this.exchange2 = ''
 
+
+
     }
 
     get Bfo() {
@@ -85,6 +87,7 @@ export class Station {
     }
 
     SendMsg(AMsg) {
+        this.getExchange()        
         if (!this._Envelope) this._Msg = new Array()
         if (AMsg === StationMessage.None) {
             this._State = State.Listening
@@ -168,6 +171,31 @@ export class Station {
         result = result.replaceAll('<rst>', rst_txt)
         if(this.exchange1) result = result.replaceAll('<1>', this.exchange1) 
         if(this.exchange2) result = result.replaceAll('<2>', this.exchange2) 
+        return result
+    }
+
+
+    getExchange() {
+        const contest = new Contest()
+        let exchange = contest._conf.active_contest.exchange_msg       
+        if (!exchange) exchange = '<rst><nr>' 
+     //  "abcdeabcde".split(/(d)/)
+        const split_ex = exchange.split(/(?=\<)/)
+
+        let result = []
+        split_ex.forEach( ex => {
+            switch(ex) {
+                case '<rst>': result.push('599')
+                   break
+                case '<1>': result.push(this.exchange1)
+                   break
+                case '<2>': result.push(this.exchange2)
+                   break
+                case '<nr>': result.push(String(this.NR).padStart(3, "0"))
+                   break;
+            }
+            result.push
+        })
         return result
     }
 

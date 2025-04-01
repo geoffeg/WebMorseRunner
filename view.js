@@ -136,12 +136,17 @@ export class View {
                 type: AudioMessage.send_msg,
                 data: StationMessage.TU
             })
+
+            const contestDef = new ContestDefinition()
+            const RecvExchange = contestDef.getExchange()
+
             this.log.addQso(
                 {
                     UTC: this.getClock(),
                     Call: this.Call,
                     RecvNr: String(this.Nr).padStart(3, "0"),
                     RecvRST: String(this.Rst),
+                    RecvExchange: RecvExchange,
                 },
             )
             this.sendMessage({
@@ -260,12 +265,14 @@ export class View {
 
     get Nr() {
         const nr_dom = document.getElementById("nr")
+        if(!nr_dom) return -1
         let nr = nr_dom.value
-        if (nr === "") return 0
+        if (nr === "") return -1
         return parseInt(nr)
     }
     get Rst() {
         const rst_dom = document.getElementById("rst")
+        if(!rst_dom) return 999
         const rst = rst_dom.value
         if (rst === "") return 599
         return parseInt(rst)

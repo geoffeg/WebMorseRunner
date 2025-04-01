@@ -277,6 +277,33 @@ export class ContestDefinition {
         return result
     }
 
+    getExchange() {
+        let result = []
+        this._contest.exchange.forEach(ex => {
+            switch (ex.id) {
+                case exchangeId.rst:
+                    const rst_dom = document.getElementById("rst")
+                    let rst = rst_dom.value
+                    if (rst === '') rst = '599'                    
+                    result.push( rst )
+                    break
+                case exchangeId.nr:
+                    const nr_dom = document.getElementById(exchangeId.nr)
+                    let nr_exchange = String(nr_dom.value).padStart(3, '0')  
+                    result.push(nr_exchange)
+                    break                    
+                case exchangeId.exchange1:
+                    const my_exchange_dom = document.getElementById("my_exchange1")
+                    let exchange = my_exchange_dom.value
+                    result.push(exchange)
+                    break
+            }
+
+        })
+
+        return result
+    }    
+
     updatePileupFields() {
         document.querySelectorAll(".pileup_only").forEach(
             (e) => {

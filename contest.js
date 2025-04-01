@@ -386,6 +386,7 @@ export class Contest {
                         call: stn.MyCall,
                         NR: stn.NR,
                         RST: stn.RST,
+                        Ex: stn.getExchange(),
                     },
                 })
             }
