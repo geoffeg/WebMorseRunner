@@ -293,7 +293,7 @@ export class ContestDefinition {
                     result.push(nr_exchange)
                     break                    
                 case exchangeId.exchange1:
-                    const my_exchange_dom = document.getElementById("my_exchange1")
+                    const my_exchange_dom = document.getElementById(exchangeId.exchange1)
                     let exchange = my_exchange_dom.value
                     result.push(exchange)
                     break
