@@ -1,3 +1,5 @@
+import { ContestDefinition } from "./contest-definition.js"
+
 export class Log {
 
     static Check = {
@@ -13,27 +15,13 @@ export class Log {
         if (Log._instance) {
             return Log._instance
         }
-        Log._instance = this    
+        Log._instance = this   
+        
+        this._contestDefinition = new ContestDefinition()
         
         this.data = []
         this.NR = 1
         this.initScoreSets()      
-/*
-        this.addQso({
-            UTC: '00:00:00',
-            Call: 'DJ1TF'
-        })
-        this.addQso({
-            UTC: '00:00:00',
-            Call: 'DJ1DF'
-        }) 
-        this.ConfCalls.add('DJ1TF')       
-        this.ConfCalls.add('D1TF')            
-        this.ConfPrefix.add('XX1')   
-        this.ConfPrefix.add('XX3')           
-        this.ConfPrefix.add('X3')           
-        this.updateScore(
-        */
     }
 
     initScoreSets() {
@@ -66,6 +54,13 @@ export class Log {
         complete_qso.Check = Log.Check.NIL
         complete_qso.SendRST = '599'
         complete_qso.SendNr = String(this.NR).padStart(3, '0')
+        
+
+        // my own exchange
+        const myexchange = this._contestDefinition.getMyExchange()
+        complete_qso.SendExchange = myexchange
+        console.log(myexchange)
+
         complete_qso.Pref = prefix
         this.NR++
         let log = document.getElementById("log");
@@ -170,7 +165,7 @@ export class Log {
         row.insertCell().textContent = `${qso.UTC}`
         row.insertCell().textContent = `${qso.Call}`
         row.insertCell().textContent = qso.RecvExchange.join(" ")//`${qso.RecvRST} ${qso.RecvNr}`
-        row.insertCell().textContent = `${qso.SendRST} ${qso.SendNr}`
+        row.insertCell().textContent = qso.SendExchange.join(" ")//`${qso.SendRST} ${qso.SendNr}`
         row.insertCell().textContent = `${qso.Pref}`
         row.insertCell().textContent = `${qso.Check}`
         let log = document.getElementById("log");

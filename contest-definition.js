@@ -1,5 +1,5 @@
 import { AudioMessage, DEFAULT, RunMode, StationMessage } from "./defaults.js"
-
+import { Log } from "./log.js"
 
 const exchangeId = {
     nr: 'nr',
@@ -79,8 +79,6 @@ const contest_def = [
         my_exchange: 'My DOK',        
         contest_messages: {         
             NrQm: 'DOK?',
-    //        R_NR: 'R <exchange>',
-    //        R_NR2: 'R <exchange> <exchange>',
         }
     },
     {
@@ -93,9 +91,6 @@ const contest_def = [
         my_exchange: 'My Name',
         contest_messages: {
             CQ: 'CQ AWT <my>',
-   //         Nr: 'R <#>',
-   //         R_NR: 'R <exchange>',
-   //         R_NR2: 'R <exchange> <exchange>',  
             NrQm: 'NAME?',
         }
     }
@@ -303,6 +298,31 @@ export class ContestDefinition {
 
         return result
     }    
+
+   // get my own exchange
+    getMyExchange() {
+        let result = []
+        this._contest.exchange.forEach(ex => {
+            switch (ex.id) {
+                case exchangeId.rst:
+                    // we always give 599                   
+                    result.push( '599' )
+                    break
+                case exchangeId.nr:
+                    const log = new Log()
+                    let nr_exchange = String(log.NR).padStart(3, '0')  
+                    result.push(nr_exchange)
+                    break                    
+                case exchangeId.exchange1:
+                    const my_exchange_dom = document.getElementById("my_exchange1")
+                    let exchange = my_exchange_dom.value
+                    result.push(exchange)
+                    break
+            }
+        })
+        return result
+    }    
+
 
     updatePileupFields() {
         document.querySelectorAll(".pileup_only").forEach(

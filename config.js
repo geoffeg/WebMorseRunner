@@ -6,6 +6,11 @@ export class Config {
     static store_key = "_WebMorseKey";
 
     constructor(callback) {
+        // singleton 
+        if (Config._instance) {
+            return Config._instance
+        }
+        Config._instance = this           
         this._my_call = document.querySelector("#my_call")
         this._volume = document.querySelector("#volume")
         this._wpm = document.querySelector("#wpm")
