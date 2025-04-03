@@ -12,23 +12,27 @@ const Exchange = {
         id: exchangeId.nr,
         text: "Nr.",
         length: 3,
+        log: "NR",
         numeric: true,
     },
     RST: {
         id: exchangeId.rst,
         text: "RST",
         length: 3,
+        log: "Rst",
         numeric: true,
     },
     NAME: {
         id: exchangeId.exchange1,
         text: 'Name',
+        log: "NAME",
         length: 6,
     },
     DOK: {
         id: exchangeId.exchange1,
         text: 'DOK',
         length: 3,
+        log: "DOK",
         uppercase: true
     }
 }
@@ -288,8 +292,9 @@ export class ContestDefinition {
                     result.push(nr_exchange)
                     break                    
                 case exchangeId.exchange1:
-                    const my_exchange_dom = document.getElementById(exchangeId.exchange1)
-                    let exchange = my_exchange_dom.value
+                    let my_exchange_dom = document.getElementById(exchangeId.exchange1)
+
+                    let exchange = my_exchange_dom.value.trim()
                     result.push(exchange)
                     break
             }
@@ -322,6 +327,16 @@ export class ContestDefinition {
         })
         return result
     }    
+
+    checkExchange(rec,send) {
+        let result = Log.Check.OK
+        for(let i = 0; i<this._contest.exchange.length;i++) {
+            const ex = this._contest.exchange[i]
+            if (rec[i] !== send[i]) result = ex.log
+        }
+         return result
+
+    }
 
 
     updatePileupFields() {

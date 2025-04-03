@@ -43,7 +43,6 @@ export class Log {
 
     addQso(qso) {
         let complete_qso = qso
-
         let call = qso.Call
         let prefix = Log.ExtractPrefix(call)
         
@@ -55,7 +54,6 @@ export class Log {
         complete_qso.SendRST = '599'
         complete_qso.SendNr = String(this.NR).padStart(3, '0')
         
-
         // my own exchange
         const myexchange = this._contestDefinition.getMyExchange()
         complete_qso.SendExchange = myexchange
@@ -77,8 +75,13 @@ export class Log {
         const rst = ( qso.RST ? qso.RST : 599 ).toString()
         let confirm = Log.Check.OK
 
-        if (last_qso.RecvRST !== rst) confirm = Log.Check.RST
-        if (last_qso.RecvNr !== NR) confirm = Log.Check.NR
+//        if (last_qso.RecvRST !== rst) confirm = Log.Check.RST
+//      if (last_qso.RecvNr !== NR) confirm = Log.Check.NR
+
+        const contestDefinition = new ContestDefinition()
+        confirm = contestDefinition.checkExchange(last_qso.RecvExchange,qso.Ex)
+        
+
         if (last_qso.Call !== call) confirm = Log.Check.NIL
         
         last_qso.Check = confirm
@@ -164,8 +167,8 @@ export class Log {
         let row = el.insertRow(-1);
         row.insertCell().textContent = `${qso.UTC}`
         row.insertCell().textContent = `${qso.Call}`
-        row.insertCell().textContent = qso.RecvExchange.join(" ")//`${qso.RecvRST} ${qso.RecvNr}`
-        row.insertCell().textContent = qso.SendExchange.join(" ")//`${qso.SendRST} ${qso.SendNr}`
+        row.insertCell().textContent = qso.RecvExchange.join(" ")
+        row.insertCell().textContent = qso.SendExchange.join(" ")
         row.insertCell().textContent = `${qso.Pref}`
         row.insertCell().textContent = `${qso.Check}`
         let log = document.getElementById("log");
