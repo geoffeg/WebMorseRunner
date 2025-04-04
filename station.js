@@ -21,7 +21,6 @@ export class Station {
         TU: 'TU',
         MyCall: '<my>',
         HisCall: '<his>',
-        Exchange1: '<exchange>',
         B4: 'QSO B4',
         Qm: '?',
         Nil: 'NIL',
@@ -101,7 +100,7 @@ export class Station {
     SendText(AMsg) {        
         AMsg = AMsg.replaceAll('<#>', this.composeExchange())
         AMsg = AMsg.replaceAll('<my>', this.MyCall)
-        AMsg = AMsg.replaceAll('<exchange>', this.exchange1)
+
         AMsg = AMsg.replaceAll('<1>', this.exchange1)   
         console.log(this)
         console.log(AMsg)     

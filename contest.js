@@ -95,6 +95,7 @@ export class Contest {
             if (contest_data) {
                 const exchange1 = contest_data.exchange1
                 if (exchange1) this._MyStation.exchange1 = exchange1
+                console.log(exchange1)
                 const exchange_msg = contest_data.exchange_msg
                 if (exchange_msg) Station.contestExchangeMessage = exchange_msg
             }

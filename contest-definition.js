@@ -50,11 +50,11 @@ const stdKey = {
 
 
 const cwaKey = Object.assign({}, stdKey, {
-    F2: { label: "<DOK>", send: StationMessage.Exchange1 },
+    F2: { label: "<DOK>", send: StationMessage.NR },
 })
 
 const awtKey = Object.assign({}, stdKey, {
-    F2: { label: "<Name>", send: StationMessage.Exchange1 },
+   F2: { label: "<Name>", send: StationMessage.NR },
 })
 
 
@@ -294,7 +294,7 @@ export class ContestDefinition {
                 case exchangeId.exchange1:
                     let my_exchange_dom = document.getElementById(exchangeId.exchange1)
 
-                    let exchange = my_exchange_dom.value.trim()
+                    let exchange = my_exchange_dom.value.trim().toUpperCase()                    
                     result.push(exchange)
                     break
             }
@@ -328,11 +328,13 @@ export class ContestDefinition {
         return result
     }    
 
-    checkExchange(rec,send) {
+    checkExchange(his,my) {
         let result = Log.Check.OK
         for(let i = 0; i<this._contest.exchange.length;i++) {
             const ex = this._contest.exchange[i]
-            if (rec[i] !== send[i]) result = ex.log
+            const his_ex = his[i].trim().toLowerCase()
+            const my_ex = my[i].trim().toLowerCase()
+            if (his_ex !== my_ex) result = ex.log
         }
          return result
 
