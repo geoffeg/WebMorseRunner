@@ -107,6 +107,8 @@ The file format for the call signs file is very simple. Some examples can be fou
 Web Morse Runner supports the following contest modes:
 * **Single Call** Always one station is calling to you. No pileup and you not need to call CQ.
 * **Pileup** In this station you need to call CQ first before stations will reply. The parameter *Activity* will determine how many stations will answer in average. The number of stations calling you will be displayed over the running clock.
+* **DARC CWA** (EXPERIMENTAL) Exchange is DOK. You need to load DL-All_DOK.txt that contain necessary DOK information for stations. Notice the points are still calculated by prefix not DOK, this might be later updated.
+* **AWT** (EXPERIMENTAL) Exchange is the name. You need to load AWT.txt that contain necessary example calls with names. Like in the DARC CWA the points calculated we by prefix. This might be later added.
 
 ## Pileup
 To master pileup it is helpful to pick station by station. Typically you can start with station calling on frequency that you copy the best.
@@ -173,6 +175,11 @@ This means after stating the contest the cursor is places automatically in the C
 
 
 ## Version
+* **0.7-beta** (2025-04-08) - **Easter Edition**
+   * Further internal restructuring of the code to allow different contests.
+   * Bugfix: Contest-definition might not load correctly when the configuration is still initial.
+   This had been found in Firefox browser as Chrome based browsers seems to slightly different instantiate modules 
+   * Experimental support for AWT (A1Club Weekly Contest) and DARC CWA contest
 * **0.6-beta** (2025-2-27) - **Carnival Edition**
    * Internal restructuring of the code to allow different contests in future versions
    * Tom (DF7TV) provided an list of Japanese calls based on JJ1WTL's data base. (File JA-All_JJ1QTL)

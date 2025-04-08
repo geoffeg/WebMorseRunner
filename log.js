@@ -57,7 +57,7 @@ export class Log {
         // my own exchange
         const myexchange = this._contestDefinition.getMyExchange()
         complete_qso.SendExchange = myexchange
-        console.log(myexchange)
+       // console.log(myexchange)
 
         complete_qso.Pref = prefix
         this.NR++
@@ -68,7 +68,7 @@ export class Log {
 
 
     checkQSO(qso) {
-        console.log("CHECK",qso)
+       // console.log("CHECK",qso)
         const call = qso.call
         const NR = String(qso.NR).padStart(3,'0')
         const last_qso = this.data[this.data.length - 1]

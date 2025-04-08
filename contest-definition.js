@@ -123,12 +123,16 @@ export class ContestDefinition {
     }
 
     static getRunMode(id) {
-        const contest = contest_def.find(e => e.id === id)
+        const contest = this.getContest(id)
+        if (!contest) return RunMode.Single
         return contest.runmode
     }
 
     static getContest(id) {
-        return contest_def.find(e => e.id === id)
+        if(!id) return this.getContest('single')
+        const contest = contest_def.find(e => e.id === id)
+        if(!id) return this.getContest('single')
+        return contest    
     }
 
     updateConfig(conf) {

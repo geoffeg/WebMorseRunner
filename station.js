@@ -102,8 +102,7 @@ export class Station {
         AMsg = AMsg.replaceAll('<my>', this.MyCall)
 
         AMsg = AMsg.replaceAll('<1>', this.exchange1)   
-        console.log(this)
-        console.log(AMsg)     
+ 
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
