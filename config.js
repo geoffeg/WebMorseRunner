@@ -126,6 +126,7 @@ export class Config {
         const contest_id = this._contest_id.value
         this._config.contest_id = contest_id
         this._config.runmode = ContestDefinition.getRunMode(this._config.contest_id)
+        this._config.active_contest = ContestDefinition.getContest(contest_id)
         this._config.activity = parseInt(this._activity.value)
 
         const exchange1 = this._exchange1.value
