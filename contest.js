@@ -177,6 +177,8 @@ export class Contest {
                 this._MyStation.NR = message.data
                 break
             case AudioMessage.create_dx:
+                // this is a lock to avoid more dx stations created 
+                this._dx_requested = false
                 if (DEFAULT.RUNMODE === RunMode.Single) this._MyStation._Msg = [StationMessage.CQ]
                 message.data.forEach((call) => {
                     const dx = new DxStation(call)
@@ -310,7 +312,8 @@ export class Contest {
             this.Stations[Stn].Tick()
         }
 
-        if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0) {
+        if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0 && !this._dx_requested ) { 
+           this._dx_requested = true
             this.post({
                 type: AudioMessage.request_dx,
                 data: 1,
