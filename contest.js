@@ -16,7 +16,7 @@ export class Contest {
         if (Contest._instance) {
             return Contest._instance
         }
-        Contest._instance = this           
+        Contest._instance = this
         this.init()
     }
 
@@ -95,7 +95,7 @@ export class Contest {
             if (contest_data) {
                 const exchange1 = contest_data.exchange1
                 if (exchange1) this._MyStation.exchange1 = exchange1
-           //     console.log(exchange1)
+                //     console.log(exchange1)
                 const exchange_msg = contest_data.exchange_msg
                 if (exchange_msg) Station.contestExchangeMessage = exchange_msg
             }
@@ -177,6 +177,8 @@ export class Contest {
                 this._MyStation.NR = message.data
                 break
             case AudioMessage.create_dx:
+                // this is a lock to avoid more dx stations created (Android)
+                this._dx_requested = false
                 if (DEFAULT.RUNMODE === RunMode.Single) this._MyStation._Msg = [StationMessage.CQ]
                 message.data.forEach((call) => {
                     const dx = new DxStation(call)
@@ -309,8 +311,8 @@ export class Contest {
         for (let Stn = this.Stations.length - 1; Stn >= 0; Stn--) {
             this.Stations[Stn].Tick()
         }
-
-        if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0) {
+        if (DEFAULT.RUNMODE == RunMode.Single && this._dx_count === 0 && !this._dx_requested) {
+            this._dx_requested = true
             this.post({
                 type: AudioMessage.request_dx,
                 data: 1,
