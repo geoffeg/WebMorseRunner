@@ -226,7 +226,8 @@ export class View {
                     this.processSpace()
                     e.preventDefault()
                     break
-                case "Enter" || e.key === 'Enter' :
+                case "Enter":
+                case e.key === 'Enter' :
                     this.processEnter()
                     e.preventDefault()
                     break
