@@ -257,8 +257,8 @@ export class View {
                     const digit_match = e.code.match(regex)
 
                     let key = e.key
-                    const modifier_pressed = ( e.ctrlKey || e.altKey || e.metaKey || 
-                        e.location === KeyboardEvent.DOM_KEY_LOCATION_NUMPAD)
+                    const modifier_pressed = (  e.ctrlKey || e.altKey || e.metaKey || 
+                        e.location === KeyboardEvent.DOM_KEY_LOCATION_NUMPAD) // e.shiftKey ||
                     // if a modifier key is pressed we also accept numbers as function key
                     if ( modifier_pressed  && digit_match ) key = `F${ digit_match[1] }`
                     if (this.processFunctionKey(key)) e.preventDefault()

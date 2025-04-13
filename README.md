@@ -22,9 +22,12 @@ This project is new and independent of Alex project. The original Morse Runner t
 * Contest Mode: 
     * Single Call
     * Pileup
+    * DARC CW Ausbildungscontest (CWA)
+    * A1CLUB AWT
 * (Complex) Noise
 * Modulation
 * Filter
+* AGC
 * Read List of calls from calls.txt
 * Speed in WPM
 * Stetting: 
@@ -142,7 +145,7 @@ The author of Web Morse Runner is not using Caret Browser and simply switched it
 
 
 #### Use Number keys
-On some platforms for example mobile it's difficult to use Function Keys. Instead of pressing function key you can press CTRL-1 / Meta-1 or Numpad 1 for F1 and CTRL-2 / Meta-2 or Numpad 2 for F2 etc.
+On some platforms for example mobile it's difficult to use Function Keys. Instead of pressing function key you can press CTRL-1 / Meta-1 / Alt-1 / Numpad 1 for F1 and CTRL-2 / Meta-2 / Alt-2 / Numpad 2 for F2 etc.
 
 ### Supported Keyboard Shortcuts
 
@@ -184,6 +187,7 @@ This means after stating the contest the cursor is places automatically in the C
       * Avoid additional DX stations are requested while the original request is pending.
       * Some Android devices use different keyboard events (thx TOM DG5CW for reporting).
       * A Bug reading the new contest definition could lead to hidden contest exchange field when the contest is started.
+      * Added Alt-Modifier zto simulate function key press
 
 
 * **0.6-beta** (2025-2-27) - **Carnival Edition**
