@@ -216,7 +216,6 @@ export class View {
 
 //        document.getElementById("input").addEventListener("keydown", (e) => {
         document.addEventListener("keydown", (e) => {
-            console.log(e.code,e.key,e)
             if (!this.running) return
             //this.startContest()
             if (this.call.value.toUpperCase() !== this.prev_call) {
@@ -398,8 +397,8 @@ export class View {
         this.ContestNode.connect(this.ctx.destination)
         this._config.read_dom()
         let conf = this._config._config
-    //    conf['active_contest'] = this._ContestDefinition._contest
-        this._ContestDefinition.updateConfig(this._config)
+        conf['active_contest'] = this._ContestDefinition._contest
+        this._ContestDefinition.updateConfig(this._config._config)
         this.sendMessage({
             type: AudioMessage.start_contest,
             data: conf,
