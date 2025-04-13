@@ -214,8 +214,9 @@ export class View {
             })
         })
 
-        document.getElementById("input").addEventListener("keydown", (e) => {
-            console.log(e.code,e.key,e.which)
+//        document.getElementById("input").addEventListener("keydown", (e) => {
+        document.addEventListener("keydown", (e) => {
+            console.log(e.code,e.key,e)
             if (!this.running) return
             //this.startContest()
             if (this.call.value.toUpperCase() !== this.prev_call) {
