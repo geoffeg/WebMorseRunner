@@ -93,7 +93,7 @@ The settings you make in Web Morse Runner will be stored the your own browsers l
 * **Flutter** Some stations have "auroral" sound.
 * **LIDS** Some stations call you when you are working another station, make mistakes when they send code, copy your messages incorrectly, and send RST other than 599.
 
-## Upload Calls (Experimental)
+## Upload Calls
 Since release 0.05 Web Morse Runner will cache the call sign information that is stored in calls.txt in the browser local storage. The calls.txt file reloaded when you clear the local storage, or if you press the **reload** link.
 You can also provide your own call signs via file upload by pressing the  **upload** link.
 The file you load load must be a standard text file containing one line per call.
@@ -107,8 +107,8 @@ The file format for the call signs file is very simple. Some examples can be fou
 Web Morse Runner supports the following contest modes:
 * **Single Call** Always one station is calling to you. No pileup and you not need to call CQ.
 * **Pileup** In this station you need to call CQ first before stations will reply. The parameter *Activity* will determine how many stations will answer in average. The number of stations calling you will be displayed over the running clock.
-* **DARC CWA** (EXPERIMENTAL) Exchange is DOK. You need to load [DL-All_DOK.txt](https://raw.githubusercontent.com/fritzsche/WebMorseRunner/refs/heads/main/Example_Calls/DL-All_DOK.txt) that contain necessary DOK information for stations. Notice the points are still calculated by prefix not DOK, this might be later updated.
-* **AWT** (EXPERIMENTAL) Exchange is the name. You need to load [AWT.txt](https://raw.githubusercontent.com/fritzsche/WebMorseRunner/refs/heads/main/Example_Calls/AWT.txt) that contain necessary example calls with names. The point calculation is still bases on prefix. This might be later added.
+* **DARC CWA** (EXPERIMENTAL) Exchange is DOK. You need to [upload](#upload-calls) calls with file [DL-All_DOK.txt](https://raw.githubusercontent.com/fritzsche/WebMorseRunner/refs/heads/main/Example_Calls/DL-All_DOK.txt) that contain necessary DOK information for stations. Notice the points are still calculated by prefix not DOK, this might be later updated.
+* **AWT** (EXPERIMENTAL) Exchange is the name. You need to [upload](#upload-calls) [AWT.txt](https://raw.githubusercontent.com/fritzsche/WebMorseRunner/refs/heads/main/Example_Calls/AWT.txt) that contain necessary example calls with names. The point calculation is still bases on prefix. This might be later added.
 
 ## Pileup
 To master pileup it is helpful to pick station by station. Typically you can start with station calling on frequency that you copy the best.
@@ -182,7 +182,7 @@ This means after stating the contest the cursor is places automatically in the C
    * Experimental support for AWT (A1Club Weekly Contest) and DARC CWA contest
    * (2025-04-13) Fixed some bugs:
       * Avoid additional DX stations are requested while the original request is pending.
-      * Some Android devices use different keyboard events (thx TOM DG5CW for reporting). Remark this was reported happening for soft keyboard. These build in keyboard are missing essential keys like: Tab/Arrow-Up/Down and Function Keys. External Bluetooth keyboards are easier to use.
+      * Some Android devices use different keyboard events (thx TOM DG5CW for reporting).
       * A Bug reading the new contest definition could lead to hidden contest exchange field when the contest is started.
 
 

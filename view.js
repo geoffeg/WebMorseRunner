@@ -253,8 +253,14 @@ export class View {
 
                     break
                 default:
-                    let key = e.code
-                    if ( ( e.ctrlKey || e.metaKey || e.location == KeyboardEvent.DOM_KEY_LOCATION_NUMPAD) && e.key.length === 1 && e.key >= '1' && e.key <= '8' ) key = `F${ e.key}`
+                    const regex = /Digit(\d)/
+                    const digit_match = e.code.match(regex)
+
+                    let key = e.key
+                    const modifier_pressed = ( e.ctrlKey || e.altKey || e.metaKey || 
+                        e.location === KeyboardEvent.DOM_KEY_LOCATION_NUMPAD)
+                    // if a modifier key is pressed we also accept numbers as function key
+                    if ( modifier_pressed  && digit_match ) key = `F${ digit_match[1] }`
                     if (this.processFunctionKey(key)) e.preventDefault()
                     break;
             }
