@@ -215,19 +215,20 @@ export class View {
         })
 
         document.getElementById("input").addEventListener("keydown", (e) => {
+            console.log(e.code,e.key,e.which)
             if (!this.running) return
             //this.startContest()
             if (this.call.value.toUpperCase() !== this.prev_call) {
                 this.prev_call = ""
                 this.CallSend = false
             }
-            switch (e.code) {
+
+            switch (e.key) {
                 case "Space":
                     this.processSpace()
                     e.preventDefault()
                     break
                 case "Enter":
-                case e.key === 'Enter' :
                     this.processEnter()
                     e.preventDefault()
                     break
