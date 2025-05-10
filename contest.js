@@ -179,7 +179,7 @@ export class Contest {
             case AudioMessage.create_dx:
                 // this is a lock to avoid more dx stations created (Android)
                 this._dx_requested = false
-                if (DEFAULT.RUNMODE === RunMode.Single) this._MyStation._Msg = [StationMessage.CQ]
+                if (DEFAULT.RUNMODE === RunMode.Single || DEFAULT.RUNMODE === RunMode.Hst) this._MyStation._Msg = [StationMessage.CQ]
                 message.data.forEach((call) => {
                     const dx = new DxStation(call)
                     this.Stations.push(dx)
@@ -317,8 +317,20 @@ export class Contest {
                 type: AudioMessage.request_dx,
                 data: 1,
             })
-            //    this._dx_count++
         }
+
+        // Hst has pile-up of 4
+        
+        if (DEFAULT.RUNMODE == RunMode.Hst && this._dx_count < 4 && !this._dx_requested) {
+            this._dx_requested = true
+            this.post({
+                type: AudioMessage.request_dx,
+                data: 1,
+            })            
+        }
+
+
+
 
         // copy in this._src_buffer
         for (let i = 0; i < result.length; i++) this._src_buffer[i] = result[i]

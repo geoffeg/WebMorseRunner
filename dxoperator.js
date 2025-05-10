@@ -199,13 +199,13 @@ export class DxOperator {
                     this.State = OperatorState.NeedPrevEnd
                     break
                 case OperatorState.NeedNr:
-                    if (Math.random() < 0.9 /*|| RunMode = rmHst*/)
+                    if (Math.random() < 0.9 || DEFAULT.RUNMODE === RunMode.Hst)
                         this._SetState(OperatorState.NeedEnd)
                     break
                 case OperatorState.NeedCall:
                     break
                 case OperatorState.NeedCallNr:
-                    if (Math.random() < 0.9) /*or (RunMode = rmHst)*/
+                    if (Math.random() < 0.9 || DEFAULT.RUNMODE === RunMode.Hst)
                         this._SetState(OperatorState.NeedCall)
                     break
                 case OperatorState.NeedEnd:
@@ -238,6 +238,13 @@ export class DxOperator {
         if (AState === OperatorState.NeedQso)
             this.Patience = Math.round(random.RndRayleigh(4))
         else this.Patience = FULL_PATIENCE
+
+        // on pile up and other repeat sometimes (not HST)
+        if (AState === OperatorState.NeedQso && 
+            (! (DEFAULT.RUNMODE === RunMode.Single || DEFAULT.RUNMODE === RunMode.Hst)) && 
+            (Math.random() < 0.1)) this.RepeatCnt = 2
+            else this.RepeatCnt = 1
+
     }
 
     _DecPatience() {
@@ -261,7 +268,7 @@ export class DxOperator {
 
     GetReplyTimeout() {
         let result = 0
-        if (this.RunMode === RunMode.Hst)
+        if (DEFAULT.RUNMODE === RunMode.Hst)
             result = random.SecondsToBlocks(60 / this.Wpm)
         else result = random.SecondsToBlocks(6 - this.Skills)
         result = Math.round(random.RndGaussLim(result, result / 2))

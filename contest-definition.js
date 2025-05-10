@@ -74,6 +74,13 @@ const contest_def = [
         key: stdKey,
     },
     {
+        id: 'hst',
+        name: "HST mode",
+        runmode: RunMode.Hst,
+        exchange: [Exchange.RST, Exchange.NR],
+        key: stdKey,
+    },    
+    {
         id: 'cwa',
         name: "DARC CWA",
         runmode: RunMode.Pileup,

@@ -1,4 +1,6 @@
 import { ContestDefinition } from "./contest-definition.js"
+import { RunMode } from "./defaults.js"
+import { Keyer } from "./keyer.js"
 
 export class Log {
 
@@ -10,42 +12,72 @@ export class Log {
         OK: ''
     }
 
+
+    static std_log_header = [
+        "UTC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Call&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Recv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Send&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Pref&nbsp;",
+        "Chk&nbsp;",
+    ]
+
+
+    static hst_log_header = [
+        "UTC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Call&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Recv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Send&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+        "Score&nbsp;",
+        "Chk&nbsp;",
+    ]
+
     constructor() {
         // singleton 
         if (Log._instance) {
             return Log._instance
         }
-        Log._instance = this   
-        
+        Log._instance = this
         this._contestDefinition = new ContestDefinition()
-        
         this.data = []
         this.NR = 1
-        this.initScoreSets()      
+        this.initScoreSets()
     }
 
     initScoreSets() {
         this.Calls = new Set()
         this.Prefix = new Set()
         this.ConfCalls = new Set()
-        this.ConfPrefix = new Set()            
+        this.ConfPrefix = new Set()
     }
 
     wipe() {
+
+        this.runmode = this._contestDefinition._contest.runmode
+
         this.data = []
         let table = document.querySelector('#log table')
+
+        let table_hdr = document.querySelector('#log_hdr')
+
+        let headers = Log.std_log_header
+        if (this.runmode === RunMode.Hst) headers = Log.hst_log_header
+        let header_items = ""
+        headers.forEach(e => { header_items += `<th>${e}</th>` })
+        table_hdr.innerHTML = header_items
+
         let row_no = table.rows.length
         for (let i = 1; i < row_no; i++) table.deleteRow(1)
         this.initScoreSets()
-        this.updateScore()     
-        this.NR = 1   
+        this.updateScore()
+        this.NR = 1
     }
 
     addQso(qso) {
         let complete_qso = qso
         let call = qso.Call
         let prefix = Log.ExtractPrefix(call)
-        
+
 
         this.Calls.add(call)
         this.Prefix.add(prefix)
@@ -53,37 +85,37 @@ export class Log {
         complete_qso.Check = Log.Check.NIL
         complete_qso.SendRST = '599'
         complete_qso.SendNr = String(this.NR).padStart(3, '0')
-        
+
         // my own exchange
         const myexchange = this._contestDefinition.getMyExchange()
         complete_qso.SendExchange = myexchange
-       // console.log(myexchange)
+        // console.log(myexchange)
 
         complete_qso.Pref = prefix
         this.NR++
-        let log = document.getElementById("log");
+        let log = document.getElementById("log")
         this.data.push(complete_qso)
         this.addTable(complete_qso)
     }
 
 
     checkQSO(qso) {
-       // console.log("CHECK",qso)
+        // console.log("CHECK",qso)
         const call = qso.call
-        const NR = String(qso.NR).padStart(3,'0')
+        const NR = String(qso.NR).padStart(3, '0')
         const last_qso = this.data[this.data.length - 1]
-        const rst = ( qso.RST ? qso.RST : 599 ).toString()
+        const rst = (qso.RST ? qso.RST : 599).toString()
         let confirm = Log.Check.OK
 
-//        if (last_qso.RecvRST !== rst) confirm = Log.Check.RST
-//      if (last_qso.RecvNr !== NR) confirm = Log.Check.NR
+        //        if (last_qso.RecvRST !== rst) confirm = Log.Check.RST
+        //      if (last_qso.RecvNr !== NR) confirm = Log.Check.NR
 
         const contestDefinition = new ContestDefinition()
-        confirm = contestDefinition.checkExchange(last_qso.RecvExchange,qso.Ex)
-        
+        confirm = contestDefinition.checkExchange(last_qso.RecvExchange, qso.Ex)
+
 
         if (last_qso.Call !== call) confirm = Log.Check.NIL
-        
+
         last_qso.Check = confirm
 
         if (confirm !== Log.Check.NIL) {
@@ -98,6 +130,22 @@ export class Log {
         }
     }
 
+    static callToScore(call) {
+        const morse = Keyer.Encode(call)
+        let result = -1
+        for (let i = 0; i < morse.length(); i++) {
+            switch (morse[i]) {
+                case '.': result += 2
+                    break
+                case '-': result += 4
+                    break
+                case ' ': result += 2
+                    break
+            }
+        }
+        return result
+    }
+
     updateScore() {
         let pts = this.Calls.size
         let multi = this.Prefix.size
@@ -107,7 +155,6 @@ export class Log {
         let conf_multi = this.ConfPrefix.size
         let conf_score = conf_pts * conf_multi
 
-        
         let pts_row = document.querySelector('.table_result tr:nth-child(2)')
 
         pts_row.querySelector('td:nth-child(2)').innerText = pts
@@ -163,16 +210,16 @@ export class Log {
     }
 
     addTable(qso) {
-        const el = document.querySelector("#log > table");
-        let row = el.insertRow(-1);
+        const el = document.querySelector("#log > table")
+        let row = el.insertRow(-1)
         row.insertCell().textContent = `${qso.UTC}`
         row.insertCell().textContent = `${qso.Call}`
         row.insertCell().textContent = qso.RecvExchange.join(" ")
         row.insertCell().textContent = qso.SendExchange.join(" ")
         row.insertCell().textContent = `${qso.Pref}`
         row.insertCell().textContent = `${qso.Check}`
-        let log = document.getElementById("log");
-        log.scrollTop = log.scrollHeight;
+        let log = document.getElementById("log")
+        log.scrollTop = log.scrollHeight
     }
 
 }

@@ -57,7 +57,7 @@ class Keyer {
         this.FRiseTime = 0.005
         this.Wpm = DEFAULT.WPM
         this.BufSize = DEFAULT.BUFSIZE
-        this.MorseMsg = this.Encode('DJ1TF')
+        this.MorseMsg = Keyer.Encode('DJ1TF')
         this._MakeRamp()
     }
 
@@ -98,7 +98,7 @@ class Keyer {
             this._RampOff[this._RampLength - i - 1] = this._RampOn[i]
     }
 
-    Encode(Txt) {
+    static Encode(Txt) {
         let result = ''        
         for (let i = 0; i < Txt.length; i++) {
             if (Txt[i] === ' ' || Txt[i] === '_') result += ' '

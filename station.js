@@ -106,7 +106,7 @@ export class Station {
         if (this.MsgText) {
             this.MsgText += ' ' + AMsg
         } else { this.MsgText = AMsg }
-        this.SendMorse(GKeyer.Encode(this.MsgText))
+        this.SendMorse(Keyer.Encode(this.MsgText))
     }
 
     SendMorse(AMorse) {
