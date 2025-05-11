@@ -373,6 +373,7 @@ export class View {
                 case AudioMessage.request_dx:
                     let calls = new Array()
                     for (let i = 0; i < data; i++) calls.push(this.calls.get_random())
+                    // console.log(calls[0])
                     this.pileupStations += data
                     this.ContestNode.port.postMessage({
                         type: AudioMessage.create_dx,

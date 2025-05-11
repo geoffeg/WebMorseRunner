@@ -49,6 +49,8 @@ export class Log {
         this.Prefix = new Set()
         this.ConfCalls = new Set()
         this.ConfPrefix = new Set()
+        this.HstRawScore = 0
+        this.HstVerifiedScore = 0
     }
 
     wipe() {
@@ -89,13 +91,23 @@ export class Log {
         // my own exchange
         const myexchange = this._contestDefinition.getMyExchange()
         complete_qso.SendExchange = myexchange
-        // console.log(myexchange)
 
-        complete_qso.Pref = prefix
+        if (this.runmode === RunMode.Hst) {
+            const score = Log.callToScore(complete_qso.Call)
+            complete_qso.Pref = score
+            this.HstRawScore += score
+        } else {
+            complete_qso.Pref = prefix
+        }
         this.NR++
         let log = document.getElementById("log")
         this.data.push(complete_qso)
         this.addTable(complete_qso)
+
+        if (this.runmode === RunMode.Hst) {
+            this.updateScore()
+        }
+
     }
 
 
@@ -126,6 +138,10 @@ export class Log {
         if (confirm === Log.Check.OK) {
             this.ConfCalls.add(last_qso.Call)
             this.ConfPrefix.add(last_qso.Pref)
+            if (this.runmode === RunMode.Hst) {
+                const confPoint = parseInt(last_qso.Pref)
+                this.HstVerifiedScore += confPoint
+            }
             this.updateScore()
         }
     }
@@ -133,7 +149,7 @@ export class Log {
     static callToScore(call) {
         const morse = Keyer.Encode(call)
         let result = -1
-        for (let i = 0; i < morse.length(); i++) {
+        for (let i = 0; i < morse.length; i++) {
             switch (morse[i]) {
                 case '.': result += 2
                     break
@@ -154,21 +170,39 @@ export class Log {
         let conf_pts = this.ConfCalls.size
         let conf_multi = this.ConfPrefix.size
         let conf_score = conf_pts * conf_multi
-
+        // Points 
         let pts_row = document.querySelector('.table_result tr:nth-child(2)')
 
-        pts_row.querySelector('td:nth-child(2)').innerText = pts
-        pts_row.querySelector('td:nth-child(3)').innerText = conf_pts
-
+        if (this.runmode === RunMode.Hst) {
+            pts_row.querySelector('td:nth-child(1)').innerText = ''
+            pts_row.querySelector('td:nth-child(2)').innerText = ''
+            pts_row.querySelector('td:nth-child(3)').innerText = ''
+        } else {
+            pts_row.querySelector('td:nth-child(1)').innerText = 'Pts'
+            pts_row.querySelector('td:nth-child(2)').innerText = pts
+            pts_row.querySelector('td:nth-child(3)').innerText = conf_pts
+        }
+        // Multi
         let multi_row = document.querySelector('.table_result tr:nth-child(3)')
+        if (this.runmode === RunMode.Hst) {
+            multi_row.querySelector('td:nth-child(1)').innerText = ''
+            multi_row.querySelector('td:nth-child(2)').innerText = ''
+            multi_row.querySelector('td:nth-child(3)').innerText = ''
+        } else {
+            multi_row.querySelector('td:nth-child(1)').innerText = 'Mult'
+            multi_row.querySelector('td:nth-child(2)').innerText = multi
+            multi_row.querySelector('td:nth-child(3)').innerText = conf_multi
+        }
 
-        multi_row.querySelector('td:nth-child(2)').innerText = multi
-        multi_row.querySelector('td:nth-child(3)').innerText = conf_multi
-
+        // Score
         let score_row = document.querySelector('.table_result tr:nth-child(4)')
-
-        score_row.querySelector('td:nth-child(2)').innerText = score
-        score_row.querySelector('td:nth-child(3)').innerText = conf_score
+        if (this.runmode === RunMode.Hst) {
+            score_row.querySelector('td:nth-child(2)').innerText = this.HstRawScore
+            score_row.querySelector('td:nth-child(3)').innerText = this.HstVerifiedScore
+        } else {
+            score_row.querySelector('td:nth-child(2)').innerText = score
+            score_row.querySelector('td:nth-child(3)').innerText = conf_score
+        }
     }
 
 
