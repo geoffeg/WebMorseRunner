@@ -178,7 +178,7 @@ This means after stating the contest the cursor is places automatically in the C
 
 
 ## Version
-* **0.8.2-beta** (2025-05-26)
+* **0.8.2-beta** (2025-05-28)
    * When matching partial call signs the original Morse Runner was not as strict as Web Morse Runner, now Web Morse Runner is relaxed. 
 * **0.8.1-beta** (2025-05-27)
    * Two bugs fixed that could cause stations not replying after call with in incomplete call sign.
