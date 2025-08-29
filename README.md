@@ -2,6 +2,8 @@
 
 A small CW contest simulator for the web.
 
+This fork has been modified with the callsigns from the last two ARS Flight of the Bumblebees contests.
+
 ## About 
 This is a new written version of Morse Runner as Web-Application.
 
